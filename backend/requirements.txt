@@ -1,3 +1,4 @@
-flask
-flask-cors
+Flask
+Flask_Cors
 flask_restx
+flask_sqlalchemy

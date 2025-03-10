@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api
+from flask_cors import CORS
 
 from settings import Config 
 from routes import api
@@ -13,6 +14,9 @@ app.config.from_object(Config)
 # register the db and api
 db.init_app(app)
 api.init_app(app)
+
+# cors
+CORS(app)
 
 # run the app
 if __name__ == '__main__':
