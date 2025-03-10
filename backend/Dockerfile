@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 3001
+EXPOSE 3000
 
 ENV FLASK_APP=app.main
 ENV FLASK_ENV=production
