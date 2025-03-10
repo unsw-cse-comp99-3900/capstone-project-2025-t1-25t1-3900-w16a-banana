@@ -1,8 +1,72 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=18321430&assignment_repo_type=AssignmentRepo)
+# Food Delivery App - Team 3900-W16A-Banana
 
+## 1. Project Description
 
+With the growing demand for on-demand food delivery, restaurants are seeking efficient solutions to connect with customers and manage orders seamlessly. Many current food delivery platforms face challenges such as inefficient order management, poor communication between customers, restaurants, and delivery drivers. To address these issues, this project proposes a food delivery mobile application that provides a seamless and user-friendly experience for all participants. We will present our solutions to improve order efficiency, enhance communication, and optimize the delivery process, ensuring a smooth and reliable service for both businesses and customers. In addition, we integrate the ChatGPT API. We encourage restaurant managers to build their own chatbots for automated customer interaction during ordering and menu recommendations. Furthermore, customers can also use the chatbots to get quick responses to common queries, such as order status and payment inquiries.
 
-# How to Run
-- `docker compose up --build`
-    - Currently this will only run backend server.
-- The Swagger API Document will be shown on `localhost:3000/`
+---
+
+## 2. Backend Setup (Local Development)
+To set up the **backend** folder, follow these steps:
+
+1. **Navigate to the backend directory**
+   ```sh
+   cd backend
+   ```
+
+2. **Install dependencies**
+   ```sh
+   pip install -r requirements.txt  # Use pip3 if on macOS
+   ```
+
+3. **Run the Flask server**
+   ```sh
+   python app.py  # Use python3 if necessary
+   ```
+
+The **Swagger API Documentation** will be available at:  
+📍 `http://localhost:5000/`
+
+If you want to run the frontend, please leave the backend server running.
+
+## 3. Frontend Setup (Local Development)
+
+The frontend includes some mobile apps using React Native and Expo. 
+
+Detailed set up will be updated soon...
+
+---
+
+## 4. Docker Setup (for week 5, week 8, week 10 demo)
+To run the project using docker
+
+1. **Clone the repository**
+   ```sh
+   git clone git@github.com:unsw-cse-comp99-3900/capstone-project-2025-t1-25t1-3900-w16a-banana.git
+   cd capstone-project-2025-t1-25t1-3900-w16a-banana
+   ```
+
+2. **Ensure Docker Desktop is running**  
+   Open **Docker Desktop** on your machine.
+
+3. **Build and start all services**
+   ```sh
+   docker-compose up --force-recreate --build
+   ```
+
+4. **Access the frontend (mobile app)**
+
+    More details will be updated soon...
+
+---
+
+## 5. Team Members
+
+| Name        | ZID       | Email                        | Role                 |
+|------------|----------|----------------------------|----------------------|
+| Wen Yi     | Z5396337 | Z5396337@student.unsw.edu.au | Scrum Master, Frontend Developer |
+| Kwok Yu Siu | Z5458029 | Z5458029@student.unsw.edu.au | Frontend Developer  |
+| Tong Ding  | Z5490086 | Z5490086@student.unsw.edu.au | Frontend Developer  |
+| Xianyu Cai | Z5454843 | Z5454843@student.unsw.edu.au | Backend Developer   |
+| Qiyao Zhou | Z5306160 | Z5306160@student.unsw.edu.au | Backend Developer   |
+| Seokho Yang | Z5337452 | Z5337452@student.unsw.edu.au | Backend Developer   |

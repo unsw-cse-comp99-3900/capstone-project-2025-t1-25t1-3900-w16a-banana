@@ -1,8 +1,9 @@
 services:
   backend:
-    build: ./backend
+    build:
+      context: backend
+      # the dockerfile path is relative to the context
+      dockerfile: Dockerfile
     ports:
-      - "${PORT:-3000}:${PORT:-3000}"
-    env_file:
-      - backend/.env
-    restart: always
+      - "5000:5000"
+      
