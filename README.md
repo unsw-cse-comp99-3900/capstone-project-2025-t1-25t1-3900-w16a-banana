@@ -24,6 +24,35 @@ To set up the **backend** folder, follow these steps:
    python app.py  # Use python3 if necessary
    ```
 
+## 2-1. Backend Setup (Local Development For Linux/WSL)
+To set up the **backend** folder, follow these steps:
+
+1. **Navigate to the backend directory**
+   ```sh
+   cd backend
+   ```
+
+2. **Creating virtual environment**
+   ```sh
+   python3 -m venv venv # 
+   ```
+
+3. **Activate the virtual environment**
+   ```sh
+   source venv/bin/activate
+   ```
+
+4. **Install dependencies**
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+## 2-2. Database Setup (Optional. Run when database schema changed)
+1. **Resetting all tables**
+   ```sh
+   python3 backend/utils/init_db.py
+   ```
+
 The **Swagger API Documentation** will be available at:  
 📍 `http://localhost:11000/`
 
