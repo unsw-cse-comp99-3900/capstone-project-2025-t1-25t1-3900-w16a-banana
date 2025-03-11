@@ -42,5 +42,3 @@ class Login(Resource):
         db.session.commit()
 
         return user.dict(), 200
-
-
