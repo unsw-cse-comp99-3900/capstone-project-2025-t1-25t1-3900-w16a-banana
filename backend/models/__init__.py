@@ -146,6 +146,7 @@ class MenuCategory(BaseModel):
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
     category_name = db.Column(db.String(50), nullable=False)
 
+
 class MenuItem(BaseModel):
     __tablename__ = 'menu_items'
 
@@ -154,8 +155,14 @@ class MenuItem(BaseModel):
     item_name = db.Column(db.String(50), nullable=False)
     item_description = db.Column(db.String(255), nullable=False)
     item_price = db.Column(db.Float, nullable=False)
-    url_img = db.Column(db.String(255), nullable=False)
     notes = db.Column(db.String(255), nullable=False)
+
+    # one item has one image
+    url_img = db.Column(db.String(255), nullable=False)
+
+    # the item may be available or not
+    is_available = db.Column(db.Boolean, nullable=False, default=True)
+
 
 # for the order
 # one customer can make multiple orders
@@ -169,7 +176,6 @@ class OrderStatus(enum.Enum):
     CANCELLED = "CANCELLED"
 
 
-
 class CustomerOrder(BaseModel):
     __tablename__ = 'customer_orders'
 
@@ -181,10 +187,39 @@ class CustomerOrder(BaseModel):
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
     
     # order stataus
-    order_status = db.Column(db.String(50), nullable=False)
-    total_price = db.Column(db.Float, nullable=False)
+    order_status = db.Column(db.Enum(OrderStatus), nullable=False, default=OrderStatus.PENDING)
+    
+    # the order should have the delivery address, suburb, state, postcode
+    address = db.Column(db.String(255), nullable=False)
+    suburb = db.Column(db.String(50), nullable=False)
+    state = db.Column(db.Enum(State), nullable=False, default=State.NSW)
+    postcode = db.Column(db.String(4), nullable=False)
+
+    # the order price: order price, delivery fee, total price
+    order_price = db.Column(db.Float, nullable=False)
     delivery_fee = db.Column(db.Float, nullable=False)
-    delivery_time = db.Column(db.DateTime, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
+    total_price = db.Column(db.Float, nullable=False)
+
+    # the order should have order time, pickup time, delivery time
+    order_time = db.Column(db.DateTime, default=datetime.now)
+    pickup_time = db.Column(db.DateTime, nullable=True)
+    delivery_time = db.Column(db.DateTime, nullable=True)
+
+    # the customer or the restaurant can leave some notes
+    customer_notes = db.Column(db.String(255), nullable=False)
+    restaurant_notes = db.Column(db.String(255), nullable=False)
+
+
+# each order contains many items, here we define one order to be one restaurant
+class OrderItem(BaseModel):
+    __tablename__ = 'order_items'
+
+    item_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('customer_orders.order_id'), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('menu_items.item_id'), nullable=False)
+    
+    # the item price may be changed, so here needs to save the price when the order is made
+    price = db.Column(db.Float, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
 
 
