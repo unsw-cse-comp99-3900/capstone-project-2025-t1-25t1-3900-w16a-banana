@@ -10,8 +10,6 @@ from models import *
 
 api = Namespace('register', description='Registration related operations')
 
-UPLOAD_FOLDER = "uploads"
-
 # customer register model
 # require: username, email, password, phone, address, suburb, state, postcode
 customer_register_model = api.model('CustomerRegister', {
@@ -68,18 +66,22 @@ class RegisterCustomer(Resource):
 
         # return the new customer object
         return new_customer.dict(), 200
+    
 
+# use driver_register_parser
+driver_register_parser = reqparse.RequestParser()
+driver_register_parser.add_argument('email', type=str, required=True, default="driver@email.com")
+driver_register_parser.add_argument('password', type=str, required=True, default="securepassword")
+driver_register_parser.add_argument('phone', type=str, required=True, default="0412345678")
+driver_register_parser.add_argument('first_name', type=str, required=True, default="John")
+driver_register_parser.add_argument('last_name', type=str, required=True, default="Doe")
+driver_register_parser.add_argument('license_number', type=str, required=True, default="123456789")
+driver_register_parser.add_argument('car_plate', type=str, required=True, default="ABC123")
 
-# driver registration
-driver_register_model = api.model('DriverRegister', {
-    'email': fields.String(required=True, description="Email"),
-    'password': fields.String(required=True, description="Password"),
-    'phone': fields.String(required=True, description="Phone (04xxxxxxxx)"),
-    'first_name': fields.String(required=True, description="First Name"),
-    'last_name': fields.String(required=True, description="Last Name"),
-    'license_number': fields.String(required=True, description="Driver License Number"),
-    'car_plate': fields.String(required=True, description="Car Plate Number"),
-})
+# those will be in 'request.files'
+driver_register_parser.add_argument("license_image", type=FileStorage, location="files", required=True, help="Driver License Image")
+driver_register_parser.add_argument("car_image", type=FileStorage, location="files", required=True, help="Car Image")
+driver_register_parser.add_argument("registration_paper", type=FileStorage, location="files", required=True, help="Registration Paper")
 
 
 @api.route('/driver')
@@ -89,45 +91,38 @@ class RegisterDriver(Resource):
     def post(self):
         """Register driver and upload files"""
 
-        data = request.form
-        files = request.files
+        args = driver_register_parser.parse_args()
 
         # check phone, postcode, state, and license number
         # no checks for now on the car plate etc
-        if not is_valid_phone(data['phone']):
+        if not is_valid_phone(args['phone']):
             abort(400, 'Invalid phone number')
         
-        if not is_valid_postcode(data['postcode']):
+        if not is_valid_postcode(args['postcode']):
             abort(400, 'Invalid postcode')
 
-        if not is_valid_license_number(data['license_number']):
+        if not is_valid_license_number(args['license_number']):
             abort(400, 'Invalid license number')
         
         # the email must be unique
-        is_email_exist = Driver.query.filter_by(email=data['email']).first()
+        is_email_exist = Driver.query.filter_by(email=args["email"]).first()
         if is_email_exist:
             abort(400, 'Email already exist')
         
-        # the user needs to upload 3 things:
-        # license_image, car_image, registration_paper
-        if 'license_image' not in files or 'car_image' not in files or 'registration_paper' not in files:
-            abort(400, 'Please upload all required files')
-        
         # save the files
-        url_license_image = save_file(files['license_image'])
-        url_car_image = save_file(files['car_image'])
-        url_registration_paper = save_file(files['registration_paper'])
+        url_license_image = save_file(args['license_image'])
+        url_car_image = save_file(args['car_image'])
+        url_registration_paper = save_file(args['registration_paper'])
 
         # create the new driver
         new_driver = Driver(
-            email=data['email'],
-            password=data['password'],
-            phone=data['phone'],
-            first_name=data['first_name'],
-            last_name=data['last_name'],
-            license_number=data['license_number'],
-            car_plate=data['car_plate'],
-            # 3 file urls
+            email=args['email'],
+            password=args['password'],
+            phone=args['phone'],
+            first_name=args['first_name'],
+            last_name=args['last_name'],
+            license_number=args['license_number'],
+            car_plate=args['car_plate'],
             url_license_image=url_license_image,
             url_car_image=url_car_image,
             url_registration_paper=url_registration_paper,
