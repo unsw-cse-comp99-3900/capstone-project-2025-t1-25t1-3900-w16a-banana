@@ -23,7 +23,7 @@ class PendingApplications(Resource):
             abort(400, 'Invalid application type')
 
         # check the token
-        token = request.headers.get('Authorization')
+        token = auth_header.parse_args()['Authorization']
         admin = Admin.query.filter_by(token=token).first()
         if not admin:
             abort(401, 'Unauthorized')
@@ -50,7 +50,7 @@ class ApproveApplication(Resource):
             abort(400, 'Invalid application type')
 
         # check the token
-        token = request.headers.get('Authorization')
+        token = auth_header.parse_args()['Authorization']
         admin = Admin.query.filter_by(token=token).first()
         if not admin:
             abort(401, 'Unauthorized')
