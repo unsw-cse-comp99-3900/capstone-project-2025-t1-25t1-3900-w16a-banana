@@ -25,7 +25,9 @@ To set up the **backend** folder, follow these steps:
    ```
 
 The **Swagger API Documentation** will be available at:  
-📍 `http://localhost:5000/`
+📍 `http://localhost:11000/`
+
+The backend port is changed to 11000 to avoid port conflict on the mac os machine. 
 
 If you want to run the frontend, please leave the backend server running.
 

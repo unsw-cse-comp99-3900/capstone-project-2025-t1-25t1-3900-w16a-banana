@@ -6,7 +6,7 @@
 
 2. `python app.py` or `python3 app.py`
 
-Then open the [http://localhost:5000](http://localhost:5000) in your browser.
+Then open the [http://localhost:11000](http://localhost:11000) in your browser.
 
 ## View the database
 
