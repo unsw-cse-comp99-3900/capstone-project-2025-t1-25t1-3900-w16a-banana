@@ -7,10 +7,10 @@ def save_file(file):
     ts = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = ts + '_' + file.filename
     path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+    print(path)
     file.save(path)
 
     # the url file path to the database
-    # url = f"{current_app.config['UPLOAD_URL']}/{filename}"
-    # return url
-    return ""
+    url = f"{current_app.config['UPLOAD_FOLDER']}/{filename}"
+    return url
     
