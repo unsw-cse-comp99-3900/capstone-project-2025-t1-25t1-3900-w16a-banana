@@ -1,5 +1,6 @@
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource, fields, reqparse
 from flask import request, abort
+from werkzeug.datastructures import FileStorage
 import secrets
 
 from utils.db import db
@@ -8,6 +9,8 @@ from utils.check import *
 from models import *
 
 api = Namespace('register', description='Registration related operations')
+
+UPLOAD_FOLDER = "uploads"
 
 # customer register model
 # require: username, email, password, phone, address, suburb, state, postcode
@@ -22,7 +25,7 @@ customer_register_model = api.model('CustomerRegister', {
     'postcode': fields.String(required=True, description="Postcode (4 digits)")
 })
 
-@api.route('/register/customer')
+@api.route('/customer')
 class RegisterCustomer(Resource):
     @api.expect(customer_register_model)
     def post(self):
@@ -79,7 +82,7 @@ driver_register_model = api.model('DriverRegister', {
 })
 
 
-@api.route('/register/driver')
+@api.route('/driver')
 class RegisterDriver(Resource):
     # the frontend will send using the form data
     # since here we use both request.data and request.files
@@ -140,70 +143,88 @@ class RegisterDriver(Resource):
 
 
 # restaurant registration
-restaurant_register_model = api.model('RestaurantRegister', {
-    'email': fields.String(required=True, description="Email"),
-    'password': fields.String(required=True, description="Password"),
-    'phone': fields.String(required=True, description="Phone (04xxxxxxxx)"),
-    'name': fields.String(required=True, description="Restaurant Name"),
-    'address': fields.String(required=True, description="Address"),
-    'suburb': fields.String(required=True, description="Suburb"),
-    'state': fields.String(required=True, description="State (ACT, NSW, NT, QLD, SA, TAS, VIC, WA)"),
-    'postcode': fields.String(required=True, description="Postcode (4 digits)"),
-    'abn': fields.String(required=True, description="ABN (11 digits)"),
-    'description': fields.String(required=True, description="Restaurant Description")
-})
+# those will be in 'request.form'
+restaurant_register_parser = reqparse.RequestParser()
+restaurant_register_parser.add_argument('email', type=str, required=True, default="example@domain.com", help="Email is required")
+restaurant_register_parser.add_argument('password', type=str, required=True, default="securepassword", help="Password is required")
+restaurant_register_parser.add_argument('phone', type=str, required=True, default="0412345678", help="Phone (04xxxxxxxx)")
+restaurant_register_parser.add_argument('name', type=str, required=True, default="A Restaurant", help="Restaurant Name")
+restaurant_register_parser.add_argument('address', type=str, required=True, default="111 Street", help="Address")
+restaurant_register_parser.add_argument('suburb', type=str, required=True, default="State", help="Suburb")
+restaurant_register_parser.add_argument('state', type=str, required=True, default="NSW", help="State (ACT, NSW, NT, QLD, SA, TAS, VIC, WA)")
+restaurant_register_parser.add_argument('postcode', type=str, required=True, default="2000", help="Postcode (4 digits)")
+restaurant_register_parser.add_argument('abn', type=str, required=True, default="12345678901", help="ABN (11 digits)")
+restaurant_register_parser.add_argument('description', type=str, required=True, default="A good restaurant", help="Restaurant Description")
 
+# those will be in 'request.files'
+restaurant_register_parser.add_argument("image1", type=FileStorage, location="files", required=True, help="First restaurant image")
+restaurant_register_parser.add_argument("image2", type=FileStorage, location="files", required=True, help="Second restaurant image")
+restaurant_register_parser.add_argument("image3", type=FileStorage, location="files", required=True, help="Third restaurant image")
 
-@api.route('/register/restaurant')
+@api.route('/restaurant')
 class RegisterRestaurant(Resource):
     # The frontend will send using form-data since we have both text fields and file uploads
+    @api.expect(restaurant_register_parser)
     def post(self):
         """Register a new restaurant account"""
 
-        data = request.form
-        files = request.files 
+        args = restaurant_register_parser.parse_args()
+        # Extract form data
+        email = args['email']
+        password = args['password']
+        phone = args['phone']
+        name = args['name']
+        address = args['address']
+        suburb = args['suburb']
+        state = args['state']
+        postcode = args['postcode']
+        abn = args['abn']
+        description = args['description']
+        image1 = args['image1']
+        image2 = args['image2']
+        image3 = args['image3']
 
         # some validation
-        if not is_valid_phone(data['phone']):
+        if not is_valid_phone(phone):
             abort(400, 'Invalid phone number')
 
-        if not is_valid_postcode(data['postcode']):
+        if not is_valid_postcode(postcode):
             abort(400, 'Invalid postcode')
 
-        if not is_valid_state(data['state']):
+        if not is_valid_state(state):
             abort(400, 'Invalid state')
 
-        if not is_valid_abn(data['abn']):
+        if not is_valid_abn(abn):
             abort(400, 'Invalid ABN')
 
         # Check if email or ABN is already registered
-        if Restaurant.query.filter_by(email=data['email']).first():
+        if Restaurant.query.filter_by(email=email).first():
             abort(400, 'Email already exists')
 
-        if Restaurant.query.filter_by(abn=data['abn']).first():
+        if Restaurant.query.filter_by(abn=abn).first():
             abort(400, 'ABN already exists')
 
         # Ensure all three images are uploaded
-        if 'image1' not in files or 'image2' not in files or 'image3' not in files:
+        if not image1 or not image2 or not image3:
             abort(400, 'Please upload all three restaurant images')
 
         # Save uploaded images
-        url_img1 = save_file(files['image1'])
-        url_img2 = save_file(files['image2'])
-        url_img3 = save_file(files['image3'])
+        url_img1 = save_file(image1)
+        url_img2 = save_file(image2)
+        url_img3 = save_file(image3)
 
         # Create new restaurant
         new_restaurant = Restaurant(
-            email=data['email'],
-            password=data['password'],
-            phone=data['phone'],
-            name=data['name'],
-            address=data['address'],
-            suburb=data['suburb'],
-            state=State(data['state']),
-            postcode=data['postcode'],
-            abn=data['abn'],
-            description=data['description'],
+            email=email,
+            password=password,
+            phone=phone,
+            name=name,
+            address=address,
+            suburb=suburb,
+            state=State(state),
+            postcode=postcode,
+            abn=abn,
+            description=description,
             url_img1=url_img1,
             url_img2=url_img2,
             url_img3=url_img3,
