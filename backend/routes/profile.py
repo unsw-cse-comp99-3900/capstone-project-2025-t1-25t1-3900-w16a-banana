@@ -7,6 +7,25 @@ from utils.header import auth_header
 
 api = Namespace('profile', description='Profile related operations')
 
+# authenticate the user with the token.
+# so the token will be checked in 4 tables
+def authenticate_user(token):
+    for user in [Customer, Driver, Restaurant, Admin]:
+        user = user.query.filter_by(token=token).first()
+        if user:
+            return user
+    
+    return None
+
+# for a easier mapping
+user_type_model = {
+    'customer': Customer,
+    'driver': Driver,
+    'restaurant': Restaurant,
+    'admin': Admin
+}
+
+
 # as long as the token is valid, any user can obtain any user's profile
 # require the user_type = customer, driver, restaurant, admin
 # and the user_id
@@ -23,26 +42,13 @@ class ViewProfile(Resource):
 
         # check the token, this user can be in Customer, Driver, Restaurant, or Admin
         token = auth_header.parse_args()['Authorization']
-
-        is_user = Customer.query.filter_by(token=token).first() \
-            or Driver.query.filter_by(token=token).first() \
-            or Restaurant.query.filter_by(token=token).first() \
-            or Admin.query.filter_by(token=token).first()
+        is_user = authenticate_user(token)
 
         if not is_user:
             abort(401, 'Unauthorized')
 
-        # get the user
-        if user_type == 'customer':
-            user = Customer.query.get(user_id)
-        elif user_type == 'driver':
-            user = Driver.query.get(user_id)
-        elif user_type == 'restaurant':
-            user = Restaurant.query.get(user_id)
-        else:
-            user = Admin.query.get(user_id)
-
-        # if the target user does not exist
+        # get the user, need the user to be exist
+        user = user_type_model[user_type].query.get(user_id)
         if not user:
             abort(404, 'User not found')
 
