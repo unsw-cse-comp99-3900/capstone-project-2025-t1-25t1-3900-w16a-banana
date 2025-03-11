@@ -22,9 +22,7 @@ class BaseModel(db.Model):
             elif col.name == "created_at" or col.name == "updated_at":
                 val = val.strftime("%Y-%m-%d %H:%M:%S")
             elif isinstance(val, enum.Enum):
-                val = val.value
-            else:
-                continue 
+                val = val.value 
 
             result_dict[col.name] = val
         
@@ -95,6 +93,10 @@ class Driver(BaseModel):
     url_car_image = db.Column(db.String(255), nullable=False)
     url_registration_paper = db.Column(db.String(255), nullable=False)
 
+    # created at
+    created_at = db.Column(db.DateTime, default=datetime.now)
+
+
 # restaurant table
 class Restaurant(BaseModel):
     __tablename__ = 'restaurants'
@@ -122,6 +124,10 @@ class Restaurant(BaseModel):
     # shop description
     description = db.Column(db.String(255), nullable=False)
 
+    # created at
+    created_at = db.Column(db.DateTime, default=datetime.now)
+
+
 # admin table
 class Admin(BaseModel):
     __tablename__ = 'admins'
@@ -129,6 +135,9 @@ class Admin(BaseModel):
     admin_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+
+    # token for the admin
+    token = db.Column(db.String(255), nullable=True, default=None)
 
     # admin should have the first name, last name
     first_name = db.Column(db.String(50), nullable=False)
@@ -206,15 +215,19 @@ class CustomerOrder(BaseModel):
     delivery_time = db.Column(db.DateTime, nullable=True)
 
     # the customer or the restaurant can leave some notes
-    customer_notes = db.Column(db.String(255), nullable=False)
-    restaurant_notes = db.Column(db.String(255), nullable=False)
+    customer_notes = db.Column(db.String(255), nullable=True)
+    restaurant_notes = db.Column(db.String(255), nullable=True)
+
+    # the customer payment (a fake payment record)
+    card_number = db.Column(db.String(16), nullable=False)
 
 
 # each order contains many items, here we define one order to be one restaurant
 class OrderItem(BaseModel):
     __tablename__ = 'order_items'
 
-    item_id = db.Column(db.Integer, primary_key=True)
+    order_item_id = db.Column(db.Integer, primary_key=True)
+    
     order_id = db.Column(db.Integer, db.ForeignKey('customer_orders.order_id'), nullable=False)
     item_id = db.Column(db.Integer, db.ForeignKey('menu_items.item_id'), nullable=False)
     
@@ -223,3 +236,32 @@ class OrderItem(BaseModel):
     quantity = db.Column(db.Integer, nullable=False)
 
 
+# after the order, the customer can leave one review for the driver,
+# and one review for the restaurant,
+# the driver and restaurant can leave one comment under that
+# and the review is allowed to be updated
+# and the review can attach two images.
+# here, one review table for two parties
+class ReviewTarget(enum.Enum):
+    DRIVER = "DRIVER"
+    RESTAURANT = "RESTAURANT"
+
+
+class Review(BaseModel):
+    __tablename__ = 'reviews'
+
+    review_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('customer_orders.order_id'), nullable=False)
+    target = db.Column(db.Enum(ReviewTarget), nullable=False)
+
+    # the review can have rating 1 - 5, some text, and maximum two images
+    rating = db.Column(db.Integer, nullable=False)
+    review_text = db.Column(db.String(255), nullable=False)
+    url_img1 = db.Column(db.String(255), nullable=True)
+    url_img2 = db.Column(db.String(255), nullable=True)
+
+    # created at and updated at
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+# more works: chat system table (maybe in sprint 2, 3)
