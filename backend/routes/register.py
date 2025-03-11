@@ -54,7 +54,7 @@ class RegisterCustomer(Resource):
             phone=data['phone'],
             address=data['address'],
             suburb=data['suburb'],
-            state=state,
+            state=State(data['state']),
             postcode=data['postcode'],
             # create the token now
             token=secrets.token_urlsafe(16)
