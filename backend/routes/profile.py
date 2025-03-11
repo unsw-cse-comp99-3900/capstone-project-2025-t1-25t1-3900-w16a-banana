@@ -2,7 +2,7 @@ from flask_restx import Namespace, Resource, fields
 from flask import request, abort
 
 from utils.db import db 
-from models import User
+from models import Customer
 
 api = Namespace('profile', description='Profile related operations')
 
@@ -11,5 +11,5 @@ api = Namespace('profile', description='Profile related operations')
 class Test(Resource):
     def get(self):
         # get all the users
-        users = User.query.all()
+        users = Customer.query.all()
         return [user.dict() for user in users]
