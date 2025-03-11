@@ -16,3 +16,6 @@ def is_valid_state(state):
 
 def is_valid_license_number(license_number):
     return license_number.isdigit()
+
+def is_valid_abn(abn):
+    return abn.isdigit() and len(abn) == 11

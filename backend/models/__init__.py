@@ -122,8 +122,8 @@ class Restaurant(BaseModel):
     state = db.Column(db.Enum(State), nullable=False, default=State.NSW)
     postcode = db.Column(db.String(4), nullable=False)
 
-    # the restaurant should have ABN
-    abn = db.Column(db.String(50), nullable=False)
+    # the restaurant should have ABN, ABN is 11 digits
+    abn = db.Column(db.String(11), nullable=False)
 
     # the restaurant can upload 3 images for the restaurant
     url_img1 = db.Column(db.String(255), nullable=False)
