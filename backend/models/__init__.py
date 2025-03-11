@@ -136,6 +136,9 @@ class Restaurant(BaseModel):
     # during registration, the restaurant application has the status
     registration_status = db.Column(db.Enum(RegistrationStatus), nullable=False, default=RegistrationStatus.PENDING)
 
+    # login will create token
+    token = db.Column(db.String(255), nullable=True, default=None)
+
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
 
