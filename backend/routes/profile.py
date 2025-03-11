@@ -1,7 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request, abort
 
-from utils.db import db 
+from utils.db import db
+from utils.check import *
 from models import *
 from utils.header import auth_header
 
@@ -81,3 +82,126 @@ class MyProfile(Resource):
         result['user_type'] = user_type
 
         return result, 200
+
+
+# for the update profile, we group the attributes into non-approval needed and approval needed
+# the non-approval needed attributes can be updated without admin approval,
+# and approval needed attributes (only for driver and restaurant) need admin approval.
+
+# all customer attributes can be updated without admin approval
+
+# for driver:
+# non approval needed: email, password, phone
+# approval needed: first_name, last_name, license_number, car_plate, license_image, car_image, registration_paper
+
+# for restaurant:
+# non approval needed: email, password, phone, url_img1, url_img2, url_img3, description
+# approval needed: name, address, suburb, state, postcode, abn
+
+# customer update model
+customer_update_model = api.model('CustomerUpdateModel', {
+    'username': fields.String(required=True, description='Username'),
+    'email': fields.String(required=True, description='Email'),
+    'password': fields.String(required=True, description='Password'),
+    'phone': fields.String(required=True, description='Phone'),
+    'address': fields.String(required=True, description='Address'),
+    'suburb': fields.String(required=True, description='Suburb'),
+    'state': fields.String(required=True, description='State'),
+    'postcode': fields.String(required=True, description='Postcode (4 digits)')
+})
+
+# the customer needs to provide his token
+@api.route('/update/customer')
+class CustomerUpdate(Resource):
+    @api.expect(auth_header, customer_update_model)
+    def put(self):
+        """Customer updates his profile, no admin approval needed"""
+
+        token = auth_header.parse_args()['Authorization']
+        customer = Customer.query.filter_by(token=token).first()
+        if not customer:
+            abort(401, 'Unauthorized')
+
+        # data, needs to check
+        data = request.json
+        if 'username' in data:
+            # the username must be unique
+            is_username_exist = Customer.query.filter_by(username=data['username']) \
+                .filter(Customer.customer_id != customer.customer_id).first()
+            if is_username_exist:
+                abort(400, 'Username already exist')
+        
+        if 'email' in data:
+            # the email must be unique
+            is_email_exist = Customer.query.filter_by(email=data['email']) \
+                .filter(Customer.id != customer.id).first()
+            if is_email_exist:
+                abort(400, 'Email already exist')
+        
+        # check the phone, etc
+        if 'phone' in data and not is_valid_phone(data['phone']):
+            abort(400, 'Invalid phone number')
+        
+        if 'postcode' in data and not is_valid_postcode(data['postcode']):
+            abort(400, 'Invalid postcode')
+        
+        if 'state' in data and not is_valid_state(data['state']):
+            abort(400, 'Invalid state')
+        
+        # update the customer
+        for key, value in data.items():
+            setattr(customer, key, value)
+        
+        db.session.commit()
+        return customer.dict(), 200
+
+
+# both driver and restaurant can update profile without admin approval
+# for the only 3 attributes
+driver_and_restaurant_non_approval_model = api.model('DriverUpdateNonApprovalModel', {
+    'email': fields.String(required=True, description='Email'),
+    'password': fields.String(required=True, description='Password'),
+    'phone': fields.String(required=True, description='Phone')
+})
+
+# and the driver and restaurant needs to provide the token
+@api.route('/update/driver/non-approval')
+@api.route('/update/restaurant/non-approval')
+class DriverAndRestaurantNonApprovalUpdate(Resource):
+    @api.expect(auth_header, driver_and_restaurant_non_approval_model)
+    def put(self):
+        """Driver and restaurant update their profile, no admin approval needed"""
+
+        token = auth_header.parse_args()['Authorization']
+        user = authenticate_user(token)
+
+        # this user needs to be either Driver or Restaurant
+        if not user or not isinstance(user, (Driver, Restaurant)):
+            abort(401, 'Unauthorized')
+
+        # data, needs to check
+        data = request.json
+        if 'phone' in data and not is_valid_phone(data['phone']):
+            abort(400, 'Invalid phone number')
+
+        # email also needs to be unique
+        if 'email' in data:
+            if isinstance(user, Driver):
+                is_email_exist = Driver.query.filter_by(email=data['email']) \
+                    .filter(Driver.driver_id != user.driver_id).first()
+                if is_email_exist:
+                    abort(400, 'Email already exist')
+            else:
+                is_email_exist = Restaurant.query.filter_by(email=data['email']) \
+                    .filter(Restaurant.restaurant_id != user.restaurant_id).first()
+                if is_email_exist:
+                    abort(400, 'Email already exist')
+
+        # update the user
+        for key, value in data.items():
+            setattr(user, key, value)
+        
+        db.session.commit()
+        return user.dict(), 200
+
+
