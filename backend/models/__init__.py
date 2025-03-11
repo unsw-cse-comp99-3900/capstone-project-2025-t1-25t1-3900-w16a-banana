@@ -46,8 +46,8 @@ class Customer(BaseModel):
 
     customer_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
 
     # for the delivery
     # australian phone is 04xx xxx xxx
@@ -65,6 +65,14 @@ class Customer(BaseModel):
 
     # some timestamps
     created_at = db.Column(db.DateTime, default=datetime.now)
+
+# the driver and restaurant have the registration status
+# pending, approved, rejected
+class RegistrationStatus(enum.Enum):
+    PENDING = "PENDING"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+
 
 # driver table
 class Driver(BaseModel):
@@ -93,6 +101,9 @@ class Driver(BaseModel):
     url_car_image = db.Column(db.String(255), nullable=False)
     url_registration_paper = db.Column(db.String(255), nullable=False)
 
+    # during registration, the driver application has the status
+    registration_status = db.Column(db.Enum(RegistrationStatus), nullable=False, default=RegistrationStatus.PENDING)
+
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
 
@@ -116,13 +127,16 @@ class Restaurant(BaseModel):
     # the restaurant should have ABN
     abn = db.Column(db.String(50), nullable=False)
 
-    # the restaurant can upload 5 images for the restaurant
+    # the restaurant can upload 3 images for the restaurant
     url_img1 = db.Column(db.String(255), nullable=False)
     url_img2 = db.Column(db.String(255), nullable=False)
     url_img3 = db.Column(db.String(255), nullable=False)
 
     # shop description
     description = db.Column(db.String(255), nullable=False)
+
+    # during registration, the restaurant application has the status
+    registration_status = db.Column(db.Enum(RegistrationStatus), nullable=False, default=RegistrationStatus.PENDING)
 
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
@@ -240,7 +254,7 @@ class OrderItem(BaseModel):
 # and one review for the restaurant,
 # the driver and restaurant can leave one comment under that
 # and the review is allowed to be updated
-# and the review can attach two images.
+# and the review can attach 1 images.
 # here, one review table for two parties
 class ReviewTarget(enum.Enum):
     DRIVER = "DRIVER"
@@ -254,11 +268,10 @@ class Review(BaseModel):
     order_id = db.Column(db.Integer, db.ForeignKey('customer_orders.order_id'), nullable=False)
     target = db.Column(db.Enum(ReviewTarget), nullable=False)
 
-    # the review can have rating 1 - 5, some text, and maximum two images
+    # the review can have rating 1 - 5, some text, and maximum 1 images
     rating = db.Column(db.Integer, nullable=False)
     review_text = db.Column(db.String(255), nullable=False)
-    url_img1 = db.Column(db.String(255), nullable=True)
-    url_img2 = db.Column(db.String(255), nullable=True)
+    url_img = db.Column(db.String(255), nullable=True)
 
     # created at and updated at
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
