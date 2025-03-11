@@ -92,8 +92,6 @@ class Driver(BaseModel):
     
     # the driver should have the car plate number
     car_plate = db.Column(db.String(10), nullable=False)
-    car_type = db.Column(db.String(50), nullable=False)
-    car_color = db.Column(db.String(50), nullable=False)
 
     # the driver should have the driver license image, car image, registration paper
     # these can be pdf or image format
