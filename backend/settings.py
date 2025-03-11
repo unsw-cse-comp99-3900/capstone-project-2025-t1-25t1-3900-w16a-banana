@@ -10,4 +10,4 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # This should be the location of upload folder in docker environment. Not local location.
-    UPLOAD_FOLDER = '/app/uploads'
+    UPLOAD_FOLDER = 'uploads'
