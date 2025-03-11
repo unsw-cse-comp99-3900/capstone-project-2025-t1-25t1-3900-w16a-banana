@@ -8,4 +8,6 @@ class Config:
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{db_path}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    UPLOAD_FOLDER = 'uploads'
+
+    # This should be the location of upload folder in docker environment. Not local location.
+    UPLOAD_FOLDER = '/app/uploads'
