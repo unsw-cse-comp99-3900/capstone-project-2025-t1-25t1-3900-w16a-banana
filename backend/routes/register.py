@@ -2,7 +2,9 @@ from flask_restx import Namespace, Resource, fields
 from flask import request, abort
 import secrets
 
-from utils.db import db 
+from utils.db import db
+from utils.file import save_file
+from utils.check import *
 from models import *
 
 api = Namespace('register', description='Registration related operations')
@@ -28,21 +30,14 @@ class RegisterCustomer(Resource):
 
         data = request.json
 
-        # check the phone needs to start with "04",
-        # length is 10, and all are digits
-        is_valid_phone = data['phone'].startswith("04") and len(data['phone']) == 10 and data['phone'].isdigit()
-        if not is_valid_phone:
+        # check the phone, postcode, and state
+        if not is_valid_phone(data['phone']):
             abort(400, 'Invalid phone number')
         
-        # check the postcode needs to be length 4 and all are digits
-        is_valid_postcode = len(data['postcode']) == 4 and data['postcode'].isdigit()
-        if not is_valid_postcode:
+        if not is_valid_postcode(data['postcode']):
             abort(400, 'Invalid postcode')
         
-        # convert the state into the enum
-        try:
-            state = State(data['state'])
-        except ValueError:
+        if not is_valid_state(data['state']):
             abort(400, 'Invalid state')
         
         # the username and email must be unique
@@ -60,19 +55,89 @@ class RegisterCustomer(Resource):
             address=data['address'],
             suburb=data['suburb'],
             state=state,
-            postcode=data['postcode']
+            postcode=data['postcode'],
+            # create the token now
+            token=secrets.token_urlsafe(16)
         )
 
         db.session.add(new_customer)
         db.session.commit()
 
-        # create the token
-        token = secrets.token_urlsafe(16)
-        new_customer.token = token
-        db.session.commit()
-
+        # return the new customer object
         return new_customer.dict(), 200
 
 
+# driver registration
+driver_register_model = api.model('DriverRegister', {
+    'email': fields.String(required=True, description="Email"),
+    'password': fields.String(required=True, description="Password"),
+    'phone': fields.String(required=True, description="Phone (04xxxxxxxx)"),
+    'first_name': fields.String(required=True, description="First Name"),
+    'last_name': fields.String(required=True, description="Last Name"),
+    'license_number': fields.String(required=True, description="Driver License Number"),
+    'car_plate': fields.String(required=True, description="Car Plate Number"),
+})
 
+
+@api.route('/register/driver')
+class RegisterDriver(Resource):
+    # the frontend will send using the form data
+    # since here we use both request.data and request.files
+    def post(self):
+        """Register driver and upload files"""
+
+        data = request.form
+        files = request.files
+
+        # check phone, postcode, state, and license number
+        # no checks for now on the car plate etc
+        if not is_valid_phone(data['phone']):
+            abort(400, 'Invalid phone number')
+        
+        if not is_valid_postcode(data['postcode']):
+            abort(400, 'Invalid postcode')
+        
+        if not is_valid_state(data['state']):
+            abort(400, 'Invalid state')
+
+        if not is_valid_license_number(data['license_number']):
+            abort(400, 'Invalid license number')
+        
+        # the email must be unique
+        is_email_exist = Driver.query.filter_by(email=data['email']).first()
+        if is_email_exist:
+            abort(400, 'Email already exist')
+        
+        # the user needs to upload 3 things:
+        # license_image, car_image, registration_paper
+        if 'license_image' not in files or 'car_image' not in files or 'registration_paper' not in files:
+            abort(400, 'Please upload all required files')
+        
+        # save the files
+        url_license_image = save_file(files['license_image'])
+        url_car_image = save_file(files['car_image'])
+        url_registration_paper = save_file(files['registration_paper'])
+
+        # create the new driver
+        new_driver = Driver(
+            email=data['email'],
+            password=data['password'],
+            phone=data['phone'],
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            license_number=data['license_number'],
+            car_plate=data['car_plate'],
+            # 3 file urls
+            url_license_image=url_license_image,
+            url_car_image=url_car_image,
+            url_registration_paper=url_registration_paper,
+            # create the token now
+            token=secrets.token_urlsafe(16)
+        )
+
+        db.session.add(new_driver)
+        db.session.commit()
+
+        # but the driver application status is still pending
+        return new_driver.dict(), 200
 
