@@ -56,8 +56,28 @@ class ViewProfile(Resource):
         return user.dict(), 200
 
 
+# use the token to obtain my own profile
+@api.route('/me')
+class MyProfile(Resource):
+    @api.expect(auth_header)
+    def get(self):
+        """Obtain my own profile, response includes the user_type"""
 
+        # check the token, this user can be in Customer, Driver, Restaurant, or Admin
+        token = auth_header.parse_args()['Authorization']
+        user = authenticate_user(token)
 
+        if not user:
+            abort(401, 'Unauthorized')
 
+        # the response also contain the user_type
+        result = user.dict()
 
+        # remove the s at the end
+        user_type = user.__tablename__
+        if user_type[-1] == 's':
+            user_type = user_type[:-1]
+        
+        result['user_type'] = user_type
 
+        return result, 200
