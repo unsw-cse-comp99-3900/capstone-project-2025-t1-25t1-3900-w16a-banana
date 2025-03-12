@@ -105,6 +105,9 @@ class Driver(BaseModel):
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
 
+    # driver login will also create token
+    token = db.Column(db.String(255), nullable=True, default=None)
+
 
 # restaurant table
 class Restaurant(BaseModel):
