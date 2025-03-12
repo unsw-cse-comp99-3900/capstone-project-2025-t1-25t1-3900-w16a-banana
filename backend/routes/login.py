@@ -24,6 +24,9 @@ class Login(Resource):
         data = request.json 
         email, password, user_type = data['email'], data['password'], data['user_type']
 
+        # check if the user exists
+        user = None
+
         if user_type == 'customer':
             user = Customer.query.filter_by(email=email, password=password).first()
         elif user_type == 'driver':
@@ -32,7 +35,9 @@ class Login(Resource):
             user = Restaurant.query.filter_by(email=email, password=password).first()
         elif user_type == 'admin':
             user = Admin.query.filter_by(email=email, password=password).first()
-        
+        else:
+            abort(400, 'Invalid user type, must be one of customer, driver, restaurant, admin')
+
         if not user:
             abort(401, 'Invalid credentials')
         
