@@ -86,8 +86,7 @@ driver_register_parser.add_argument("registration_paper", type=FileStorage, loca
 
 @api.route('/driver')
 class RegisterDriver(Resource):
-    # the frontend will send using the form data
-    # since here we use both request.data and request.files
+    @api.expect(driver_register_parser)
     def post(self):
         """Register driver and upload files"""
 
@@ -97,9 +96,6 @@ class RegisterDriver(Resource):
         # no checks for now on the car plate etc
         if not is_valid_phone(args['phone']):
             abort(400, 'Invalid phone number')
-        
-        if not is_valid_postcode(args['postcode']):
-            abort(400, 'Invalid postcode')
 
         if not is_valid_license_number(args['license_number']):
             abort(400, 'Invalid license number')
