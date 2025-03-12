@@ -105,6 +105,9 @@ class Driver(BaseModel):
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
 
+    # driver login will also create token
+    token = db.Column(db.String(255), nullable=True, default=None)
+
 
 # restaurant table
 class Restaurant(BaseModel):
@@ -168,7 +171,7 @@ class MenuCategory(BaseModel):
 
     category_id = db.Column(db.Integer, primary_key=True)
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
-    category_name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
 
 
 class MenuItem(BaseModel):
@@ -176,10 +179,9 @@ class MenuItem(BaseModel):
 
     item_id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey('menu_categories.category_id'), nullable=False)
-    item_name = db.Column(db.String(50), nullable=False)
-    item_description = db.Column(db.String(255), nullable=False)
-    item_price = db.Column(db.Float, nullable=False)
-    notes = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    price = db.Column(db.Float, nullable=False)
 
     # one item has one image
     url_img = db.Column(db.String(255), nullable=False)

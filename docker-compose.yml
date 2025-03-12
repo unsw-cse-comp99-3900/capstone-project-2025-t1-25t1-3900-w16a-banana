@@ -8,5 +8,4 @@ services:
       - "11000:11000"
     # Mount persistent local storage volume for check if file is uploaded in docker environment
     volumes:
-      - ./backend/uploads:/app/uploads
-      
+      - ./backend/uploads:/app/backend/uploads
