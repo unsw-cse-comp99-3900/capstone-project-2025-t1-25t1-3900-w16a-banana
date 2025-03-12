@@ -173,3 +173,69 @@ class CreateMenuItem(Resource):
         db.session.commit()
 
         return new_item.dict(), 200
+
+
+# parser for updating an existing menu item.
+# all the required is False now.
+update_item_parser = reqparse.RequestParser()
+update_item_parser.add_argument('name', type=str, required=False, help='Updated menu item name')
+update_item_parser.add_argument('description', type=str, required=False, help='Updated menu item description')
+update_item_parser.add_argument('price', type=float, required=False, help='Updated menu item price')
+update_item_parser.add_argument('is_available', type=bool, required=False, help='Menu item availability (true/false)')
+update_item_parser.add_argument('img', type=FileStorage, location='files', required=False, help='New menu item image file')
+
+@api.route('/item/<int:item_id>')
+class UpdateDeleteMenuItem(Resource):
+    @api.expect(auth_header, update_item_parser)
+    def put(self, item_id):
+        """Update existing menu item attributes (can update any provided fields)"""
+
+        token = auth_header.parse_args()['Authorization']
+        restaurant = Restaurant.query.filter_by(token=token).first()
+        if not restaurant:
+            abort(401, 'Unauthorized')
+
+        item = MenuItem.query.join(MenuCategory).filter(
+            MenuCategory.restaurant_id == restaurant.restaurant_id,
+            MenuItem.item_id == item_id
+        ).first()
+
+        if not item:
+            abort(404, 'Menu item not found')
+
+        args = update_item_parser.parse_args()
+
+        # Check and update fields if provided
+        for field in ['name', 'description', 'price', 'is_available']:
+            if args[field]:
+                setattr(item, field, args[field])
+
+        if args['img']:
+            item.url_img = save_file(args['img'])
+
+        db.session.commit()
+
+        return item.dict(), 200
+
+
+    @api.expect(auth_header)
+    def delete(self, item_id):
+        """Restaurant disable a menu item: turn the is_available to False"""
+
+        token = auth_header.parse_args()['Authorization']
+        restaurant = Restaurant.query.filter_by(token=token).first()
+        if not restaurant:
+            abort(401, 'Unauthorized')
+
+        item = MenuItem.query.join(MenuCategory).filter(
+            MenuCategory.restaurant_id == restaurant.restaurant_id,
+            MenuItem.item_id == item_id
+        ).first()
+
+        if not item:
+            abort(404, 'Menu item not found')
+
+        item.is_available = False
+        db.session.commit()
+
+        return {'message': 'Menu item disabled successfully'}, 200
