@@ -45,7 +45,7 @@ class PendingApplications(Resource):
 @api.route('/<string:application_type>/<int:user_id>/<string:action>')
 class ApproveApplication(Resource):
     @api.expect(auth_header)
-    @api.description('application_type is either driver or restaurant, user_id is the driver_id or restaurant_id, action is either approve or reject')
+    @api.doc(description='application_type is either driver or restaurant, user_id is the driver_id or restaurant_id, action is either approve or reject')
     def post(self, application_type, user_id, action):
         """Admin action on the application"""
 
