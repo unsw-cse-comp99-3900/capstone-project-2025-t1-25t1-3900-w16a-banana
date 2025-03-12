@@ -4,10 +4,10 @@ import secrets
 
 from utils.db import db
 from utils.check import *
-from utils.header import auth_header
+from utils.header import auth_header, check_token
 from models import *
 
-api = Namespace('application', description='Admin works on the new driver and new restaurant application')
+api = Namespace('admin', description='APIs for Adminstrators')
 
 # admin approve or reject application:
 # when the new driver or restaurant applies,
@@ -26,8 +26,7 @@ class PendingApplications(Resource):
             abort(400, 'Invalid application type')
 
         # check the token
-        token = auth_header.parse_args()['Authorization']
-        admin = Admin.query.filter_by(token=token).first()
+        admin = check_token(auth_header, Admin)
         if not admin:
             abort(401, 'Unauthorized')
 
@@ -49,19 +48,18 @@ class ApproveApplication(Resource):
     def post(self, application_type, user_id, action):
         """Admin action on the application"""
 
+        # check the token
+        admin = check_token(auth_header, Admin)
+        if not admin:
+            abort(401, 'Unauthorized')
+
         # check the application type
         if application_type not in ['driver', 'restaurant']:
             abort(400, 'Invalid application type')
 
         if action not in ['approve', 'reject']:
             abort(400, 'Invalid action')
-
-        # check the token
-        token = auth_header.parse_args()['Authorization']
-        admin = Admin.query.filter_by(token=token).first()
-        if not admin:
-            abort(401, 'Unauthorized')
-
+        
         # get the application
         if application_type == 'driver':
             application = Driver.query.filter_by(id=user_id, status=RegistrationStatus.PENDING).first()
