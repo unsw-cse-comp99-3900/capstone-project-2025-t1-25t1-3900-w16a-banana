@@ -6,7 +6,7 @@ import secrets
 from utils.db import db
 from utils.file import save_file
 from utils.check import *
-from utils.header import auth_header
+from utils.header import auth_header, check_token
 from models import *
 
 api = Namespace('driver', description='APIs for Driver')
@@ -34,6 +34,10 @@ class RegisterDriver(Resource):
         """Register driver and upload files"""
 
         args = register_parser.parse_args()
+
+        is_password_okay, description = is_password_safe(args['password'])
+        if not is_password_okay:
+            abort(400, description)
 
         # check phone, postcode, state, and license number
         # no checks for now on the car plate etc
@@ -91,9 +95,9 @@ class RegisterDriver(Resource):
 
 # Driver non approval mode: email, password, phone
 update_no_approval_model = api.model('DriverUpdateNoApprovalModel', {
-    'email': fields.String(required=True, description="Email"),
-    'password': fields.String(required=True, description="Password"),
-    'phone': fields.String(required=True, description="Phone")
+    'email': fields.String(required=False, description="Email"),
+    'password': fields.String(required=False, description="Password"),
+    'phone': fields.String(required=False, description="Phone")
 })
 
 
@@ -103,14 +107,17 @@ class DriverNonApprovalUpdate(Resource):
     def put(self):
         """Driver updates profile (email, password, phone) - No admin approval needed"""
 
-        token = auth_header.parse_args()['Authorization']
-        driver = Driver.query.filter_by(token=token).first()
-
+        driver = check_token(auth_header, Driver)
         if not driver:
             abort(401, 'Unauthorized')
 
         # Get request data
         data = request.json
+
+        if 'password' in data:
+            is_password_okay, description = is_password_safe(data['password'])
+            if not is_password_okay:
+                abort(400, description)
 
         # Validate phone number
         if 'phone' in data and not is_valid_phone(data['phone']):
@@ -130,8 +137,6 @@ class DriverNonApprovalUpdate(Resource):
         db.session.commit()
         return driver.dict(), 200
     
-
-
 # some attributes change require approval from the admin
 # driver: first_name, last_name, license_number, car_plate, license_image, car_image, registration_paper
 # use reqparse to obtain these attributes, but required = False for all attributes
@@ -152,8 +157,7 @@ class DriverUpdateRequireApproval(Resource):
     def put(self):
         """Driver updates his profile, admin approval needed"""
 
-        token = auth_header.parse_args()['Authorization']
-        driver = Driver.query.filter_by(token=token).first()
+        driver = check_token(auth_header, Driver)
         if not driver:
             abort(401, 'Unauthorized')
 

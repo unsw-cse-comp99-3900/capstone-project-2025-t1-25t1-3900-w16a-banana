@@ -6,7 +6,7 @@ import secrets
 from utils.db import db
 from utils.file import save_file
 from utils.check import *
-from utils.header import auth_header
+from utils.header import auth_header, check_token
 from models import *
 
 api = Namespace('customer', description='APIs for Customer')
@@ -32,6 +32,11 @@ class RegisterCustomer(Resource):
     def post(self):
 
         data = request.json
+
+        # Check password strength
+        is_password_okay, description = is_password_safe(data['password'])
+        if not is_password_okay:
+            abort(400, description)
 
         # check the phone, postcode, and state
         if not is_valid_phone(data['phone']):
@@ -72,14 +77,14 @@ class RegisterCustomer(Resource):
 
 # customer update model
 customer_update_model = api.model('CustomerUpdateModel', {
-    'username': fields.String(required=True, description='Username'),
-    'email': fields.String(required=True, description='Email'),
-    'password': fields.String(required=True, description='Password'),
-    'phone': fields.String(required=True, description='Phone'),
-    'address': fields.String(required=True, description='Address'),
-    'suburb': fields.String(required=True, description='Suburb'),
-    'state': fields.String(required=True, description='State'),
-    'postcode': fields.String(required=True, description='Postcode (4 digits)')
+    'username': fields.String(required=False, description='Username'),
+    'email': fields.String(required=False, description='Email'),
+    'password': fields.String(required=False, description='Password'),
+    'phone': fields.String(required=False, description='Phone'),
+    'address': fields.String(required=False, description='Address'),
+    'suburb': fields.String(required=False, description='Suburb'),
+    'state': fields.String(required=False, description='State'),
+    'postcode': fields.String(required=False, description='Postcode (4 digits)')
 })
 
 
@@ -91,13 +96,18 @@ class CustomerUpdate(Resource):
     def put(self):
         """Customer updates his profile, no admin approval needed"""
 
-        token = auth_header.parse_args()['Authorization']
-        customer = Customer.query.filter_by(token=token).first()
+        customer = check_token(auth_header, Customer)
         if not customer:
             abort(401, 'Unauthorized')
 
         # data, needs to check
         data = request.json
+
+        if 'password' in data:
+            is_password_okay, description = is_password_safe(data['password'])
+            if not is_password_okay:
+                abort(400, description)
+
         if 'username' in data:
             # the username must be unique
             is_username_exist = Customer.query.filter_by(username=data['username']) \
