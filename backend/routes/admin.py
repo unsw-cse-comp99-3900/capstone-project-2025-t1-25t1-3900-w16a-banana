@@ -9,6 +9,43 @@ from models import *
 
 api = Namespace('admin', description='APIs for Adminstrators')
 
+
+register_model = api.model("Admin Register Model", {
+    'email': fields.String(required=True, description='Email', default="admin@gmail.com"),
+    'password': fields.String(required=True, description='Password', default="StrongPass12!@"),
+    'first_name': fields.String(required=True, description='First Name', default="John"),
+    'last_name': fields.String(required=True, description="Last Name", default="Doe")
+})
+
+
+# Adding new admin TODO: Might have to add some security feature
+@api.route('/register')
+class AdminRegister(Resource):
+    def post(self):
+        data = request.json
+
+        is_email_exist = Customer.query.filter_by(email=data['email']).first()
+
+        is_password_okay, description = is_password_safe(data['password'])
+        if not is_password_okay:
+            abort(400, description)
+
+        if is_email_exist:
+            abort(400, 'Email already exist')
+
+        new_admin = Admin(
+            email=data['email'],
+            password=data['password'],
+            first_name=data['first_name'],
+            last_name=data['last_name']
+        )
+
+        db.session.add(new_admin)
+        db.session.commit()
+
+        # return the new customer object
+        return new_admin.dict(), 200
+
 # admin approve or reject application:
 # when the new driver or restaurant applies,
 # or when the existing driver or restaurant updates some important information
