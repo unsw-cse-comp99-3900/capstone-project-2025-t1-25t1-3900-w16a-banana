@@ -52,10 +52,11 @@ class AdminRegister(Resource):
 
 # the admin obtains all PENDING applications
 # choose between the driver and restaurant
+@api.doc(params={'application_type': 'Either restaurant or driver'})
 @api.route('/pending/<string:application_type>')
 class PendingApplications(Resource):
     @api.expect(auth_header)
-    def get(self, application_type):
+    def get(self, application_type: str):
         """Admin obtains all PENDING applications, enter either driver or restaurant"""
 
         # check the application type
