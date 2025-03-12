@@ -47,14 +47,22 @@ To set up the **backend** folder, follow these steps:
    pip install -r requirements.txt
    ```
 
-## 2-2. Database Setup (Optional. Run when database schema changed)
-1. **Resetting all tables**
+## 2-2. Backend Database Setup (Optional. Run when database schema changed)
+**Resetting all tables**
    ```sh
    python3 backend/utils/init_db.py
    ```
 
+## 2-3. Backend Test (Using pytest)
+**From the root directory**
+   ```sh
+   pytest
+   ```
+__________________________________________
 The **Swagger API Documentation** will be available at:  
 📍 `http://localhost:11000/`
+
+__________________________________________
 
 The backend port is changed to 11000 to avoid port conflict on the mac os machine. 
 
