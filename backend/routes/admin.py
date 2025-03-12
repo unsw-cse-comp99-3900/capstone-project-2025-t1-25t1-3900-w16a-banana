@@ -21,15 +21,15 @@ register_model = api.model("Admin Register Model", {
 # Adding new admin TODO: Might have to add some security feature
 @api.route('/register')
 class AdminRegister(Resource):
+    @api.expect(register_model)
     def post(self):
         data = request.json
-
-        is_email_exist = Customer.query.filter_by(email=data['email']).first()
 
         is_password_okay, description = is_password_safe(data['password'])
         if not is_password_okay:
             abort(400, description)
 
+        is_email_exist = Admin.query.filter_by(email=data['email']).first()
         if is_email_exist:
             abort(400, 'Email already exist')
 
@@ -69,9 +69,9 @@ class PendingApplications(Resource):
 
         # get the pending applications
         if application_type == 'driver':
-            applications = Driver.query.filter_by(status=RegistrationStatus.PENDING).all()
+            applications = Driver.query.filter_by(registration_status=RegistrationStatus.PENDING).all()
         else:
-            applications = Restaurant.query.filter_by(status=RegistrationStatus.PENDING).all()
+            applications = Restaurant.query.filter_by(registration_status=RegistrationStatus.PENDING).all()
 
         # return the dicts
         return [application.dict() for application in applications]
