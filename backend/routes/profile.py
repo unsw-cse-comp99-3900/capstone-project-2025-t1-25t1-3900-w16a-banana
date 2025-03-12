@@ -86,6 +86,7 @@ class MyProfile(Resource):
         return result, 200
 
 
+###############################################################################################
 # for the update profile, we group the attributes into non-approval needed and approval needed
 # the non-approval needed attributes can be updated without admin approval,
 # and approval needed attributes (only for driver and restaurant) need admin approval.
@@ -99,6 +100,8 @@ class MyProfile(Resource):
 # for restaurant:
 # non approval needed: email, password, phone, url_img1, url_img2, url_img3, description
 # approval needed: name, address, suburb, state, postcode, abn
+###############################################################################################
+
 
 # customer update model
 customer_update_model = api.model('CustomerUpdateModel', {
@@ -158,53 +161,103 @@ class CustomerUpdate(Resource):
         return customer.dict(), 200
 
 
-# both driver and restaurant can update profile without admin approval
-# for the only 3 attributes
-driver_and_restaurant_non_approval_model = api.model('DriverUpdateNonApprovalModel', {
-    'email': fields.String(required=True, description='Email'),
-    'password': fields.String(required=True, description='Password'),
-    'phone': fields.String(required=True, description='Phone')
+# Driver non approval mode: email, password, phone
+driver_update_no_approval_model = api.model('DriverUpdateNoApprovalModel', {
+    'email': fields.String(required=True, description="Email"),
+    'password': fields.String(required=True, description="Password"),
+    'phone': fields.String(required=True, description="Phone")
 })
 
-# and the driver and restaurant needs to provide the token
+
 @api.route('/update/driver/non-approval')
-@api.route('/update/restaurant/non-approval')
-class DriverAndRestaurantNonApprovalUpdate(Resource):
-    @api.expect(auth_header, driver_and_restaurant_non_approval_model)
+class DriverNonApprovalUpdate(Resource):
+    @api.expect(auth_header, driver_update_no_approval_model)
     def put(self):
-        """Driver and restaurant update their profile, no admin approval needed"""
+        """Driver updates profile (email, password, phone) - No admin approval needed"""
 
         token = auth_header.parse_args()['Authorization']
-        user = authenticate_user(token)
+        driver = Driver.query.filter_by(token=token).first()
 
-        # this user needs to be either Driver or Restaurant
-        if not user or not isinstance(user, (Driver, Restaurant)):
+        if not driver:
             abort(401, 'Unauthorized')
 
-        # data, needs to check
+        # Get request data
         data = request.json
+
+        # Validate phone number
         if 'phone' in data and not is_valid_phone(data['phone']):
             abort(400, 'Invalid phone number')
 
-        # email also needs to be unique
+        # Validate unique email
         if 'email' in data:
-            if isinstance(user, Driver):
-                is_email_exist = Driver.query.filter_by(email=data['email']) \
-                    .filter(Driver.driver_id != user.driver_id).first()
-                if is_email_exist:
-                    abort(400, 'Email already exist')
-            else:
-                is_email_exist = Restaurant.query.filter_by(email=data['email']) \
-                    .filter(Restaurant.restaurant_id != user.restaurant_id).first()
-                if is_email_exist:
-                    abort(400, 'Email already exist')
+            is_email_exist = Driver.query.filter_by(email=data['email']) \
+                .filter(Driver.driver_id != driver.driver_id).first()
+            if is_email_exist:
+                abort(400, 'Email already exists')
 
-        # update the user
+        # Update driver attributes
         for key, value in data.items():
-            setattr(user, key, value)
-        
+            setattr(driver, key, value)
+
         db.session.commit()
-        return user.dict(), 200
+        return driver.dict(), 200
+
+
+# Restaurant update no approval model
+restaurant_update_no_approval_parser = reqparse.RequestParser()
+restaurant_update_no_approval_parser.add_argument('email', type=str, required=True, help="Email is required")
+restaurant_update_no_approval_parser.add_argument('password', type=str, required=True, help="Password is required")
+restaurant_update_no_approval_parser.add_argument('phone', type=str, required=True, help="Phone number (04xxxxxxxx)")
+restaurant_update_no_approval_parser.add_argument('description', type=str, required=True, help="Restaurant description")
+
+# may update the images
+restaurant_update_no_approval_parser.add_argument('image1', type=FileStorage, location='files', required=False, help="First image")
+restaurant_update_no_approval_parser.add_argument('image2', type=FileStorage, location='files', required=False, help="Second image")
+restaurant_update_no_approval_parser.add_argument('image3', type=FileStorage, location='files', required=False, help="Third image")
+
+
+@api.route('/update/restaurant/non-approval')
+class RestaurantNonApprovalUpdate(Resource):
+    @api.expect(restaurant_update_no_approval_parser)
+    def put(self):
+        """Restaurant updates profile (email, password, phone, images, description) - No admin approval needed"""
+
+        args = restaurant_update_no_approval_parser.parse_args()
+        
+        # Authenticate restaurant
+        token = request.headers.get('Authorization')
+        if not token:
+            abort(401, "Authorization token is missing")
+        
+        restaurant = Restaurant.query.filter_by(token=token).first()
+        if not restaurant:
+            abort(401, 'Unauthorized')
+
+        # Validate phone number
+        if 'phone' in args and not is_valid_phone(args['phone']):
+            abort(400, 'Invalid phone number')
+
+        # Validate unique email
+        if 'email' in args:
+            is_email_exist = Restaurant.query.filter_by(email=args['email']) \
+                .filter(Restaurant.restaurant_id != restaurant.restaurant_id).first()
+            if is_email_exist:
+                abort(400, 'Email already exists')
+
+        # Process and save image uploads
+        if args['image1']:
+            restaurant.url_img1 = save_file(args['image1'])
+        if args['image2']:
+            restaurant.url_img2 = save_file(args['image2'])
+        if args['image3']:
+            restaurant.url_img3 = save_file(args['image3'])
+
+        # Update restaurant attributes
+        for key, value in args.items() and key not in ['image1', 'image2', 'image3']:
+            setattr(restaurant, key, value)
+
+        db.session.commit()
+        return restaurant.dict(), 200
 
 
 # some attributes change require approval from the admin
@@ -255,11 +308,54 @@ class DriverUpdateRequireApproval(Resource):
         if 'registration_paper' in args:
             driver.url_registration_paper = save_file(args['registration_paper'])
         
+        # set to pending
+        driver.status = RegistrationStatus.PENDING
         db.session.commit()
+
         return driver.dict(), 200
 
 
+# for the restaurant, the attributes that need admin approval are:
+# name, address, suburb, state, postcode, abn
+# use a json model
+restaurant_model = api.model('RestaurantModel', {
+    'name': fields.String(required=True, description='Name'),
+    'address': fields.String(required=True, description='Address'),
+    'suburb': fields.String(required=True, description='Suburb'),
+    'state': fields.String(required=True, description='State'),
+    'postcode': fields.String(required=True, description='Postcode (4 digits)'),
+    'abn': fields.String(required=True, description='ABN (11 digits)')
+})
 
+@api.route('/update/restaurant/require-approval')
+class RestaurantUpdateRequireApproval(Resource):
+    @api.expect(auth_header, restaurant_model)
+    def put(self):
+        """Restaurant updates his profile, admin approval needed"""
 
+        token = auth_header.parse_args()['Authorization']
+        restaurant = Restaurant.query.filter_by(token=token).first()
+        if not restaurant:
+            abort(401, 'Unauthorized')
 
+        # data
+        data = request.json
 
+        if 'abn' in data and not is_valid_abn(data['abn']):
+            abort(400, 'Invalid ABN')
+
+        if 'postcode' in data and not is_valid_postcode(data['postcode']):
+            abort(400, 'Invalid postcode')
+
+        if 'state' in data and not is_valid_state(data['state']):
+            abort(400, 'Invalid state')
+
+        # update the restaurant
+        for key, value in data.items():
+            setattr(restaurant, key, value)
+        
+        # set to pending
+        restaurant.status = RegistrationStatus.PENDING
+        db.session.commit()
+
+        return restaurant.dict(), 200
