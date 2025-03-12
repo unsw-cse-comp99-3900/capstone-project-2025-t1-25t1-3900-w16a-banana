@@ -7,8 +7,9 @@ api = Namespace('uploads', description='send file from uploads directory')
 
 @api.route('/<path:filename>')
 class SendFile(Resource):
+    @api.doc(description="try with http://localhost:11000/uploads/Placeholder.png in the browser")
     def get(self, filename):
-        """Try with http://localhost:11000/uploads/Placeholder.png in the browser"""
+        """Flask send static file from directory"""
 
         # check if the file exists
         path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
