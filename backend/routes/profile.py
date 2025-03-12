@@ -1,10 +1,12 @@
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource, fields, reqparse
 from flask import request, abort
+from werkzeug.datastructures import FileStorage
 
 from utils.db import db
 from utils.check import *
 from models import *
 from utils.header import auth_header
+from utils.file import save_file
 
 api = Namespace('profile', description='Profile related operations')
 
@@ -203,5 +205,61 @@ class DriverAndRestaurantNonApprovalUpdate(Resource):
         
         db.session.commit()
         return user.dict(), 200
+
+
+# some attributes change require approval from the admin
+# driver: first_name, last_name, license_number, car_plate, license_image, car_image, registration_paper
+# use reqparse to obtain these attributes, but required = False for all attributes
+driver_parser = reqparse.RequestParser()
+driver_parser.add_argument('first_name', type=str, required=False, help='First Name')
+driver_parser.add_argument('last_name', type=str, required=False, help='Last Name')
+driver_parser.add_argument('license_number', type=str, required=False, help='License Number')
+driver_parser.add_argument('car_plate', type=str, required=False, help='Car Plate')
+
+# 3 files
+driver_parser.add_argument('license_image', type=FileStorage, location='files', required=False, help='License Image')
+driver_parser.add_argument('car_image', type=FileStorage, location='files', required=False, help='Car Image')
+driver_parser.add_argument('registration_paper', type=FileStorage, location='files', required=False, help='Registration Paper')
+
+@api.route('/update/driver/require-approval')
+class DriverUpdateRequireApproval(Resource):
+    @api.expect(auth_header, driver_parser)
+    def put(self):
+        """Driver updates his profile, admin approval needed"""
+
+        token = auth_header.parse_args()['Authorization']
+        driver = Driver.query.filter_by(token=token).first()
+        if not driver:
+            abort(401, 'Unauthorized')
+
+        # data
+        args = driver_parser.parse_args()
+
+        if 'frist_name' in args: driver.first_name = args['first_name']
+        if 'last_name' in args: driver.last_name = args['last_name']
+        if 'car_plate' in args: driver.car_plate = args['car_plate']
+
+        if 'license_number' in args:
+            if not is_valid_license_number(args['license_number']):
+                abort(400, 'Invalid license number')
+            driver.license_number = args['license_number']
+        
+        # 3 files
+        # save the files
+        if 'license_image' in args:
+            driver.url_license_image = save_file(args['license_image'])
+        
+        if 'car_image' in args:
+            driver.url_car_image = save_file(args['car_image'])
+        
+        if 'registration_paper' in args:
+            driver.url_registration_paper = save_file(args['registration_paper'])
+        
+        db.session.commit()
+        return driver.dict(), 200
+
+
+
+
 
 
