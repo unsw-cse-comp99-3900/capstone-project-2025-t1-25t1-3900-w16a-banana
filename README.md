@@ -54,7 +54,11 @@ To set up the **backend** folder, follow these steps:
    ```
 
 ## 2-3. Backend Test (Using pytest)
-**From the root directory**
+1. **Move to backend directory**
+   ```sh
+   cd backend
+   ```
+2. **From the backend directory**
    ```sh
    pytest
    ```
