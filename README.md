@@ -112,4 +112,4 @@ To run the project using docker
 | Tong Ding  | Z5490086 | Z5490086@student.unsw.edu.au | Frontend Developer  |
 | Xianyu Cai | Z5454843 | Z5454843@student.unsw.edu.au | Backend Developer   |
 | Qiyao Zhou | Z5306160 | Z5306160@student.unsw.edu.au | Backend Developer   |
-| Seokho Yang | Z5337452 | Z5337452@student.unsw.edu.au | Backend Developer   |
+| Seokho Yang | Z5337452 | Z5337452@student.unsw.edu.au | Project Owner, Backend Developer   |
