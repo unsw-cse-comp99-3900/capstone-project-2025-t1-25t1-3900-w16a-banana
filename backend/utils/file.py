@@ -1,29 +1,38 @@
-from flask import current_app
-from datetime import datetime
-from werkzeug.utils import secure_filename
-from werkzeug.datastructures import FileStorage
-
+import time
 import os
+from flask import current_app
+from werkzeug.datastructures import FileStorage
+from uuid import uuid4
+
 
 SUPPORTED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+
+# Return the extension of the file
+def get_file_extension(file: FileStorage) -> str:
+    if '.' not in file.filename:
+        return ""
+    else:
+        return file.filename.rsplit('.', 1)[1].lower()
+
+
 # save the new file to the current app upload folder
 def save_file(file: FileStorage) -> str:
-    ts = datetime.now().strftime('%Y%m%d%H%M%S')
-    filename = ts + '_' + secure_filename(file.filename)
-    path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-    print(path)
-    file.save(path)
+    # Filename is created as `timestamp_uniqueId.extension`
+    filename = f"{time.strftime('%Y%m%d%H%M%S')}_{uuid4().hex}.{get_file_extension(file)}"
+
+    # Make sure that the directory exists
+    os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+    #Save the file
+    file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
     # the url file path to the database
-    url = f"{current_app.config['UPLOAD_FOLDER']}/{filename}"
-    return url
+    return f"{current_app.config['UPLOAD_FOLDER']}/{filename}"
 
 # save the new file to the current app upload folder
 def save_image(file: FileStorage) -> str:
-    is_image = '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in SUPPORTED_IMAGE_EXTENSIONS
-
-    if is_image:
+    if get_file_extension(file) in SUPPORTED_IMAGE_EXTENSIONS:
     # Save file after checking extension
         return save_file(file)
     else:
