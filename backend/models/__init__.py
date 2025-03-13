@@ -1,7 +1,8 @@
-# database models definition here
+"""This is a module that contains DB Schema Model"""
 
 import enum
 from datetime import datetime
+from sqlalchemy import CheckConstraint, UniqueConstraint
 
 from utils.db import db 
 
@@ -39,7 +40,6 @@ class State(enum.Enum):
     VIC = "VIC"
     WA = "WA"
 
-
 # customer, driver, restaurant, admin are 4 separate tables
 class Customer(BaseModel):
     __tablename__ = 'customers'
@@ -72,7 +72,6 @@ class RegistrationStatus(enum.Enum):
     PENDING = "PENDING"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
-
 
 # driver table
 class Driver(BaseModel):
@@ -107,7 +106,6 @@ class Driver(BaseModel):
 
     # driver login will also create token
     token = db.Column(db.String(255), nullable=True, default=None)
-
 
 # restaurant table
 class Restaurant(BaseModel):
@@ -145,7 +143,6 @@ class Restaurant(BaseModel):
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-
 # admin table
 class Admin(BaseModel):
     __tablename__ = 'admins'
@@ -173,7 +170,6 @@ class MenuCategory(BaseModel):
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
     name = db.Column(db.String(50), nullable=False)
 
-
 class MenuItem(BaseModel):
     __tablename__ = 'menu_items'
 
@@ -189,7 +185,6 @@ class MenuItem(BaseModel):
     # the item may be available or not
     is_available = db.Column(db.Boolean, nullable=False, default=True)
 
-
 # for the order
 # one customer can make multiple orders
 # one order can contain multiple items
@@ -201,6 +196,21 @@ class OrderStatus(enum.Enum):
     DELIVERED = "DELIVERED"
     CANCELLED = "CANCELLED"
 
+class CartItem(BaseModel):
+    __tablename__ = "cart_items"
+
+    # Customer whom the cart belongs
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), primary_key=True)
+
+    # Item that is in the cart
+    item_id = db.Column(db.Integer, db.ForeignKey('menu_items.item_id'), primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False)
+
+    # Make sure that quantity is greater than 0.
+    __table_args__ = (
+        CheckConstraint("quantity > 0", name="quantity_positive"),
+        UniqueConstraint("customer_id", "item_id", name="Unique Item In Cart")
+    )
 
 class CustomerOrder(BaseModel):
     __tablename__ = 'customer_orders'
@@ -237,7 +247,6 @@ class CustomerOrder(BaseModel):
 
     # the customer payment (a fake payment record)
     card_number = db.Column(db.String(16), nullable=False)
-
 
 # each order contains many items, here we define one order to be one restaurant
 class OrderItem(BaseModel):
