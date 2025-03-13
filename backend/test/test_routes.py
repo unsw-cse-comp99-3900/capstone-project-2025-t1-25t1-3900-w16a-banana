@@ -1,5 +1,7 @@
 from test.test_conf import client
-import io
+from pathlib import Path
+
+resources = Path(__file__).parent / "resources"
 
 # Test for admin register
 def test_admin_register(client):
@@ -32,22 +34,22 @@ def test_admin_register(client):
 
     assert response.status_code == 400
 
-# #Test for restaurant register
-# def test_restaurant_register(client):
-#     response = client.post('/restaurant/register', content_type='multipart/form-data' ,data={
-#         "email": (None, "admin@example.com"),
-#         "password": (None, "SecurePassword12!@"),
-#         "phone": (None, "0412345678"),
-#         "name": (None, "A Restaurant"),
-#         "address": (None, "111 Street"),
-#         "suburb": (None, "Kensington"),
-#         "state": (None, "NSW"),
-#         "postcode": (None, "2000"),
-#         "abn": (None, "11111111111"),
-#         "description": "A good restaurant",
-#         'image1': (io.BytesIO(b"fakeimage1"), 'fakeimage1.png', 'image/png'),
-#         'image2': (io.BytesIO(b"fakeimage2"), 'fakeimage2.png', 'image/png'),
-#         'image3': (io.BytesIO(b"fakeimage3"), 'fakeimage3.png', 'image/png')
-#     })
-#     print(response)
-#     assert response.status_code == 200
+#Test for restaurant register
+def test_restaurant_register(client):
+    data = {
+        "email": "admin@example.com",
+        "password": "SecurePassword12!@",
+        "phone": "0412345678",
+        "name": "A Restaurant",
+        "address": "111 Street",
+        "suburb": "Kensington",
+        "state": "NSW",
+        "postcode": "2000",
+        "abn": "11111111111",
+        "description": "A good restaurant",
+        'image1': (resources / "test.png").open("rb"),
+        'image2': (resources / "test.png").open("rb"),
+        'image3': (resources / "test.png").open("rb")
+    }
+    response = client.post('/restaurant/register', content_type='multipart/form-data', data=data)
+    assert response.status_code == 200
