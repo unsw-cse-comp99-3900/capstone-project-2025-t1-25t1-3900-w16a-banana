@@ -139,3 +139,63 @@ class CustomerUpdate(Resource):
         db.session.commit()
         return customer.dict(), 200
 
+
+cart_item_update_model = api.model('Cart Item Delete Model', {
+    'item_id': fields.Integer(required=True, description='Item ID to Delete'),
+    'quantity': fields.Integer(required=True, description='Quantity of item')
+})
+# 
+@api.route('/cart')
+class ShopItems(Resource):
+    @api.expect(auth_header)
+    def get(self):
+        """Get All Items' ID in the shopping cart"""
+        # Check customer token
+        customer = check_token(auth_header, Customer)
+        if not customer:
+            abort(401, 'Unauthorized')
+
+        # Get all items in the cart
+        cart_items = CartItem.query.filter_by(customer_id=customer.id)
+        item_id = []
+        for cart_item in cart_items:
+            item_id += cart_item.item_id
+
+        return {item_id: item_id}, 200
+    
+    @api.expect(auth_header, cart_item_update_model)
+    def put(self):
+        """Update/Add/Remove item in the cart. Quantity 0 will remove the item."""
+        # Check customer token
+        customer = check_token(auth_header, Customer)
+        if not customer:
+            abort(401, 'Unauthorized')
+
+        data = request.json
+
+        if not MenuItem.query.filter_by(item_id=data['item_id']).first():
+            abort(400, 'Wrong Item ID')
+
+        if data['quantity'] < 0:
+            abort(400, 'Wrong Item Quantity')
+
+        # Check if item already exists
+        cart_item = CartItem.query.filter_by(customer_id=customer.id, item_id=data['item_id']).first()
+
+        # If there is no same item, add one
+        if not cart_item:
+            new_cart_item = CartItem(
+                customer_id=customer.id,
+                item_id=data['item_id'],
+                quantity=data['quantity']
+            )
+            db.session.add(new_cart_item)
+        # If the quantity is 0, delete the item
+        elif data['quantity'] == 0:
+            db.session.delete(cart_item)
+        # Otherwise, update the item
+        else:
+            cart_item.quantity = data['quantity']
+        db.session.commit()
+
+
