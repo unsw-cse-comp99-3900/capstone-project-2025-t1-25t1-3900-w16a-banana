@@ -18,7 +18,7 @@ api = Namespace('restaurant', description='APIs for Restaurants')
 # those will be in 'request.form'
 register_parser = reqparse.RequestParser()
 register_parser.add_argument('email', type=str, required=True, default="example@domain.com", help="Email is required")
-register_parser.add_argument('password', type=str, required=True, default="securepassword", help="Password is required")
+register_parser.add_argument('password', type=str, required=True, default="SecurePassword12!@", help="Password is required")
 register_parser.add_argument('phone', type=str, required=True, default="0412345678", help="Phone (04xxxxxxxx)")
 register_parser.add_argument('name', type=str, required=True, default="A Restaurant", help="Restaurant Name")
 register_parser.add_argument('address', type=str, required=True, default="111 Street", help="Address")
