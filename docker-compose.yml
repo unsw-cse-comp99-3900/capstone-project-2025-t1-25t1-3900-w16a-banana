@@ -1,5 +1,6 @@
 services:
   backend:
+    container_name: backend
     build:
       context: backend
       # the dockerfile path is relative to the context
