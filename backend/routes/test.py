@@ -37,5 +37,17 @@ class Users(Resource):
         
         else:
             return {"message": "Wrong type"}, 400
+        
+
+@api.route('/menus')
+class Users(Resource):
+    def get(self):
+        """Get all existing users"""
+
+        menuItems = []
+        for menuItem in MenuItem.query.all():
+            menuItems.append(menuItem.dict())
+
+        return {"Menus": menuItems}, 200
 
         
