@@ -3,11 +3,15 @@ from pathlib import Path
 
 resources = Path(__file__).parent / "resources"
 
+ADMIN_EMAIL = "admin@example.com"
+ADMIN_PASSWORD ="SafePass12!@!"
+ADMIN_TOKEN = ""
+
 # Test for admin register
-def test_admin_register(client):
+def test_01_admin_register_login(client):
     response = client.post('/admin/register', json={
-        "email": "admin@example.com",
-        "password": "SafePass12!@!",
+        "email": ADMIN_EMAIL,
+        "password": ADMIN_PASSWORD,
         "first_name": "John",
         "last_name": "Doe"
     })
@@ -16,8 +20,8 @@ def test_admin_register(client):
 
     # Sign up using same email fails
     response = client.post('/admin/register', json={
-        "email": "admin@example.com",
-        "password": "SafePass12!@!",
+        "email": ADMIN_EMAIL,
+        "password": ADMIN_PASSWORD,
         "first_name": "John",
         "last_name": "Doe"
     })
@@ -34,10 +38,23 @@ def test_admin_register(client):
 
     assert response.status_code == 400
 
+    # Get the toekn by loggin in with admin account
+    response = client.post('/auth/login', json={
+        'email': ADMIN_EMAIL,
+        'password': ADMIN_PASSWORD,
+        'user_type': 'admin'
+    })
+
+    assert response.status_code == 200
+    assert 'token' in response.get_json()
+
+    global ADMIN_TOKEN
+    ADMIN_TOKEN = response.get_json()['token']
+
 #Test for restaurant register
-def test_restaurant_register(client):
+def test_02_restaurant_register(client):
     data = {
-        "email": "admin@example.com",
+        "email": "restaurant@example.com",
         "password": "SecurePassword12!@",
         "phone": "0412345678",
         "name": "A Restaurant",
@@ -52,4 +69,18 @@ def test_restaurant_register(client):
         'image3': (resources / "test.png").open("rb")
     }
     response = client.post('/restaurant/register', content_type='multipart/form-data', data=data)
+    assert response.status_code == 200
+
+def test_03_check_pending_restaurant(client):
+    headers = {
+        "Authorization": ADMIN_TOKEN
+    }
+    print(ADMIN_TOKEN)
+    response = client.get('/test/admin')
+
+    print(response.get_json())
+
+    response = client.get('/admin/pending/restaurant', headers=headers)
+
+    print(response.get_json())
     assert response.status_code == 200
