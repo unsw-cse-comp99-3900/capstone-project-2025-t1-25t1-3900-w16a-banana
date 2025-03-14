@@ -33,6 +33,12 @@ Customer:
 * login
 * register a new account
 * update profile (does not require admin approval)
+* Add/Delete/Update item to the cart
+
+
+Developer
+* View all menus using API Call
+* View all users using API Call
 
 ## View the database
 
