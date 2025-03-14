@@ -1,18 +1,13 @@
 import pytest
-from app import app
-from utils.db import db
+from app import app, db
 
-import sys
-sys.path.insert(0, "/app/backend")  # to import application, this is required
-
-from app import app
-
-
-@pytest.fixture
+@pytest.fixture(scope="session")
 def client():
     app.config['TESTING'] = True
 
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        yield app.test_client()
+    with app.app_context():  # Create an application context
+        db.drop_all()  # Ensure a fresh database
+        db.create_all()  # Recreate tables
+
+    with app.test_client() as client:
+        yield client
