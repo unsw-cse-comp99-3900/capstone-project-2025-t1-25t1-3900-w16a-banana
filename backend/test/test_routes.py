@@ -3,6 +3,8 @@ from pathlib import Path
 
 resources = Path(__file__).parent / "resources"
 
+
+# Global test configurations
 ADMIN_EMAIL = "admin@example.com"
 ADMIN_PASSWORD ="SafePass12!@!"
 ADMIN_TOKEN = ""
@@ -70,17 +72,13 @@ def test_02_restaurant_register(client):
     }
     response = client.post('/restaurant/register', content_type='multipart/form-data', data=data)
     assert response.status_code == 200
+    
 
+# Test to see pending restaurants
 def test_03_check_pending_restaurant(client):
-    headers = {
+    # Token for admin
+    admin_headers = {
         "Authorization": ADMIN_TOKEN
     }
-    print(ADMIN_TOKEN)
-    response = client.get('/test/admin')
-
-    print(response.get_json())
-
-    response = client.get('/admin/pending/restaurant', headers=headers)
-
-    print(response.get_json())
+    response = client.get('/admin/pending/restaurant', headers=admin_headers)
     assert response.status_code == 200

@@ -11,4 +11,7 @@ COPY . .
 
 EXPOSE 11000
 
-CMD ["python", "app.py"]
+COPY entrypoint.sh app/backend/entrypoint.sh
+RUN chmod +x app/backend/entrypoint.sh
+
+ENTRYPOINT ["app/backend/entrypoint.sh"]
