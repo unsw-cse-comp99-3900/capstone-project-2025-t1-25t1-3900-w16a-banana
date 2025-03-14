@@ -1,4 +1,4 @@
-from test.test_conf import client
+from .test_conf import client
 from pathlib import Path
 
 resources = Path(__file__).parent / "resources"

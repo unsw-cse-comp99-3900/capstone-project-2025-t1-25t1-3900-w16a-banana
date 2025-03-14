@@ -54,13 +54,13 @@ To set up the **backend** folder, follow these steps:
    ```
 
 ## 2-3. Backend Test (Using pytest)
-1. **Move to backend directory**
+1. **Make sure that the docker for backend is running**
    ```sh
-   cd backend
+   docker-compose up --force-recreate --build
    ```
-2. **From the backend directory**
+2. **Run the pytest from the docker environment (On Differenet shell)**
    ```sh
-   pytest
+   docker exec -it backend pytest #backend is the container name.
    ```
 __________________________________________
 The **Swagger API Documentation** will be available at:  
