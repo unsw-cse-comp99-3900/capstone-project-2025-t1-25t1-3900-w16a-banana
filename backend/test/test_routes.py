@@ -9,6 +9,9 @@ ADMIN_EMAIL = "admin@example.com"
 ADMIN_PASSWORD ="SafePass12!@!"
 ADMIN_TOKEN = ""
 
+RESTAURANT_EMAIL = "restaurant@example.com"
+RESTAURANT_PASSWORD = "SecurePassword12!@"
+
 # Test for admin register
 def test_01_admin_register_login(client):
     response = client.post('/admin/register', json={
@@ -56,8 +59,8 @@ def test_01_admin_register_login(client):
 #Test for restaurant register
 def test_02_restaurant_register(client):
     data = {
-        "email": "restaurant@example.com",
-        "password": "SecurePassword12!@",
+        "email": RESTAURANT_EMAIL,
+        "password": RESTAURANT_PASSWORD,
         "phone": "0412345678",
         "name": "A Restaurant",
         "address": "111 Street",
@@ -70,6 +73,8 @@ def test_02_restaurant_register(client):
         'image2': (resources / "test.png").open("rb"),
         'image3': (resources / "test.png").open("rb")
     }
+
+    # Check if the register was successful
     response = client.post('/restaurant/register', content_type='multipart/form-data', data=data)
     assert response.status_code == 200
     
@@ -80,5 +85,11 @@ def test_03_check_pending_restaurant(client):
     admin_headers = {
         "Authorization": ADMIN_TOKEN
     }
+    # Get all pending applications of the restaurant
     response = client.get('/admin/pending/restaurant', headers=admin_headers)
+
+    # Check the response
     assert response.status_code == 200
+    assert response.get_json()[0]['email'] == RESTAURANT_EMAIL
+    assert response.get_json()[0]['registration_status'] == 'PENDING'
+
