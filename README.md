@@ -6,8 +6,9 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
 ---
 
-## 2. Backend Setup (Local Development)
-To set up the **backend** folder, follow these steps:
+## 2. Backend Setup & Testing
+## 2-1A. Setup Server (Local)
+To set up the **backend** server, follow these steps:
 
 1. **Navigate to the backend directory**
    ```sh
@@ -24,7 +25,7 @@ To set up the **backend** folder, follow these steps:
    python app.py  # Use python3 if necessary
    ```
 
-## 2-1. Backend Setup (Local Development For Linux/WSL)
+## 2-1B. Setup Server (Local / For Linux/WSL)
 To set up the **backend** folder, follow these steps:
 
 1. **Navigate to the backend directory**
@@ -34,10 +35,11 @@ To set up the **backend** folder, follow these steps:
 
 2. **Creating virtual environment**
    ```sh
-   python3 -m venv venv # 
+   python3 -m venv venv # install venv if required
    ```
 
 3. **Activate the virtual environment**
+   - Start from here if you already created virtual envrionment.
    ```sh
    source venv/bin/activate
    ```
@@ -47,21 +49,41 @@ To set up the **backend** folder, follow these steps:
    pip install -r requirements.txt
    ```
 
-## 2-2. Backend Database Setup (Optional. Run when database schema changed)
-**Resetting all tables**
+5. **Run the Flask server**
    ```sh
-   python3 backend/utils/init_db.py
+   python app.py
    ```
 
-## 2-3. Backend Test (Using pytest)
+## 2-2A. Backend Test (pytest & Docker)
 1. **Make sure that the docker for backend is running**
    ```sh
    docker-compose up --force-recreate --build
    ```
 2. **Run the pytest from the docker environment (On Differenet shell)**
    ```sh
-   docker exec -it backend pytest #backend is the container name.
+   docker exec -it backend pytest # backend is the container name.
    ```
+
+## 2-2B. Backend Test (pytest & Local Server)
+1. **Ensure that backend server is running.**
+
+2. **Move to backend folder**
+   ```sh
+   cd backend
+   ```
+
+3. **Run pytest**
+   ```sh
+   pytest
+   ```
+
+## 2-3. Backend Database Setup (Optional)
+ - Run this when you get error from DB. For example, when you made changes to DB Schema.
+ - **Reset all tables**
+   ```sh
+   python3 backend/utils/init_db.py
+   ```
+
 __________________________________________
 The **Swagger API Documentation** will be available at:  
 📍 `http://localhost:11000/`
