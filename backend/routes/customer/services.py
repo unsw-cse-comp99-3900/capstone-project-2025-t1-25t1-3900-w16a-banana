@@ -1,0 +1,3 @@
+# Common functions for customer goes here.
+
+

@@ -4,7 +4,7 @@ import secrets
 
 from utils.db import db 
 from utils.header import auth_header
-from models import *
+from db_model import *
 
 api = Namespace('auth', description='Authentication related operations. Common for all types of users')
 
