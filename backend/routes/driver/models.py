@@ -14,8 +14,7 @@ register_req_parser.add_argument('last_name', type=str, required=True, default="
 register_req_parser.add_argument('license_number', type=str, required=True, default="123456789")
 register_req_parser.add_argument('car_plate', type=str, required=True, default="ABC123")
 register_req_parser.add_argument("license_image", type=FileStorage, location="files", required=True, help="Driver License Image")
-register_req_parser.add_argument("car_image", type=FileStorage, location="files", required=True, help="Car Image")
-register_req_parser.add_argument("registration_paper", type=FileStorage, location="files", required=True, help="Registration Paper")
+register_req_parser.add_argument("profile_image", type=FileStorage, location="files", required=True, help="Profile Image")
 
 """
 # for the update profile, we group the attributes into non-approval needed and approval needed
@@ -43,5 +42,4 @@ update_approval_req_parser.add_argument('last_name', type=str, required=False, h
 update_approval_req_parser.add_argument('license_number', type=str, required=False, help='License Number')
 update_approval_req_parser.add_argument('car_plate', type=str, required=False, help='Car Plate')
 update_approval_req_parser.add_argument('license_image', type=FileStorage, location='files', required=False, help='License Image')
-update_approval_req_parser.add_argument('car_image', type=FileStorage, location='files', required=False, help='Car Image')
-update_approval_req_parser.add_argument('registration_paper', type=FileStorage, location='files', required=False, help='Registration Paper')
+update_approval_req_parser.add_argument('profile_image', type=FileStorage, location='files', required=False, help='Profile Image')

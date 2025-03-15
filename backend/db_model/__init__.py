@@ -63,6 +63,9 @@ class Customer(BaseModel):
     # login will create token
     token = db.Column(db.String(255), nullable=True, default=None)
 
+    # Customer Profile Image URL
+    profile_image = db.Column(db.String(255), nullable=True, default=None)
+
     # some timestamps
     created_at = db.Column(db.DateTime, default=datetime.now)
 
@@ -95,8 +98,7 @@ class Driver(BaseModel):
     # the driver should have the driver license image, car image, registration paper
     # these can be pdf or image format
     url_license_image = db.Column(db.String(255), nullable=False)
-    url_car_image = db.Column(db.String(255), nullable=False)
-    url_registration_paper = db.Column(db.String(255), nullable=False)
+    url_profile_image = db.Column(db.String(255), nullable=False)
 
     # during registration, the driver application has the status
     registration_status = db.Column(db.Enum(RegistrationStatus), nullable=False, default=RegistrationStatus.PENDING)
