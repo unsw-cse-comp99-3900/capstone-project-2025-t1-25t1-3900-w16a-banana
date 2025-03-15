@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-backend:
+  build-test-backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +22,18 @@ jobs:
       - name: Build Backend
         run: |
           docker build -t backend -f backend/Dockerfile backend/
+
+      - name: Run Backend Container
+        run: |
+          docker run -d --name backend -p 11000:11000 backend
+          sleep 5  # Wait for the backend to initialize
+
+      - name: Run Pytest inside Docker
+        run: |
+          docker exec backend pytest --disable-warnings -s -v
+
+      - name: Stop and remove the container
+        if: always()
+        run: |
+          docker stop backend
+          docker rm backend
