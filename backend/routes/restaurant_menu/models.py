@@ -38,6 +38,28 @@ update_menu_category_req = api.model('Update Category', {
 # for simplicity, only allow to handle one menu item at a time."
 """
 
+"""Basic structure of Menu Item"""
+menu_item_res = api.model('Item Basic Structure', {
+    'item_id': fields.Integer(description='Restaurant ID'),
+    'category_id': fields.Integer(description='Category ID'),
+    'name': fields.String(description='Item name'),
+    'description': fields.String(description='Item Description'),
+    'price': fields.Float(description='Item Price'),
+    'url_img': fields.String(description='Item Image URL'),
+    'is_available': fields.Boolean(description='Item Availability'),
+})
+
+"""Response for view all items in restaurant"""
+get_all_items_res = api.model('Get All Menus in restaurant', {
+    'items': fields.List(fields.Nested(menu_item_res), description='List of menu items')
+})
+
+get_all_items_by_category_res = api.model('Get All Menus in restaurant', {
+    'items': fields.List(fields.Nested(menu_item_res), description='List of menu items'),
+    'category_id': fields.Integer(description='Category ID')
+})
+
+
 """Response/Request for post item"""
 post_item_req_parser = reqparse.RequestParser()
 post_item_req_parser.add_argument('name', type=str, required=True, help='Menu item name')
