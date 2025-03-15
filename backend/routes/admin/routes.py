@@ -76,6 +76,11 @@ class PendingApplications(Resource):
 
 # the admin approves or reject the PENDING application
 @api.route('/<string:application_type>/<int:user_id>/<string:action>')
+@api.doc(params={
+    "application_type": "driver or restaurant",
+    "user_id": "specific user id of given type",
+    "action": "approve or reject"
+})
 class ApproveApplication(Resource):
     @api.doc(description='application_type is either driver or restaurant, user_id is the driver_id or restaurant_id, action is either approve or reject')
     @api.expect(auth_header)
@@ -98,19 +103,25 @@ class ApproveApplication(Resource):
         
         # get the application
         if application_type == 'driver':
-            application = Driver.query.filter_by(id=user_id, status=RegistrationStatus.PENDING).first()
+            application = Driver.query.filter_by(
+                driver_id=user_id,
+                registration_status=RegistrationStatus.PENDING
+            ).first()
         else:
-            application = Restaurant.query.filter_by(id=user_id, status=RegistrationStatus.PENDING).first()
+            application = Restaurant.query.filter_by(
+                restaurant_id=user_id,
+                registration_status=RegistrationStatus.PENDING
+            ).first()
 
         if not application:
             return res_error(400, 'Invalid application')
 
         # approve or reject
         if action == 'reject':
-            application.status = RegistrationStatus.REJECTED
+            application.registration_status = RegistrationStatus.REJECTED
             db.session.commit()
             return {'message': 'Application rejected'}
         else:
-            application.status = RegistrationStatus.APPROVED
+            application.registration_status = RegistrationStatus.APPROVED
             db.session.commit()
             return {'message': 'Application approved'}

@@ -77,44 +77,52 @@ class CustomerUpdate(Resource):
         # data, needs to check
         args = update_profile_req_parser.parse_args()
 
-        if 'password' in args:
+        if args['password']:
             is_password_okay, description = is_password_safe(args['password'])
             if not is_password_okay:
                 return res_error(400, description)
+            customer.password = args['password']
 
-        if 'username' in args:
+        if args['username']:
             # the username must be unique
-            is_username_exist = Customer.query.filter_by(username=args['username']) \
-                .filter(Customer.customer_id != customer.customer_id).first()
+            is_username_exist = Customer.query.filter(
+                Customer.username == args['username'],
+                Customer.customer_id != customer.customer_id
+            ).first()
             if is_username_exist:
                 return res_error(400, 'Username already exist')
+            customer.username = args['username']
         
-        if 'email' in args:
+        if args['email']:
             # the email must be unique
             is_email_exist = Customer.query.filter_by(email=args['email']) \
                 .filter(Customer.id != customer.id).first()
             if is_email_exist:
                 return res_error(400, 'Email already exist')
+            customer.email = args['email']
         
         # check the phone, etc
-        if 'phone' in args and not is_valid_phone(args['phone']):
-            return res_error(400, 'Invalid phone number')
+        if args['phone']:
+            if not is_valid_phone(args['phone']):
+                return res_error(400, 'Invalid phone number')
+            customer.phone = args['phone']
         
-        if 'postcode' in args and not is_valid_postcode(args['postcode']):
-            return res_error(400, 'Invalid postcode')
+        if args['postcode']:
+            if not is_valid_postcode(args['postcode']):
+                return res_error(400, 'Invalid postcode')
+            customer.postcode = args['postcode']
         
-        if 'state' in args and not is_valid_state(args['state']):
-            return res_error(400, 'Invalid state')
+        if args['state']:
+            if not is_valid_state(args['state']):
+                return res_error(400, 'Invalid state')
+            customer.state = args['state']
 
 
-        if 'profile' in args:
-            url = save_file(args['license_image'])
+        if args['profile_image']:
+            url = save_file(args['profile_image'])
             if not url:
                 return res_error(400, "Invalid Image File")
-
-        # update the customer
-        for key, value in args.items():
-            setattr(customer, key, value)
+            customer.profile_image = args['profile_image']
         
         db.session.commit()
         return customer.dict(), 200

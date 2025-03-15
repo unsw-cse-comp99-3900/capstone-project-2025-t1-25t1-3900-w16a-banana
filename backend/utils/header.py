@@ -8,10 +8,10 @@ auth_header.add_argument('Authorization', location='headers', required=True, hel
 
 
 # Extract token from the header
-def get_token(header: reqparse.RequestParser):
+def get_token_from_header(header: reqparse.RequestParser) -> str:
     return header.parse_args()['Authorization']
 
 # Check the token and get the existing model
 def check_token(header: reqparse.RequestParser, model: Union[Admin, Customer, Driver, Restaurant]):
-    token = get_token(header)
+    token = get_token_from_header(header)
     return model.query.filter_by(token=token).first()

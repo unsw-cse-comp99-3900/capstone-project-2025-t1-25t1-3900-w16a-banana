@@ -11,6 +11,7 @@ ADMIN_TOKEN = ""
 
 RESTAURANT_EMAIL = "restaurant@example.com"
 RESTAURANT_PASSWORD = "SecurePassword12!@"
+RESTAURANT_TOKEN = ""
 
 # Test for admin register
 def test_01_admin_register_login(client):
@@ -57,7 +58,7 @@ def test_01_admin_register_login(client):
     ADMIN_TOKEN = response.get_json()['token']
 
 #Test for restaurant register
-def test_02_restaurant_register(client):
+def test_02_restaurant_register_login(client):
     data = {
         "email": RESTAURANT_EMAIL,
         "password": RESTAURANT_PASSWORD,
@@ -77,6 +78,19 @@ def test_02_restaurant_register(client):
     # Check if the register was successful
     response = client.post('/restaurant/register', content_type='multipart/form-data', data=data)
     assert response.status_code == 200
+
+    response = client.post('/auth/login', json={
+        'email': RESTAURANT_EMAIL,
+        'password': RESTAURANT_PASSWORD,
+        'user_type': 'restaurant'
+    })
+
+    assert response.status_code == 200
+    assert 'token' in response.get_json()
+
+    global RESTAURANT_TOKEN
+    RESTAURANT_TOKEN = response.get_json()['token']
+    
     
 
 # Test to see pending restaurants
