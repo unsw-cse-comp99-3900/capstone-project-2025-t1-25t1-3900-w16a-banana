@@ -85,7 +85,6 @@ class RegisterRestaurant(Resource):
             url_img1=url_img1,
             url_img2=url_img2,
             url_img3=url_img3,
-            token=secrets.token_urlsafe(16)
         )
 
         db.session.add(new_restaurant)
@@ -111,27 +110,37 @@ class RestaurantNonApprovalUpdate(Resource):
             return res_error(401)
 
         # Validate phone number
-        if 'phone' in args and not is_valid_phone(args['phone']):
-            return res_error(400, 'Invalid phone number')
+        if args['phone']:
+            if not is_valid_phone(args['phone']):
+                return res_error(400, 'Invalid phone number')
+            restaurant.phone = args['phone']
 
         # Validate unique email
-        if 'email' in args:
-            is_email_exist = Restaurant.query.filter_by(email=args['email']) \
-                .filter(Restaurant.restaurant_id != restaurant.restaurant_id).first()
+        if args['email']:
+            is_email_exist = Restaurant.query.filter(
+                Restaurant.email == args['email'],
+                Restaurant.restaurant_id != restaurant.restaurant_id
+            ).first()
             if is_email_exist:
                 return res_error(400, 'Email already exists')
+            restaurant.email = args['email']
 
         # Process and save image uploads
         if args['image1']:
-            restaurant.url_img1 = save_image(args['image1'])
+            url = save_image(args['image1'])
+            if not url:
+                return res_error(400, 'Unsupported Image File')
+            restaurant.url_img1 = url
         if args['image2']:
-            restaurant.url_img2 = save_image(args['image2'])
+            url = save_image(args['image2'])
+            if not url:
+                return res_error(400, 'Unsupported Image File')
+            restaurant.url_img2 = url
         if args['image3']:
-            restaurant.url_img3 = save_image(args['image3'])
-
-        # Update restaurant attributes
-        for key, value in args.items() and key not in ['image1', 'image2', 'image3']:
-            setattr(restaurant, key, value)
+            url = save_image(args['image3'])
+            if not url:
+                return res_error(400, 'Unsupported Image File')
+            restaurant.url_img3 = url
 
         db.session.commit()
         return restaurant.dict(), 200
@@ -152,18 +161,20 @@ class RestaurantUpdateRequireApproval(Resource):
         # data
         data = request.json
 
-        if 'abn' in data and not is_valid_abn(data['abn']):
-            return res_error(400, 'Invalid ABN')
+        if data['abn']:
+            if not is_valid_abn(data['abn']):
+                return res_error(400, 'Invalid ABN')
+            restaurant.abn = data['abn']
 
-        if 'postcode' in data and not is_valid_postcode(data['postcode']):
-            return res_error(400, 'Invalid postcode')
+        if data['postcode']:
+            if not is_valid_postcode(data['postcode']):
+                return res_error(400, 'Invalid postcode')
+            restaurant.postcode = data['postcode']
 
-        if 'state' in data and not is_valid_state(data['state']):
-            return res_error(400, 'Invalid state')
-
-        # update the restaurant
-        for key, value in data.items():
-            setattr(restaurant, key, value)
+        if data['state']:
+            if not is_valid_state(data['state']):
+                return res_error(400, 'Invalid state')
+            restaurant.state = data['state']
         
         # set to pending
         restaurant.status = RegistrationStatus.PENDING

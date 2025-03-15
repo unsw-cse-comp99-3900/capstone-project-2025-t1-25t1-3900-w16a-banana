@@ -38,7 +38,7 @@ def get_all_menu_items_by_category(menuCategory: MenuCategory) -> List[MenuItem]
 def get_all_menu_items_by_restaurant(restaurant: Restaurant) -> List[MenuItem]:
     return MenuItem.query.join(MenuCategory).filter(
             MenuCategory.restaurant_id == restaurant.restaurant_id
-    )
+    ).all()
 
 def get_menu_item_by_category_item_id(menuCategory: MenuCategory, item_id: int) -> Optional[MenuItem]:
     """Returns a list of all menu categories with given ID."""

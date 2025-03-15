@@ -37,7 +37,7 @@ class RegisterDriver(Resource):
         
         # save the files
         url_license_image = save_file(args['license_image'])
-        url_car_image = save_file(args['car_image'])
+        url_profile_image = save_file(args['profile_image'])
         url_registration_paper = save_file(args['registration_paper'])
 
         # create the new driver
@@ -50,7 +50,7 @@ class RegisterDriver(Resource):
             license_number=args['license_number'],
             car_plate=args['car_plate'],
             url_license_image=url_license_image,
-            url_car_image=url_car_image,
+            url_profile_image=url_profile_image,
             url_registration_paper=url_registration_paper,
             # create the token now
             token=secrets.token_urlsafe(16)
@@ -112,25 +112,24 @@ class DriverUpdateRequireApproval(Resource):
         # data
         args = update_approval_req_parser.parse_args()
 
-        if 'frist_name' in args: driver.first_name = args['first_name']
-        if 'last_name' in args: driver.last_name = args['last_name']
-        if 'car_plate' in args: driver.car_plate = args['car_plate']
-
-        if 'license_number' in args:
+        if args['frist_name']: driver.first_name = args['first_name']
+        if args['last_name']: driver.last_name = args['last_name']
+        if args['car_plate']: driver.car_plate = args['car_plate']
+        if args['license_number']:
             if not is_valid_license_number(args['license_number']):
                 return res_error(400, 'Invalid license number')
             driver.license_number = args['license_number']
+        if args['license_image']:
+            url = save_file(args['license_image'])
+            if not url:
+                return res_error(400, 'Unsupported Image File')
+            driver.url_license_image = url
         
-        # 3 files
-        # save the files
-        if 'license_image' in args:
-            driver.url_license_image = save_file(args['license_image'])
-        
-        if 'car_image' in args:
-            driver.url_car_image = save_file(args['car_image'])
-        
-        if 'registration_paper' in args:
-            driver.url_registration_paper = save_file(args['registration_paper'])
+        if args['profile_image']:
+            url = save_file(args['profile_image'])
+            if not url:
+                return res_error(400, 'Unsupported Image File')
+            driver.url_profile_image = url
         
         # set to pending
         driver.status = RegistrationStatus.PENDING

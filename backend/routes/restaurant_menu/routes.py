@@ -16,7 +16,7 @@ from routes.restaurant_menu.services import *
 # or delete the existing menu category.
 # require the restaurant token in the auth_header variable
 
-@api.route('/menu/categories')
+@api.route('/categories')
 class MenuCategories(Resource):
     @api.expect(auth_header)
     @api.response(200, "Success", get_menu_categories_res)
@@ -28,10 +28,10 @@ class MenuCategories(Resource):
             return res_error(401)
         
         categories = get_all_menu_categories(restaurant)
-        return {"categories": categories.dict()}, 200
+        return {"categories": category.dict() for category in categories}, 200
 
 
-@api.route('/menu/category/new')
+@api.route('/category/new')
 class NewMenuCategory(Resource):
     @api.expect(auth_header, post_menu_category_req)
     @api.response(200, "Success", menu_category_res)
@@ -48,13 +48,13 @@ class NewMenuCategory(Resource):
         if get_menu_category_by_name(restaurant, name):
             return res_error(400, 'Category already exists')
 
-        category = MenuCategory(restaurant_id=restaurant.id, name=name)
+        category = MenuCategory(restaurant_id=restaurant.restaurant_id, name=name)
         db.session.add(category)
         db.session.commit()
         
         return category.dict(), 200
 
-@api.route('/menu/category/update/<int:category_id>')
+@api.route('/category/update/<int:category_id>')
 class MenuCategoryUpdate(Resource):
     @api.expect(auth_header, update_menu_category_req)
     @api.response(200, "Success", menu_category_res)
@@ -82,7 +82,7 @@ class MenuCategoryUpdate(Resource):
         return category.dict(), 200
 
 
-@api.route('/menu/category/delete/<int:category_id>')
+@api.route('/category/delete/<int:category_id>')
 class MenuCategoryDelete(Resource):
     @api.expect(auth_header)
     def delete(self, category_id):
@@ -115,7 +115,7 @@ class MenuCategoryDelete(Resource):
 #         # Get items in the restaurant
 #         items = get_all_menu_items_by_restaurant(restaurant=restaurant)
 
-#         return {"items": {item.dict() for item in items}}, 200
+#         return {}, 200
 
 
 # @api.route('/items/<int:category_id>')
@@ -135,10 +135,7 @@ class MenuCategoryDelete(Resource):
 #         # Get items in the category
 #         items = get_all_menu_items_by_category(menuCategory=category)
 
-#         return {
-#             "items": {item.dict() for item in items},
-#             'category_id': category.category_id
-#         }, 200
+#         return {}, 200
 
 @api.route('/item/new/<int:category_id>')
 class NewMenuItem(Resource):
@@ -164,6 +161,10 @@ class NewMenuItem(Resource):
         # Validate duplicate item names
         if get_menu_item_by_restaurant_item_name(restaurant, args['name']):
             return res_error(400, "Item name already exists")
+        
+        if args['is_available'] != 'true' and\
+            args['is_available'] != 'false':
+            return res_error(400, "Availability Must be 'true' or 'false'")
 
         # Save image
         img_file = request.files.get('img')
@@ -174,11 +175,11 @@ class NewMenuItem(Resource):
         # Create the new menu item
         new_item = MenuItem(
             category_id=category_id,
-            item_name=args['name'],
-            item_description=args['description'],
-            item_price=args['price'],
+            name=args['name'],
+            description=args['description'],
+            price=args['price'],
             url_img=url_img,
-            is_available=args['is_available']
+            is_available=True if str(args['is_available']) == 'true' else False
         )
 
         db.session.add(new_item)
@@ -206,6 +207,7 @@ class ManageMenuItem(Resource):
             return res_error(404, 'Menu item not found')
 
         args = update_item_req_parser.parse_args()
+        print(args)
 
         # Update Image. Check If files saved
         if args['img']:
@@ -216,15 +218,25 @@ class ManageMenuItem(Resource):
 
         # Update Name. Check if name conflicts
         if args['name']:
-            if get_menu_item_by_restaurant_item_name(args['name']):
+            if get_menu_item_by_restaurant_item_name(
+                restaurant=restaurant,
+                item_name=args['name']
+            ):
                 return res_error(400, "Duplicate Item Name")
+            item.name = args['name']
 
         # Check and update fields if provided
-        for field in ['description', 'price', 'is_available']:
+        for field in ['description', 'price']:
             if args[field]:
                 setattr(item, field, args[field])
-        db.session.commit()
 
+        if args['is_available']:
+            if args['is_available'] != 'true' and\
+            args['is_available'] != 'false':
+                return res_error(400, "Availability Must be 'true' or 'false'")
+            item.is_available=True if str(args['is_available']) == 'true' else False
+
+        db.session.commit()
         return item.dict(), 200
 
 
