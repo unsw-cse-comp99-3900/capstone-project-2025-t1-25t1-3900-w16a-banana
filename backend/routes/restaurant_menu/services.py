@@ -26,13 +26,19 @@ def get_menu_category_by_id(ownerRestaurant: Restaurant, category_id: int) -> Op
         restaurant_id = ownerRestaurant.restaurant_id, category_id = category_id
     ).first()
 
+"-------------------------------------------------"
 
-def get_all_menu_items(menuCategory: MenuCategory) -> List[MenuItem]:
+
+def get_all_menu_items_by_category(menuCategory: MenuCategory) -> List[MenuItem]:
     """Returns a list of all menu categories for the given category."""
     return MenuItem.query.filter_by(
         category_id=menuCategory.category_id
     ).all()
 
+def get_all_menu_items_by_restaurant(restaurant: Restaurant) -> List[MenuItem]:
+    return MenuItem.query.join(MenuCategory).filter(
+            MenuCategory.restaurant_id == restaurant.restaurant_id
+    )
 
 def get_menu_item_by_category_item_id(menuCategory: MenuCategory, item_id: int) -> Optional[MenuItem]:
     """Returns a list of all menu categories with given ID."""
@@ -47,12 +53,6 @@ def get_menu_item_by_category_item_name(menuCategory: MenuCategory, item_name: s
         category_id = menuCategory.category_id,
         name = item_name
     ).first()
-
-
-def get_menu_all_items_by_restaurant(restaurant: Restaurant) -> Query:
-    return MenuItem.query.join(MenuCategory).filter(
-            MenuCategory.restaurant_id == restaurant.restaurant_id
-    )
 
 def get_menu_item_by_restaurant_item_id(restaurant: Restaurant, item_id: int) -> Optional[MenuItem]:
     """Returns a item of a given restaurant with given item id"""
