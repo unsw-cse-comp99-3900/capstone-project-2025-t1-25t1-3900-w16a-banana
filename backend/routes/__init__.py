@@ -1,9 +1,9 @@
 from flask_restx import Api 
-from routes.admin import api as admin_api
+from routes.admin.routes import api as admin_api
 from routes.auth import api as auth_api
-from routes.customer import api as customer_api 
-from routes.driver import api as driver_api
-from routes.restaurant import api as restaurant_api
+from routes.customer.routes import api as customer_api 
+from routes.driver.routes import api as driver_api
+from routes.restaurant.routes import api as restaurant_api
 from routes.query import api as query_api
 from routes.files import api as files_api
 from routes.test import api as test_api

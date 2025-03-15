@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields, reqparse
 from flask import request, abort
 from werkzeug.datastructures import FileStorage
-from models import *
+from db_model import *
 
 api = Namespace('test', description='APIs for Testing for developers')
 
