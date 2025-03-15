@@ -101,41 +101,41 @@ class MenuCategoryDelete(Resource):
         return {'message': 'Category deleted successfully'}, 200
 
 
-# @api.route('/items')
-# class GetAllItemsInRestaurant(Resource):
-#     @api.expect(auth_header)
-#     @api.response(200, get_all_items_res)
-#     def get(self):
-#         """Get all items in category"""
-#         # Check restaurant
-#         restaurant = get_restaurant_by_header(auth_header)
-#         if not restaurant:
-#             return res_error(401)
+@api.route('/items')
+class GetAllItemsInRestaurant(Resource):
+    @api.expect(auth_header)
+    @api.response(200, 'list of items', get_all_items_res)
+    def get(self):
+        """Get all items in category"""
+        # Check restaurant
+        restaurant = get_restaurant_by_header(auth_header)
+        if not restaurant:
+            return res_error(401)
 
-#         # Get items in the restaurant
-#         items = get_all_menu_items_by_restaurant(restaurant=restaurant)
+        # Get items in the restaurant
+        items = get_all_menu_items_by_restaurant(restaurant=restaurant)
 
-#         return {}, 200
+        return {'items': item.dict() for item in items}, 200
 
 
-# @api.route('/items/<int:category_id>')
-# class GetAllItemsInCategory(Resource):
-#     @api.expect(auth_header)
-#     @api.response(200, get_all_items_res)
-#     def get(self, category_id):
-#         """Get all items in category"""
-#         # Check restaurant
-#         restaurant = get_restaurant_by_header(auth_header)
-#         if not restaurant:
-#             return res_error(401)
-#         # Check Category
-#         category = get_menu_category_by_id(restaurant, category_id)
-#         if not category:
-#             return res_error(404, 'Category not found')
-#         # Get items in the category
-#         items = get_all_menu_items_by_category(menuCategory=category)
+@api.route('/items/<int:category_id>')
+class GetAllItemsInCategory(Resource):
+    @api.expect(auth_header)
+    @api.response(200, 'list of items', get_all_items_res)
+    def get(self, category_id):
+        """Get all items in category"""
+        # Check restaurant
+        restaurant = get_restaurant_by_header(auth_header)
+        if not restaurant:
+            return res_error(401)
+        # Check Category
+        category = get_menu_category_by_id(restaurant, category_id)
+        if not category:
+            return res_error(404, 'Category not found')
+        # Get items in the category
+        items = get_all_menu_items_by_category(menuCategory=category)
 
-#         return {}, 200
+        return {'items': item.dict() for item in items}, 200
 
 @api.route('/item/new/<int:category_id>')
 class NewMenuItem(Resource):
@@ -207,7 +207,6 @@ class ManageMenuItem(Resource):
             return res_error(404, 'Menu item not found')
 
         args = update_item_req_parser.parse_args()
-        print(args)
 
         # Update Image. Check If files saved
         if args['img']:
