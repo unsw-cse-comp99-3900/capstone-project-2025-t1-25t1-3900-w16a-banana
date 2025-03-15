@@ -7,7 +7,7 @@ from utils.db import db
 from utils.file import save_image
 from utils.check import *
 from utils.header import auth_header, check_token
-from models import *
+from db_model import *
 
 
 api = Namespace('query', description='APIs for querying DB for General Info')

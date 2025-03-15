@@ -1,5 +1,5 @@
-from flask_restx import Namespace, Resource, fields, reqparse
-from flask import request, abort
+from flask_restx import Resource, fields, reqparse
+from flask import request
 from werkzeug.datastructures import FileStorage
 import secrets
 
@@ -7,40 +7,23 @@ from utils.db import db
 from utils.file import save_image
 from utils.check import *
 from utils.header import auth_header, check_token
-from models import *
+from utils.response import res_error
+from db_model import *
+from routes.restaurant.models import *
 
-api = Namespace('restaurant', description='APIs for Restaurants')
-    
 
 # Login routes are in separate api
-
-# restaurant registration
-# those will be in 'request.form'
-register_parser = reqparse.RequestParser()
-register_parser.add_argument('email', type=str, required=True, default="example@domain.com", help="Email is required")
-register_parser.add_argument('password', type=str, required=True, default="SecurePassword12!@", help="Password is required")
-register_parser.add_argument('phone', type=str, required=True, default="0412345678", help="Phone (04xxxxxxxx)")
-register_parser.add_argument('name', type=str, required=True, default="A Restaurant", help="Restaurant Name")
-register_parser.add_argument('address', type=str, required=True, default="111 Street", help="Address")
-register_parser.add_argument('suburb', type=str, required=True, default="State", help="Suburb")
-register_parser.add_argument('state', type=str, required=True, default="NSW", help="State (ACT, NSW, NT, QLD, SA, TAS, VIC, WA)")
-register_parser.add_argument('postcode', type=str, required=True, default="2000", help="Postcode (4 digits)")
-register_parser.add_argument('abn', type=str, required=True, default="12345678901", help="ABN (11 digits)")
-register_parser.add_argument('description', type=str, required=True, default="A good restaurant", help="Restaurant Description")
-
-# those will be in 'request.files'
-register_parser.add_argument("image1", type=FileStorage, location="files", required=True, help="First restaurant image")
-register_parser.add_argument("image2", type=FileStorage, location="files", required=True, help="Second restaurant image")
-register_parser.add_argument("image3", type=FileStorage, location="files", required=True, help="Third restaurant image")
 
 @api.route('/register')
 class RegisterRestaurant(Resource):
     # The frontend will send using form-data since we have both text fields and file uploads
-    @api.expect(register_parser)
+    @api.expect(register_req_parser)
+    @api.response(200, "Success", register_res)
+    @api.response(400, "Bad Request", error_res)
     def post(self):
         """Register a new restaurant account"""
 
-        args = register_parser.parse_args()
+        args = register_req_parser.parse_args()
         # Extract form data
         email = args['email']
         password = args['password']
@@ -58,27 +41,27 @@ class RegisterRestaurant(Resource):
 
         # some validation
         if not is_valid_phone(phone):
-            abort(400, 'Invalid phone number')
+            return res_error(400, 'Invalid phone number')
 
         if not is_valid_postcode(postcode):
-            abort(400, 'Invalid postcode')
+            return res_error(400, 'Invalid postcode')
 
         if not is_valid_state(state):
-            abort(400, 'Invalid state')
+            return res_error(400, 'Invalid state')
 
         if not is_valid_abn(abn):
-            abort(400, 'Invalid ABN')
+            return res_error(400, 'Invalid ABN')
 
         # Check if email or ABN is already registered
         if Restaurant.query.filter_by(email=email).first():
-            abort(400, 'Email already exists')
+            return res_error(400, 'Email already exists')
 
         if Restaurant.query.filter_by(abn=abn).first():
-            abort(400, 'ABN already exists')
+            return res_error(400, 'ABN already exists')
 
         # Ensure all three images are uploaded and in correct extension
         if not image1 or not image2 or not image3:
-            abort(400, 'Please upload all three restaurant images')
+            return res_error(400, 'Please upload all three restaurant images')
 
         # Save uploaded images
         url_img1 = save_image(image1)
@@ -86,7 +69,7 @@ class RegisterRestaurant(Resource):
         url_img3 = save_image(image3)
 
         if not url_img1 or not url_img2 or not url_img3:
-            abort(400, 'Unsupported files for images')
+            return res_error(400, 'Unsupported files for images')
 
         # Create new restaurant
         new_restaurant = Restaurant(
@@ -110,56 +93,34 @@ class RegisterRestaurant(Resource):
         db.session.commit()
 
         # the application status will be pending
-        return new_restaurant.dict(), 200
-
-
-###############################################################################################
-# for the update profile, we group the attributes into non-approval needed and approval needed
-# the non-approval needed attributes can be updated without admin approval,
-# and approval needed attributes (only for driver and restaurant) need admin approval.
-
-# all customer attributes can be updated without admin approval
-
-# for restaurant:
-# non approval needed: email, password, phone, url_img1, url_img2, url_img3, description
-# approval needed: name, address, suburb, state, postcode, abn
-###############################################################################################
-
-# Restaurant update no approval model
-update_no_approval_parser = reqparse.RequestParser()
-update_no_approval_parser.add_argument('email', type=str, required=True, help="Email is required")
-update_no_approval_parser.add_argument('password', type=str, required=True, help="Password is required")
-update_no_approval_parser.add_argument('phone', type=str, required=True, help="Phone number (04xxxxxxxx)")
-update_no_approval_parser.add_argument('description', type=str, required=True, help="Restaurant description")
-
-# may update the images
-update_no_approval_parser.add_argument('image1', type=FileStorage, location='files', required=False, help="First image")
-update_no_approval_parser.add_argument('image2', type=FileStorage, location='files', required=False, help="Second image")
-update_no_approval_parser.add_argument('image3', type=FileStorage, location='files', required=False, help="Third image")
+        return {'message': 'Registration Success'}, 200
 
 @api.route('/update/non-approval')
 class RestaurantNonApprovalUpdate(Resource):
-    @api.expect(auth_header, update_no_approval_parser)
+    @api.expect(auth_header, update_non_approval_req_parser)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    @api.response(400, "Unauthorised", error_res)
     def put(self):
         """Restaurant updates profile (email, password, phone, images, description) - No admin approval needed"""
 
-        args = update_no_approval_parser.parse_args()
+        args = update_non_approval_req_parser.parse_args()
         
         # Authenticate restaurant
         restaurant = check_token(auth_header, Restaurant)
         if not restaurant:
-            abort(401, 'Unauthorized')
+            return res_error(401)
 
         # Validate phone number
         if 'phone' in args and not is_valid_phone(args['phone']):
-            abort(400, 'Invalid phone number')
+            return res_error(400, 'Invalid phone number')
 
         # Validate unique email
         if 'email' in args:
             is_email_exist = Restaurant.query.filter_by(email=args['email']) \
                 .filter(Restaurant.restaurant_id != restaurant.restaurant_id).first()
             if is_email_exist:
-                abort(400, 'Email already exists')
+                return res_error(400, 'Email already exists')
 
         # Process and save image uploads
         if args['image1']:
@@ -176,41 +137,30 @@ class RestaurantNonApprovalUpdate(Resource):
         db.session.commit()
         return restaurant.dict(), 200
 
-
-
-# for the restaurant, the attributes that need admin approval are:
-# name, address, suburb, state, postcode, abn
-# use a json model
-update_approval_model = api.model('RestaurantModel', {
-    'name': fields.String(required=True, description='Name'),
-    'address': fields.String(required=True, description='Address'),
-    'suburb': fields.String(required=True, description='Suburb'),
-    'state': fields.String(required=True, description='State'),
-    'postcode': fields.String(required=True, description='Postcode (4 digits)'),
-    'abn': fields.String(required=True, description='ABN (11 digits)')
-})
-
 @api.route('/update/require-approval')
 class RestaurantUpdateRequireApproval(Resource):
-    @api.expect(auth_header, update_approval_model)
+    @api.expect(auth_header, update_approval_req)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    @api.response(400, "Unauthorised", error_res)
     def put(self):
         """Restaurant updates his profile, admin approval needed"""
 
         restaurant = check_token(auth_header, Restaurant)
         if not restaurant:
-            abort(401, 'Unauthorized')
+            return res_error(401)
 
         # data
         data = request.json
 
         if 'abn' in data and not is_valid_abn(data['abn']):
-            abort(400, 'Invalid ABN')
+            return res_error(400, 'Invalid ABN')
 
         if 'postcode' in data and not is_valid_postcode(data['postcode']):
-            abort(400, 'Invalid postcode')
+            return res_error(400, 'Invalid postcode')
 
         if 'state' in data and not is_valid_state(data['state']):
-            abort(400, 'Invalid state')
+            return res_error(400, 'Invalid state')
 
         # update the restaurant
         for key, value in data.items():
@@ -239,7 +189,7 @@ class MenuCategoryAction(Resource):
 
         restaurant = check_token(auth_header, Restaurant)
         if not restaurant:
-            abort(401, 'Unauthorized')
+            return res_error(401)
 
         # get data
         data = request.json
@@ -247,7 +197,7 @@ class MenuCategoryAction(Resource):
 
         category = MenuCategory.query.filter_by(restaurant_id=restaurant.restaurant_id, name=name).first()
         if category:
-            abort(400, 'Category already exists')
+            return res_error(400, 'Category already exists')
 
         category = MenuCategory(restaurant_id=restaurant.id, name=name)
         db.session.add(category)
@@ -263,16 +213,16 @@ class MenuCategoryModify(Resource):
 
         restaurant = check_token(auth_header, Restaurant)
         if not restaurant:
-            abort(401, 'Unauthorized')
+            return res_error(401)
 
         category = MenuCategory.query.filter_by(restaurant_id=restaurant.restaurant_id, category_id=category_id).first()
         if not category:
-            abort(404, 'Category not found')
+            return res_error(404, 'Category not found')
 
         new_name = api.payload['name']
         existing_category = MenuCategory.query.filter_by(restaurant_id=restaurant.restaurant_id, name=new_name).first()
         if existing_category:
-            abort(400, 'Category name already exists')
+            return res_error(400, 'Category name already exists')
 
         category.name = new_name
         db.session.commit()
@@ -286,11 +236,11 @@ class MenuCategoryModify(Resource):
 
         restaurant = check_token(auth_header, Restaurant)
         if not restaurant:
-            abort(401, 'Unauthorized')
+            return res_error(401)
 
         category = MenuCategory.query.filter_by(restaurant_id=restaurant.restaurant_id, category_id=category_id).first()
         if not category:
-            abort(404, 'Category not found')
+            return res_error(404, 'Category not found')
 
         db.session.delete(category)
         db.session.commit()
@@ -327,7 +277,7 @@ class ManageMenuItem(Resource):
         # Authentication
         restaurant = check_token(auth_header, Restaurant)
         if not restaurant:
-            abort(401, "Unauthorized")
+            return res_error(401)
 
         args = new_item_parser.parse_args()
 
@@ -337,11 +287,11 @@ class ManageMenuItem(Resource):
         ).first()
 
         if not category:
-            abort(404, "Category not found")
+            return res_error(404, "Category not found")
 
         # Validate duplicate item names
         if MenuItem.query.filter_by(category_id=category_id, item_name=args['name']).first():
-            abort(400, "Item name already exists")
+            return res_error(400, "Item name already exists")
 
         # Save image
         img_file = request.files.get('img')
@@ -369,7 +319,7 @@ class ManageMenuItem(Resource):
         token = auth_header.parse_args()['Authorization']
         restaurant = Restaurant.query.filter_by(token=token).first()
         if not restaurant:
-            abort(401, 'Unauthorized')
+            return res_error(401)
 
         item = MenuItem.query.join(MenuCategory).filter(
             MenuCategory.restaurant_id == restaurant.restaurant_id,
@@ -377,7 +327,7 @@ class ManageMenuItem(Resource):
         ).first()
 
         if not item:
-            abort(404, 'Menu item not found')
+            return res_error(404, 'Menu item not found')
 
         args = update_item_parser.parse_args()
 
@@ -399,7 +349,7 @@ class ManageMenuItem(Resource):
 
         restaurant = check_token(auth_header, Restaurant)
         if not restaurant:
-            abort(401, 'Unauthorized')
+            return res_error(401)
 
         item = MenuItem.query.join(MenuCategory).filter(
             MenuCategory.restaurant_id == restaurant.restaurant_id,
@@ -407,7 +357,7 @@ class ManageMenuItem(Resource):
         ).first()
 
         if not item:
-            abort(404, 'Menu item not found')
+            return res_error(404, 'Menu item not found')
 
         item.is_available = False
         db.session.commit()

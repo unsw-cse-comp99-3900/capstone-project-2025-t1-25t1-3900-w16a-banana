@@ -1,5 +1,5 @@
 # perform some simple checks on the phone number, postcode, and state
-from models import State
+from db_model import State
 import re
 
 def is_valid_phone(phone):

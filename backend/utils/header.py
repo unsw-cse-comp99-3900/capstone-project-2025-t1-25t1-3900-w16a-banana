@@ -1,5 +1,5 @@
 from flask_restx import reqparse
-from models import *
+from db_model import *
 from typing import Union
 
 # a Authorization token header required
