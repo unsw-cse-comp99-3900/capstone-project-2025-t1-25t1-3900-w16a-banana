@@ -1,6 +1,7 @@
 import React, { createContext, useState, useRef } from "react";
 import { Snackbar, Text } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import { View } from "react-native";
 
 export const ToastContext = createContext();
 
@@ -42,13 +43,15 @@ export const ToastProvider = ({ children }) => {
           backgroundColor: toast.status === "success" ? "#4CAF50" : "#D32F2F",
         }}
       >
-        <MaterialIcons 
-          name={toast.status === "success" ? "check-circle" : "error"} 
-          size={20} 
-          color="white" 
-          style={{ marginRight: 10 }} 
-        />
-        <Text style={{ color: "white" }}>{toast.message}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <MaterialIcons 
+            name={toast.status === "success" ? "check-circle" : "error"} 
+            size={20} 
+            color="white" 
+            style={{ marginRight: 10 }} 
+          />
+          <Text style={{ color: "white" }}>{toast.message}</Text>
+        </View>
       </Snackbar>
     </ToastContext.Provider>
   );
