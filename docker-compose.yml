@@ -10,3 +10,14 @@ services:
     # Mount persistent local storage volume for check if file is uploaded in docker environment
     volumes:
       - ./backend/uploads:/app/backend/uploads
+    
+  frontend:
+    container_name: frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "19006:19006"   # expo web
+      - "8081:8081"     # metro bundler
+    depends_on:
+      - backend
