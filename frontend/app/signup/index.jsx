@@ -35,7 +35,6 @@ export default function SignupSelection() {
       {options.map((option) => (
         <TouchableOpacity key={option.type} onPress={() => {
           router.push(`/signup/${option.type}`)
-          showToast(`Sign up as a ${option.label}, "success`)
         }}>
           <Card style={{ padding: 20, marginBottom: 35, alignItems: "start" }}>
             <MaterialIcons name={option.icon} size={40} color="#007bff" />
