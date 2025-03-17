@@ -5,7 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 
 // the component has a textfield at the top,
 // then a preview image on the left, and an upload button (IconButton) on the right.
-export default function ImageUploadComponent ({ label, form, setForm, fieldKey, buttonText }) {
+export default function ImageUploadComponent ({ label, form, setForm, inputKey, imageKey, buttonText }) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -15,7 +15,7 @@ export default function ImageUploadComponent ({ label, form, setForm, fieldKey, 
     });
 
     if (!result.canceled) {
-      setForm({ ...form, [fieldKey]: result.assets[0].uri });
+      setForm({ ...form, [imageKey]: result.assets[0].uri });
     }
   };
 
@@ -24,8 +24,8 @@ export default function ImageUploadComponent ({ label, form, setForm, fieldKey, 
       <TextInput
         label={label}
         mode="outlined"
-        value={form[fieldKey + "Number"] || ""}
-        onChangeText={(text) => setForm({ ...form, [fieldKey + "Number"]: text })}
+        value={form[inputKey]}
+        onChangeText={(text) => setForm({...form, [inputKey]: text})}
         style={{ marginBottom: 4 }}
       />
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -33,9 +33,9 @@ export default function ImageUploadComponent ({ label, form, setForm, fieldKey, 
           <IconButton icon="camera" size={30} onPress={pickImage} />
           <Text variant="labelSmall" style={{ width: 120, textAlign: "center" }}>{buttonText}</Text>
         </View>
-        {form[fieldKey] && (
+        {form[imageKey] && (
           <Image 
-            source={{ uri: form[fieldKey] }} 
+            source={{ uri: form[imageKey] }} 
             style={{ 
               width: 80, 
               height: 80, 
