@@ -1,11 +1,11 @@
 import React from "react";
 import { View, Image } from "react-native";
-import { TextInput, Button, Card } from "react-native-paper";
+import { TextInput, IconButton, Card, Text } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 
 // the component has a textfield at the top,
-// then a preview image on the left, and a upload button on the right.
-export default function DriverImageUpload ({ label, form, setForm, fieldKey }) {
+// then a preview image on the left, and an upload button (IconButton) on the right.
+export default function ImageUploadComponent ({ label, form, setForm, fieldKey }) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -20,19 +20,32 @@ export default function DriverImageUpload ({ label, form, setForm, fieldKey }) {
   };
 
   return (
-    <Card style={{ padding: 10, marginBottom: 8 }}>
+    <Card style={{ padding: 12, marginBottom: 12 }}>
       <TextInput
         label={label}
         mode="outlined"
         value={form[fieldKey + "Number"] || ""}
         onChangeText={(text) => setForm({ ...form, [fieldKey + "Number"]: text })}
-        style={{ marginBottom: 8 }}
+        style={{ marginBottom: 4 }}
       />
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View style={{ alignItems: "center" }}>
+          <IconButton icon="camera" size={30} onPress={pickImage} />
+          <Text variant="labelSmall">Upload Image</Text>
+        </View>
         {form[fieldKey] && (
-          <Image source={{ uri: form[fieldKey] }} style={{ width: 100, height: 80, borderRadius: 5 }} />
+          <Image 
+            source={{ uri: form[fieldKey] }} 
+            style={{ 
+              width: 80, 
+              height: 80, 
+              borderRadius: 5,
+              borderWidth: 1,
+              borderColor: "#a6a6a6",
+              objectFit: "contain",
+            }} 
+          />
         )}
-        <Button mode="outlined" onPress={pickImage}>Upload {label} Image</Button>
       </View>
     </Card>
   );
