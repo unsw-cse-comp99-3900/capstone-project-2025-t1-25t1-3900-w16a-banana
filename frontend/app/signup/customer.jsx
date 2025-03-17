@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { useRouter } from "expo-router";
-import { Button, TextInput, Text, IconButton } from "react-native-paper";
-import validator from "validator";
+import { Button, Text, IconButton } from "react-native-paper";
 import useToast from "../../hooks/useToast";
 import useAuth from "../../hooks/useAuth";
+import PersonalInfoForm from "../../components/PersonalInfoForm";
+import AddressForm from "../../components/AddressForm";
 
 export default function CustomerSignup() {
   const router = useRouter();
@@ -23,20 +24,6 @@ export default function CustomerSignup() {
     postcode: "",
   });
 
-  const [passwordError, setPasswordError] = useState("");
-
-  const handleChange = (key, value) => {
-    setForm({ ...form, [key]: value });
-  };
-
-  const validatePassword = (password) => {
-    if (!validator.isStrongPassword(password)) {
-      setPasswordError("Password is not strong enough!");
-    } else {
-      setPasswordError("");
-    }
-  };
-
   const handleSubmit = () => {
     // TODO: Add submit
   };
@@ -53,7 +40,6 @@ export default function CustomerSignup() {
       state: "",
       postcode: "",
     });
-    setPasswordError("");
   };
 
   return (
@@ -68,29 +54,10 @@ export default function CustomerSignup() {
 
       {/* Personal Info Section */}
       <Text variant="titleMedium" style={{ marginBottom: 10 }}>Personal Information</Text>
-      <TextInput label="Username" mode="outlined" value={form.username} onChangeText={(text) => handleChange("username", text)} style={{ marginBottom: 8 }}/>
-      <TextInput label="Email" mode="outlined" value={form.email} keyboardType="email-address" onChangeText={(text) => handleChange("email", text)} style={{ marginBottom: 8 }}/>
-      <TextInput label="Phone" mode="outlined" value={form.phone} keyboardType="phone-pad" onChangeText={(text) => handleChange("phone", text)} style={{ marginBottom: 8 }}/>
-      <TextInput
-        mode="outlined"
-        label="Password"
-        value={form.password}
-        secureTextEntry
-        onChangeText={(text) => {
-          handleChange("password", text);
-          validatePassword(text);
-        }}
-        style={{ marginBottom: 8 }}
-      />
-      {passwordError ? <Text style={{ color: "red" }}>{passwordError}</Text> : null}
-      <TextInput label="Confirm Password" mode="outlined" value={form.confirmPassword} secureTextEntry onChangeText={(text) => handleChange("confirmPassword", text)} style={{ marginBottom: 8 }}/>
-      
+      <PersonalInfoForm form={form} setForm={setForm} userType="customer" />
+
       {/* Address Section */}
-      <Text variant="titleMedium" style={{ marginTop: 15, marginBottom: 10 }}>Address</Text>
-      <TextInput label="Address" mode="outlined" value={form.address} onChangeText={(text) => handleChange("address", text)} style={{ marginBottom: 8 }} />
-      <TextInput label="Suburb" mode="outlined" value={form.suburb} onChangeText={(text) => handleChange("suburb", text)} style={{ marginBottom: 8 }}/>
-      <TextInput label="State" mode="outlined" value={form.state} onChangeText={(text) => handleChange("state", text)} style={{ marginBottom: 8 }} />
-      <TextInput label="Postcode" mode="outlined" value={form.postcode} keyboardType="numeric" onChangeText={(text) => handleChange("postcode", text)} style={{ marginBottom: 8 }} />
+      <AddressForm form={form} setForm={setForm} />
       
       {/* Submit & Clear Buttons */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
