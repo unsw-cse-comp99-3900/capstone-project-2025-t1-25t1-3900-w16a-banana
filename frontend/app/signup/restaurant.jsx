@@ -56,7 +56,7 @@ export default function RestaurantSignup() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ScrollView style={{ flex: 1, padding: 20, backgroundColor: "#fff", marginBottom: 20 }}>
+      <ScrollView style={{ flex: 1, padding: 20, backgroundColor: "#f9f9f9", marginBottom: 20 }}>
         {/* Back Button & Title */}
         <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
           <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />

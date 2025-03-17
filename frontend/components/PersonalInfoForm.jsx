@@ -1,24 +1,15 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import { TextInput, Text } from "react-native-paper";
-import validator from "validator";
+import { TextInput, Text, HelperText } from "react-native-paper";
+import validator, { isStrongPassword } from "validator";
+import isEmail from "validator/lib/isEmail";
 
 // customer: username, email, phone, password, confirmPassword
 // driver: first name, last name, email, phone, password, confirmPassword
 // restaurant: business name, email, phone, password, confirmPassword
 export default function PersonalInfoForm ({ form, setForm, userType }) {
-  const [passwordError, setPasswordError] = useState("");
-
   const handleChange = (key, value) => {
     setForm({ ...form, [key]: value });
-  };
-
-  const validatePassword = (password) => {
-    if (!validator.isStrongPassword(password)) {
-      setPasswordError("Password is not strong enough!");
-    } else {
-      setPasswordError("");
-    }
   };
 
   return (
@@ -68,6 +59,11 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
         onChangeText={(text) => handleChange("email", text)}
         style={{ marginBottom: 8 }}
       />
+      {form.email && !isEmail(form.email) && (
+        <HelperText type="error" visible={true}>
+          Please enter a valid email address.
+        </HelperText>
+      )}
       <TextInput
         label="Phone"
         mode="outlined"
@@ -85,7 +81,6 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
           secureTextEntry
           onChangeText={(text) => {
             handleChange("password", text);
-            validatePassword(text);
           }}
           style={{ flex: 1, marginRight: 5 }}
         />
@@ -98,7 +93,16 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
           style={{ flex: 1, marginLeft: 5 }}
         />
       </View>
-      {passwordError ? <Text style={{ color: "red" }}>{passwordError}</Text> : null}
+      {form.password && !isStrongPassword(form.password) && (
+        <HelperText type="error" visible={true}>
+          Password must be at least 8 characters long and contain a number, a lowercase letter, and an uppercase letter.
+        </HelperText>
+      )}
+      {form.password && form.confirmPassword && form.password !== form.confirmPassword && (
+        <HelperText type="error" visible={true}>
+          Passwords do not match.
+        </HelperText>
+      )}
     </View>
   );
 };

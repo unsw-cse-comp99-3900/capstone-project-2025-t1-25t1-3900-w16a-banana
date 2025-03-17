@@ -43,7 +43,7 @@ export default function DriverSignup() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, padding: 20, backgroundColor: "#f9f9f9" }}>
       {/* Back Button & Title */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
         <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
