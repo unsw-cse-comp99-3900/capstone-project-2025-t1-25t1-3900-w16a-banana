@@ -6,7 +6,7 @@ import validator from "validator";
 // customer: username, email, phone, password, confirmPassword
 // driver: first name, last name, email, phone, password, confirmPassword
 // restaurant: business name, email, phone, password, confirmPassword
-export default PersonalInfoForm ({ form, setForm, userType }) => {
+export default function PersonalInfoForm ({ form, setForm, userType }) {
   const [passwordError, setPasswordError] = useState("");
 
   const handleChange = (key, value) => {
