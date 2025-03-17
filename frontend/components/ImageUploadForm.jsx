@@ -26,7 +26,7 @@ export default function ImageUploadComponent ({ label, form, setForm, fieldKey }
         mode="outlined"
         value={form[fieldKey + "Number"] || ""}
         onChangeText={(text) => setForm({ ...form, [fieldKey + "Number"]: text })}
-        style={{ marginBottom: 8 }}
+        style={{ marginBottom: 4 }}
       />
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <View style={{ alignItems: "center" }}>
