@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
-import validator, { isStrongPassword } from "validator";
+import validator, { isMobilePhone, isStrongPassword } from "validator";
 import isEmail from "validator/lib/isEmail";
 
 // customer: username, email, phone, password, confirmPassword
@@ -72,6 +72,11 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
         onChangeText={(text) => handleChange("phone", text)}
         style={{ marginBottom: 8 }}
       />
+      {form.phone && !isMobilePhone(form.phone, "en-AU") && (
+        <HelperText type="error" visible={true}>
+          Please enter a valid Australian phone number.
+        </HelperText>
+      )}
       {/* passwrod and confirm password on the same row */}
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <TextInput

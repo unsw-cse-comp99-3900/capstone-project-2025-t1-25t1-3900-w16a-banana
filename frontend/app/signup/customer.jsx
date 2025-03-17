@@ -8,7 +8,7 @@ import PersonalInfoForm from "../../components/PersonalInfoForm";
 import AddressForm from "../../components/AddressForm";
 import axios from "axios";
 import { isStrongPassword } from "validator";
-import BACKEND from "../constants/backend";
+import { BACKEND } from "../constants/backend";
 
 export default function CustomerSignup() {
   const router = useRouter();

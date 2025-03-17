@@ -58,8 +58,8 @@ export default function DriverSignup() {
 
       {/* Driver Info Section: Upload two images: license image, and car image */}
       <Text variant="titleMedium" style={{ marginTop: 15, marginBottom: 10 }}>Driver Information</Text>
-      <ImageUploadForm label="License Number" form={form} setForm={setForm} fieldKey="licenseImage" />
-      <ImageUploadForm label="Car Plate Number" form={form} setForm={setForm} fieldKey="carImage" />
+      <ImageUploadForm label="License Number" form={form} setForm={setForm} fieldKey="licenseImage" buttonText="Upload License Image" />
+      <ImageUploadForm label="Car Plate Number" form={form} setForm={setForm} fieldKey="carImage" buttonText="Upload Registration Paper Image"/>
       
       {/* Submit & Clear Buttons */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>

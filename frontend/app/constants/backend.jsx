@@ -1,1 +1,1 @@
-export default BACKEND = "http://localhost:11000";
+export const BACKEND = "http://localhost:11000";
