@@ -25,18 +25,18 @@ export default function AddressForm({ form, setForm }) {
       />
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 16, }}>
         <TextInput
+          label="Suburb"
+          mode="outlined"
+          value={form.suburb}
+          onChangeText={(text) => handleChange("suburb", text)}
+          style={{ width: "48%" }}
+        />
+        <TextInput
           label="Postcode"
           mode="outlined"
           value={form.postcode}
           keyboardType="numeric"
           onChangeText={(text) => handleChange("postcode", text)}
-          style={{ width: "48%" }}
-        />
-        <TextInput
-          label="Suburb"
-          mode="outlined"
-          value={form.suburb}
-          onChangeText={(text) => handleChange("suburb", text)}
           style={{ width: "48%" }}
         />
       </View>
