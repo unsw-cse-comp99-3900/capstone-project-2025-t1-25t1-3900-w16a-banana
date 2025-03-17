@@ -1,23 +1,23 @@
-import React, { createContext, useContext, useState, useRef } from "react";
-import { Snackbar } from "react-native-paper";
+import React, { createContext, useState, useRef } from "react";
+import { Snackbar, Text } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 
-const ToastContext = createContext();
+export const ToastContext = createContext();
 
 export const ToastProvider = ({ children }) => {
-  const [toast, setToast] = useState({ visible: false, message: "", action: null });
+  const [toast, setToast] = useState({ visible: false, message: "", status: "", action: null });
   const timeoutRef = useRef(null);
 
-  // timeout auto at 3 seconds
-  const showToast = (message, action = null, duration = 3000) => {
-    // clear timeout and prevent flickering
+  // input the message, and the status == success, error
+  const showToast = (message, status = "success", action = null, duration = 3000) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    setToast({ visible: true, message, action });
+    setToast({ visible: true, message, status, action });
 
     timeoutRef.current = setTimeout(() => {
-      setToast({ visible: false, message: "", action: null });
+      setToast({ visible: false, message: "", status: "", action: null });
       timeoutRef.current = null;
     }, duration);
   };
@@ -27,7 +27,7 @@ export const ToastProvider = ({ children }) => {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-    setToast({ visible: false, message: "", action: null });
+    setToast({ visible: false, message: "", status: "", action: null });
   };
 
   return (
@@ -38,9 +38,17 @@ export const ToastProvider = ({ children }) => {
         onDismiss={hideToast}
         action={toast.action}
         duration={3000}
-        style={{ backgroundColor: "#333" }} // Custom styling
+        style={{ 
+          backgroundColor: toast.status === "success" ? "#4CAF50" : "#D32F2F",
+        }}
       >
-        {toast.message}
+        <MaterialIcons 
+          name={toast.status === "success" ? "check-circle" : "error"} 
+          size={20} 
+          color="white" 
+          style={{ marginRight: 10 }} 
+        />
+        <Text style={{ color: "white" }}>{toast.message}</Text>
       </Snackbar>
     </ToastContext.Provider>
   );
