@@ -11,7 +11,7 @@ COPY . .
 
 EXPOSE 11000
 
-COPY entrypoint.sh app/backend/entrypoint.sh
-RUN chmod +x app/backend/entrypoint.sh
+RUN chmod +x entrypoint.sh
+COPY entrypoint.sh /app/backend/entrypoint.sh
 
 ENTRYPOINT ["/app/backend/entrypoint.sh"]
