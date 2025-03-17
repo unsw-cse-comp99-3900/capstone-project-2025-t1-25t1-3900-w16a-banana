@@ -10,6 +10,7 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
     ```sh
     git clone git@github.com:unsw-cse-comp99-3900/capstone-project-2025-t1-25t1-3900-w16a-banana.git
+    
     cd capstone-project-2025-t1-25t1-3900-w16a-banana
     ```
 
