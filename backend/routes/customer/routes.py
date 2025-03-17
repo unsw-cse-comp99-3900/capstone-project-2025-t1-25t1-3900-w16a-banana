@@ -59,7 +59,9 @@ class RegisterCustomer(Resource):
         db.session.commit()
 
         # return the new customer object
-        return {'message': 'Registration Success'}, 200
+        # return {'message': 'Registration Success'}, 200
+        return new_customer.dict(), 200
+
 
 @api.route('/update/profile')
 class CustomerUpdate(Resource):
@@ -122,7 +124,8 @@ class CustomerUpdate(Resource):
             url = save_file(args['profile_image'])
             if not url:
                 return res_error(400, "Invalid Image File")
-            customer.profile_image = args['profile_image']
+            
+            customer.url_profile_image = url
         
         db.session.commit()
         return customer.dict(), 200
