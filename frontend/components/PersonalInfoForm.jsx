@@ -24,7 +24,7 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
         />
       )}
       {userType === "driver" && (
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
           <TextInput
             label="First Name"
             mode="outlined"
