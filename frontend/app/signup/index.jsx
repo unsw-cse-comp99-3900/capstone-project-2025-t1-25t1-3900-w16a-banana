@@ -19,7 +19,7 @@ export default function SignupSelection() {
   const { contextProfile } = useAuth();
 
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, padding: 20, backgroundColor: "#f9f9f9" }}>
       {/* Back Button and Title on the Same Line */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 30 }}>
         <IconButton 

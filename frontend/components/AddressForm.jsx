@@ -1,7 +1,8 @@
 import React from "react";
 import { View } from "react-native";
-import { TextInput, Text } from "react-native-paper";
+import { TextInput, Text, HelperText } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
+import { isPostalCode } from "validator";
 
 export default function AddressForm({ form, setForm }) {
   const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
@@ -39,6 +40,12 @@ export default function AddressForm({ form, setForm }) {
           style={{ width: "48%" }}
         />
       </View>
+      {/* error for the postcode */}
+      {form.postcode && !isPostalCode(form.postcode, "AU") && (
+        <HelperText type="error" visible={true} style={{ marginTop: -12, marginBottom: 8}}>
+          Please enter a valid Australian postcode
+        </HelperText>
+      )}
       <View style={{ width: "48%", justifyContent: "center", borderRadius: 5, borderWidth: 1, borderColor: "#323232" }}>
         <Picker
           selectedValue={form.state}

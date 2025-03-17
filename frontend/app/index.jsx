@@ -7,7 +7,7 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff", padding: 20 }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f9f9f9", padding: 20 }}>
       <Image source={require("../assets/images/icon.png")} style={{ width: 120, height: 120, marginBottom: 20 }} />
       <Text variant="headlineLarge" style={{ fontWeight: "bold", marginBottom: 20 }}>
         SmartEats
