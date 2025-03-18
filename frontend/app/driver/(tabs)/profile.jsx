@@ -8,6 +8,7 @@ import ProfileAvatar from "../../../components/ProfileAvatar";
 import LogoutButton from "../../../components/LogoutButton";
 import { BACKEND } from "../../../constants/backend";
 import MyScrollView from "../../../components/MyScrollView";
+import ZoomableImage from "../../../components/ZoomableImage";
 
 export default function Profile() {
   const router = useRouter();
@@ -63,18 +64,11 @@ export default function Profile() {
           <Text style={{ fontSize: 16, paddingBottom: 7 }}><Text style={{ fontWeight: "bold" }}>Car Plate:</Text> {contextProfile.car_plate}</Text>
           {/* license image */}
           <Text style={{ fontSize: 16, fontWeight: "bold", paddingBottom: 7 }}>License Image:</Text>
-          <Image 
-            source={{ uri: `${BACKEND}/${contextProfile.url_license_image}` }}
-            style={{ width: "100%", height: 150, borderRadius: 10, marginBottom: 10 }}
-            resizeMode="contain"
-          />
+          <ZoomableImage imageUrl={contextProfile.url_license_image} title="License Image" />
+
           {/* registration paper image */}
           <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>Registration Paper:</Text>
-          <Image 
-            source={{ uri: `${BACKEND}/${contextProfile.url_registration_paper}` }}
-            style={{ width: "100%", height: 150, borderRadius: 10 }}
-            resizeMode="contain"
-          />
+          <ZoomableImage imageUrl={contextProfile.url_registration_paper} title="Registration Paper" />
         </View>
 
         {/* Profile update button */}
