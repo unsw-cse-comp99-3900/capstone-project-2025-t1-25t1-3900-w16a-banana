@@ -59,27 +59,27 @@ export default function Profile() {
         {/* License and Registration Documents */}
         <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
           <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7 }}>Documents</Text>
-          <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>License Number:</Text> {contextProfile.license_number}</Text>
-          <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Car Plate:</Text> {contextProfile.car_plate}</Text>
-          {/* images */}
-          <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>License Image:</Text>
+          <Text style={{ fontSize: 16, paddingBottom: 7 }}><Text style={{ fontWeight: "bold" }}>License Number:</Text> {contextProfile.license_number}</Text>
+          <Text style={{ fontSize: 16, paddingBottom: 7 }}><Text style={{ fontWeight: "bold" }}>Car Plate:</Text> {contextProfile.car_plate}</Text>
+          {/* license image */}
+          <Text style={{ fontSize: 16, fontWeight: "bold", paddingBottom: 7 }}>License Image:</Text>
           <Image 
             source={{ uri: `${BACKEND}/${contextProfile.url_license_image}` }}
-            style={{ width: "100%", height: 200, borderRadius: 10, marginBottom: 10 }}
+            style={{ width: "100%", height: 150, borderRadius: 10, marginBottom: 10 }}
             resizeMode="contain"
           />
-
+          {/* registration paper image */}
           <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>Registration Paper:</Text>
           <Image 
             source={{ uri: `${BACKEND}/${contextProfile.url_registration_paper}` }}
-            style={{ width: "100%", height: 200, borderRadius: 10 }}
+            style={{ width: "100%", height: 150, borderRadius: 10 }}
             resizeMode="contain"
           />
         </View>
 
         {/* Profile update button */}
-        <View style={{ flexDirection: "row", marginTop: 20 }}>
-          <Button mode="outlined" icon="pencil" onPress={() => router.push("/driver/EditProfile")}>Edit Profile</Button>
+        <View style={{ flexDirection: "row", marginTop: 20, marginBottom: -12 }}>
+          <Button mode="outlined" icon="pencil" onPress={() => router.push("/driver/EditProfile")}>Edit</Button>
         </View>
 
         {/* Logout Button */}
