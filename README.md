@@ -18,47 +18,29 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
     Open **Docker Desktop** on your machine.
 
-3. **Build and start all services**
+3. (Only for Windows) The backend has a shell script [backend/entrypoint.sh](./backend/entrypoint.sh) that may be converted to CRLF line endings when on Windows. So we need to convert it to LF line endings before running the docker service. 
+
+    ```sh
+    # open a git bash terminal(!!) at the project root folder.
+
+    dos2unix backend/entrypoint.sh
+
+    # the terminal will show:
+    # dos2unix: converting file backend/entrypoint.sh to Unix format ...
+    # then you can close the terminal
+    ```
+
+4. **Build and start all services**
 
     ```sh
     docker-compose up --force-recreate --build
     ```
 
-    Visit either [http://localhost:8081](http://localhost:8081) or [http://localhost:19006](http://localhost:19006) to view the frontend.
+    Visit [http://localhost:19006](http://localhost:19006) to use the app.
 
-4. Default data
+5. Default data
 
-    The project has default data for all user types. You can use the following credentials to login. Only the first 2 records per user type are shown here. 
-
-    * **Admin**  
-
-        | Name        | Email               | Password   | User Type  |
-        |------------|--------------------|------------|------------|
-        | Tom Smith  | admin@example.com   | Abcd1234!  | Admin      |
-
-    * **Customers**  
-
-        | Name          | Email             | Password   | User Type  |
-        |--------------|------------------|------------|------------|
-        | John Doe     | john@example.com  | Abcd1234!  | Customer   |
-        | Jane Smith   | jane@example.com  | Abcd1234!  | Customer   |
-
-
-    * **Drivers**  
-
-        | Name           | Email               | Password   | User Type  |
-        |---------------|--------------------|------------|------------|
-        | Alex Johnson  | alex@example.com    | Abcd1234!  | Driver     |
-        | Sophia Wilson | sophia@example.com  | Abcd1234!  | Driver     |
-
-    * **Restaurants**  
-
-        | Name            | Email                  | Password   | User Type  |
-        |----------------|------------------------|------------|------------|
-        | Sydney Eats    | sydneyeats@example.com  | Abcd1234!  | Restaurant |
-        | Harbour Grill  | harbourgrill@example.com | Abcd1234!  | Restaurant |
-
-5. We have also prepared some demo materials (like license image, registration paper, restaurant image) in the [demo-materials folder](./demo-materials/) for you to upload during using the app. 
+    The project has default data for all user types. Please view [demo-materials/README.md](./demo-materials/README.md) for more information. And we have also prepared some images for you to upload during using the app. They are in the [demo-materials folder](./demo-materials/).
 
 ## 3. Backend Setup & Testing
 ## 3-1A. Setup Server (Local)

@@ -11,7 +11,7 @@ RUN npm install
 COPY . .
 
 # Expose the port Expo web uses
-EXPOSE 19006 8081
+EXPOSE 19006
 
 # Set environment variable to make sure we use web
 ENV EXPO_PLATFORM=web
