@@ -13,7 +13,6 @@ export default function LogoutButton() {
     <Button
       mode="outlined"
       icon="logout"
-      style={{ marginTop: 30 }}
       onPress={() => {
         logout();
         router.replace("/");

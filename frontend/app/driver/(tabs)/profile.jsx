@@ -72,12 +72,12 @@ export default function Profile() {
         </View>
 
         {/* Profile update button */}
-        <View style={{ flexDirection: "row", marginTop: 20, marginBottom: -12 }}>
-          <Button mode="outlined" icon="pencil" onPress={() => router.push("/driver/EditProfile")}>Edit</Button>
+        <View style={{ flexDirection: "row", marginTop: 20, gap: 30 }}>
+          <Button mode="outlined" icon="pencil" onPress={() => router.push("/driver/EditProfile")}>
+            Edit
+          </Button>
+          <LogoutButton />
         </View>
-
-        {/* Logout Button */}
-        <LogoutButton />
       </View>
     </MyScrollView>
   );
