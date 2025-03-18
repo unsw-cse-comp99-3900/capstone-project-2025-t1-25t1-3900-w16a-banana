@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 
 // the component has a textfield at the top,
 // then a preview image on the left, and an upload button (IconButton) on the right.
+// the input key can be null, so that the textfield is not rendered.
 export default function ImageUploadComponent ({ label, form, setForm, inputKey, imageKey, buttonText }) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -21,13 +22,15 @@ export default function ImageUploadComponent ({ label, form, setForm, inputKey, 
 
   return (
     <Card style={{ padding: 12, marginBottom: 12 }}>
-      <TextInput
-        label={label}
-        mode="outlined"
-        value={form[inputKey]}
-        onChangeText={(text) => setForm({...form, [inputKey]: text})}
-        style={{ marginBottom: 4 }}
-      />
+      {inputKey && (
+        <TextInput
+          label={label}
+          mode="outlined"
+          value={form[inputKey]}
+          onChangeText={(text) => setForm({...form, [inputKey]: text})}
+          style={{ marginBottom: 4 }}
+        />
+      )}
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <View style={{ alignItems: "center" }}>
           <IconButton icon="camera" size={30} onPress={pickImage} />

@@ -19,7 +19,7 @@ export default function AddressForm ({ form, setForm }) {
       <TextInput
         label="Address"
         mode="outlined"
-        value={form.address || ""}
+        value={form.address}
         onChangeText={(text) => handleChange("address", text)}
         style={{ marginBottom: 8 }}
       />
@@ -27,14 +27,14 @@ export default function AddressForm ({ form, setForm }) {
         <TextInput
           label="Suburb"
           mode="outlined"
-          value={form.suburb || ""}
+          value={form.suburb}
           onChangeText={(text) => handleChange("suburb", text)}
           style={{ width: "48%" }}
         />
         <TextInput
           label="Postcode"
           mode="outlined"
-          value={form.postcode || ""}
+          value={form.postcode}
           keyboardType="numeric"
           onChangeText={(text) => handleChange("postcode", text)}
           style={{ width: "48%" }}
@@ -47,7 +47,7 @@ export default function AddressForm ({ form, setForm }) {
       ) : null}
       <View style={{ width: "48%", borderRadius: 5, borderWidth: 1, borderColor: "#323232", overflow: "hidden" }}>
         <Picker
-          selectedValue={form.state || ""}
+          selectedValue={form.state}
           onValueChange={(value) => handleChange("state", value)}
           style={{ height: 50 }}
         >
