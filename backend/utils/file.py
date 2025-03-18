@@ -18,8 +18,8 @@ def get_file_extension(file: FileStorage) -> str:
 
 # save the new file to the current app upload folder
 def save_file(file: FileStorage) -> str:
-    # Filename is created as `timestamp_uniqueId.extension`
-    filename = f"{time.strftime('%Y%m%d%H%M%S')}_{uuid4().hex}.{get_file_extension(file)}"
+    # Filename is created as `uniqueId.extension`
+    filename = f"{uuid4().hex}.{get_file_extension(file)}"
 
     # Make sure that the directory exists
     os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
