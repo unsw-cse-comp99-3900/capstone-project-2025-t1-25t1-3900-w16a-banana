@@ -5,10 +5,11 @@ import { useRouter } from "expo-router";
 import useAuth from "../../../hooks/useAuth";
 import useToast from "../../../hooks/useToast";
 import ProfileAvatar from "../../../components/ProfileAvatar";
+import LogoutButton from "../../../components/LogoutButton";
 
 export default function Profile() {
   const router = useRouter();
-  const { isContextLoading, contextProfile } = useAuth();
+  const { isContextLoading, contextProfile, logout } = useAuth();
   const { showToast } = useToast();
 
   if (isContextLoading) {
@@ -61,6 +62,9 @@ export default function Profile() {
         <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>State:</Text> {contextProfile.state}</Text>
         <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Postcode:</Text> {contextProfile.postcode}</Text>
       </View>
+
+      {/* logout button with an icon */}
+      <LogoutButton />
     </View>
   );
 }
