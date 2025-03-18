@@ -1,4 +1,4 @@
-from flask_restx import Namespace, Resource, fields, reqparse
+from flask_restx import Namespace, fields, reqparse
 from werkzeug.datastructures import FileStorage
 
 api = Namespace('restaurant', description='APIs for Restaurants')

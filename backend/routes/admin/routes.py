@@ -3,6 +3,7 @@ from flask import request
 
 from utils.db import db
 from utils.check import *
+from utils.file import save_file
 from utils.header import auth_header, check_token
 from utils.response import res_error
 from db_model import *
@@ -16,6 +17,8 @@ class AdminRegister(Resource):
     @api.response(400, "Bad Request", error_res)
     @api.response(401, "Unauthorised", error_res)
     def post(self):
+        """ Register a new admin account """
+
         data = request.json
 
         is_password_okay, description = is_password_safe(data['password'])
@@ -38,6 +41,52 @@ class AdminRegister(Resource):
 
         # return the new customer object
         return {'message': 'Registration Success'}, 200
+
+
+@api.route("/update")
+class AdminUpdate(Resource):
+    @api.expect(auth_header, update_req_parser)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    def put(self):
+        """ Admin can update his first_name, last_name, email, password, profile image """
+
+        admin = check_token(auth_header, Admin)
+        if not admin:
+            return res_error(401)
+
+        args = update_req_parser.parse_args()
+
+        if args.get('email'):
+            is_email_exist = Admin.query.filter_by(email=args['email']) \
+                .filter(Admin.admin_id != admin.admin_id).first()
+            if is_email_exist:
+                return res_error(400, 'Email already exists')
+            admin.email = args["email"]
+
+        if args.get('password'):
+            is_password_okay, description = is_password_safe(args['password'])
+            if not is_password_okay:
+                return res_error(400, description)
+            admin.password = args["password"]
+
+        if args.get('first_name'):
+            admin.first_name = args['first_name']
+
+        if args.get('last_name'):
+            admin.last_name = args['last_name']
+
+        if args['profile_image']:
+            url = save_file(args['profile_image'])
+            if not url:
+                return res_error(400, "Invalid Image File")
+            
+            admin.url_profile_image = url
+
+        # save the changes
+        db.session.commit()
+        return admin.dict(), 200
+
 
 # admin approve or reject application:
 # when the new driver or restaurant applies,
