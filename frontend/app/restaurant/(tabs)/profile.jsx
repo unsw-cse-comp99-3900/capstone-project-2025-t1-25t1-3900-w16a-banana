@@ -15,6 +15,6 @@ export default function Profile() {
   }
 
   return (
-    <UserProfile userType="driver" userProfile={contextProfile} isSelfProfile={true} />
+    <UserProfile userType="restaurant" userProfile={contextProfile} isSelfProfile={true} />
   );
 }

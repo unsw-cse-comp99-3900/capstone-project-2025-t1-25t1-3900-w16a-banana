@@ -96,8 +96,8 @@ class UpdateProfile(Resource):
         
         # get the request
         args = update_req_parser.parse_args()
-        print(args)
 
+        # monitor if some require-approval fields are updated
         require_approval = False
 
         # some fields may not be updated, but the parse_args will always have that key,
