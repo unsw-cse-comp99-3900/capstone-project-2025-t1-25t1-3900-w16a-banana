@@ -4,7 +4,7 @@ import { Button, Avatar, Portal, Dialog } from "react-native-paper";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
-import { BACKEND } from "../../constants/backend";
+import { BACKEND } from "../../../constants/backend";
 import useAuth from "../../../hooks/useAuth";
 import useToast from "../../../hooks/useToast";
 
@@ -21,7 +21,6 @@ export default function Profile() {
 
   useEffect(() => {
     if (isContextLoading) return;
-    if (profile) return;
 
     const fetchProfile = async () => {
       const url = `${BACKEND}/auth/me`;
@@ -147,7 +146,7 @@ export default function Profile() {
       <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7 }}>Personal Information</Text>
-          <TouchableOpacity onPress={() => console.log("Edit Personal Info")}
+          <TouchableOpacity onPress={() => router.push("/customer/EditPersonalInfo")}
             style={{ padding: 5 }}>
             <Text style={{ color: "#4CAF50" }}>✎</Text>
           </TouchableOpacity>
@@ -161,7 +160,7 @@ export default function Profile() {
       <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7, }}>Primary Address</Text>
-          <TouchableOpacity onPress={() => console.log("Edit Address Info")}
+          <TouchableOpacity onPress={() => router.push("/customer/EditAddress")}
             style={{ padding: 5 }}>
             <Text style={{ color: "#4CAF50" }}>✎</Text>
           </TouchableOpacity>
