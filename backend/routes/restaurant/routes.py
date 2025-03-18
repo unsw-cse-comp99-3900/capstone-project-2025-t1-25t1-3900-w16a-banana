@@ -189,7 +189,7 @@ class RestaurantUpdate(Resource):
         
         # track the require-approval fields
         if require_approval:
-            restaurant.status = RegistrationStatus.PENDING
+            restaurant.registration_status = RegistrationStatus.PENDING
         
         db.session.commit()
         return restaurant.dict(), 200
