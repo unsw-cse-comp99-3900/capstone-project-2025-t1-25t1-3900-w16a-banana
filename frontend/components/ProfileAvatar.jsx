@@ -41,7 +41,7 @@ export default function ProfileAvatar({ userType }) {
     formData.append("profile_image", imageBlob, "profile.jpg");
 
     // Prepare
-    const url = `${BACKEND}/${userType}/update/profile`;
+    const url = `${BACKEND}/${userType}/update`;
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {

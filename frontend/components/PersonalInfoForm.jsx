@@ -7,6 +7,7 @@ import isEmail from "validator/lib/isEmail";
 // customer: username, email, phone, password, confirmPassword
 // driver: first name, last name, email, phone, password, confirmPassword
 // restaurant: business name, email, phone, password, confirmPassword
+// admin: first_name, last_name, email, password, confirmPassword
 export default function PersonalInfoForm ({ form, setForm, userType }) {
   const handleChange = (key, value) => {
     setForm((prevForm) => ({ ...prevForm, [key]: value }));
@@ -17,9 +18,15 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
   const isValidPassword = form.password && !isStrongPassword(form.password);
   const doPasswordsMatch = form.password && form.confirmPassword && form.password !== form.confirmPassword;
 
+  // determine types
+  const isCustomer = userType === "customer";
+  const isDriver = userType === "driver";
+  const isRestaurant = userType === "restaurant";
+  const isAdmin = userType === "admin";
+
   return (
     <View>
-      {userType === "customer" && (
+      {isCustomer && (
         <TextInput
           label="Username"
           mode="outlined"
@@ -28,7 +35,7 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
           style={{ marginBottom: 8 }}
         />
       )}
-      {userType === "driver" && (
+      {(isDriver || isAdmin) && (
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
           <TextInput
             label="First Name"
@@ -46,7 +53,7 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
           />
         </View>
       )}
-      {userType === "restaurant" && (
+      {isRestaurant && (
         <TextInput
           label="Business Name"
           mode="outlined"
@@ -70,7 +77,9 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
           Please enter a valid email address.
         </HelperText>
       ) : null}
-      <TextInput
+
+      {/* phone */}
+      {!isAdmin && (<TextInput
         label="Phone"
         mode="outlined"
         value={form.phone}
@@ -78,7 +87,7 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
         error={isValidPhone}
         onChangeText={(text) => handleChange("phone", text)}
         style={{ marginBottom: isValidPhone ? 0 : 8 }}
-      />
+      />)}
       {isValidPhone ? (
         <HelperText type="error" visible={true} style={{ marginBottom: 8 }}>
           Please enter a valid Australian phone number.
