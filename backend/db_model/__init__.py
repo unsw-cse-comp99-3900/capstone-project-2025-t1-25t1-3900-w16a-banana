@@ -64,7 +64,7 @@ class Customer(BaseModel):
     token = db.Column(db.String(255), nullable=True, default=None)
 
     # Customer Profile Image URL
-    profile_image = db.Column(db.String(255), nullable=True, default=None)
+    url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/customer.png")
 
     # some timestamps
     created_at = db.Column(db.DateTime, default=datetime.now)
@@ -95,10 +95,13 @@ class Driver(BaseModel):
     # the driver should have the car plate number
     car_plate = db.Column(db.String(10), nullable=False)
 
-    # the driver should have the driver license image, car image, registration paper
+    # the driver should have the driver license image, registration paper
     # these can be pdf or image format
     url_license_image = db.Column(db.String(255), nullable=False)
-    url_profile_image = db.Column(db.String(255), nullable=False)
+    url_registration_paper = db.Column(db.String(255), nullable=False)
+
+    # the driver can have a profile
+    url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/driver.png")
 
     # during registration, the driver application has the status
     registration_status = db.Column(db.Enum(RegistrationStatus), nullable=False, default=RegistrationStatus.PENDING)
@@ -138,6 +141,9 @@ class Restaurant(BaseModel):
 
     # during registration, the restaurant application has the status
     registration_status = db.Column(db.Enum(RegistrationStatus), nullable=False, default=RegistrationStatus.PENDING)
+
+    # profile image
+    url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/manager.png")
 
     # login will create token
     token = db.Column(db.String(255), nullable=True, default=None)

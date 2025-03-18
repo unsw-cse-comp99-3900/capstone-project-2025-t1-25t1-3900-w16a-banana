@@ -37,7 +37,6 @@ class RegisterDriver(Resource):
         
         # save the files
         url_license_image = save_file(args['license_image'])
-        url_profile_image = save_file(args['profile_image'])
         url_registration_paper = save_file(args['registration_paper'])
 
         # create the new driver
@@ -50,7 +49,6 @@ class RegisterDriver(Resource):
             license_number=args['license_number'],
             car_plate=args['car_plate'],
             url_license_image=url_license_image,
-            url_profile_image=url_profile_image,
             url_registration_paper=url_registration_paper,
             # create the token now
             token=secrets.token_urlsafe(16)
