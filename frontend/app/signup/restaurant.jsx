@@ -9,7 +9,7 @@ import ImageUploadForm from "../../components/ImageUploadForm";
 import { isPostalCode, isStrongPassword } from "validator";
 import axios from "axios";
 import isEmail from "validator/lib/isEmail";
-import { BACKEND } from "../constants/backend";
+import { BACKEND } from "../../constants/backend";
 import useAuth from "../../hooks/useAuth";
 
 export default function Restaurant () {

@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import BottomTabs from "../../../components/BottomTabs";
 
 const tabs = [
   { name: "index", title: "Home", icon: "home", visible: true },
@@ -9,33 +10,12 @@ const tabs = [
   { name: "profile", title: "Profile", icon: "account", visible: true },
   // hide favourites from the tab bar
   { name: "favourites", title: "Favourites", icon: "heart", visible: false },
+  { name: "EditAddress", title: "Edit Address", icon: "map-marker", visible: false },
+  { name: "EditPersonalInfo", title: "Edit Personal Info", icon: "account-edit", visible: false },
 ];
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "blue", headerShown: false }}>
-      {tabs.map((tab) =>
-        tab.visible ? (
-          <Tabs.Screen
-            key={tab.name}
-            name={tab.name}
-            options={{
-              title: tab.title,
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name={tab.icon} size={24} color={color} />
-              ),
-            }}
-          />
-        ) : (
-          <Tabs.Screen
-            key={tab.name}
-            name={tab.name}
-            options={{
-              href: null,
-            }}
-          />
-        )
-      )}
-    </Tabs>
+    <BottomTabs tabs={tabs} />
   );
 }

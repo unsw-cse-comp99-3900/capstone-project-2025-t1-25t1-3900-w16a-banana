@@ -6,7 +6,7 @@ import useToast from "../../hooks/useToast";
 import useAuth from "../../hooks/useAuth";
 import PersonalInfoForm from "../../components/PersonalInfoForm";
 import ImageUploadForm from "../../components/ImageUploadForm";
-import { BACKEND } from "../constants/backend";
+import { BACKEND } from "../../constants/backend";
 import { isStrongPassword } from "validator";
 import axios from "axios";
 
