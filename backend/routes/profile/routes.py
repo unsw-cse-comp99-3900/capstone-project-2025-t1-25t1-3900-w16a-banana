@@ -8,7 +8,7 @@ from utils.response import res_error
 
 
 @api.route("/")
-class PRofileResource(Resource):
+class ProfileResource(Resource):
     @api.expect(profile_req_parser)
     def get(self):
         """Obtain a profile, enter user_type (customer, restaurant, driver, admin) and user_id"""
@@ -31,3 +31,22 @@ class PRofileResource(Resource):
             return res_error(400, 'User not found')
         else:
             return user.dict()
+
+
+@api.route("/all/<string:user_type>")
+class AllProfileResource(Resource):
+    def get(self, user_type):
+        """Obtain all profiles of a certain user type, user_type in (customer, restaurant, driver, admin)"""
+
+        if user_type == 'customer':
+            users = Customer.query.all()
+        elif user_type == 'restaurant':
+            users = Restaurant.query.all()
+        elif user_type == 'driver':
+            users = Driver.query.all()
+        elif user_type == 'admin':
+            users = Admin.query.all()
+        else:
+            return res_error(400, 'Invalid user type')
+
+        return [user.dict() for user in users]
