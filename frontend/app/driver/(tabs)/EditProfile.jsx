@@ -15,8 +15,7 @@ import { isStrongPassword } from "validator";
 export default function EditProfile() {
   const router = useRouter();
   const { showToast } = useToast();
-  const { contextProfile } = useAuth();
-
+  const { contextProfile, login } = useAuth();
   const [form, setForm] = useState({});
 
   useEffect(() => {
@@ -98,7 +97,7 @@ export default function EditProfile() {
     setDialogVisible(false);
     
     const formData = new FormData();
-    
+
     if (form.firstName !== contextProfile.first_name) formData.append("first_name", form.firstName);
     if (form.lastName !== contextProfile.last_name) formData.append("last_name", form.lastName);
     if (form.email !== contextProfile.email) formData.append("email", form.email);
@@ -120,11 +119,14 @@ export default function EditProfile() {
     }
     
     try {
-      const url = `${BACKEND}/driver/update/require-approval`;
-      const config = { headers: { Authorization: contextProfile.token, "Content-Type": "multipart/form-data" } };
+      const url = `${BACKEND}/driver/update`;
+      const config = { headers: { Authorization: contextProfile.token } };
       
-      await axios.put(url, formData, config);
+      const response = await axios.put(url, formData, config);
       showToast("Profile update submitted for admin approval.", "success");
+
+      // save the updated profile to the context
+      login(response.data);
       router.navigate("/driver/profile");
     } catch (error) {
       console.error("Error updating profile:", error);

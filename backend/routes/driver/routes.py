@@ -96,10 +96,14 @@ class UpdateProfile(Resource):
         
         # get the request
         args = update_req_parser.parse_args()
+        print(args)
 
         require_approval = False
 
-        if "email" in args:
+        # some fields may not be updated, but the parse_args will always have that key,
+        # so here use args["email"] or args.get("email") to check if the field is updated, 
+        # not "if email in args"
+        if args.get("email"):
             is_email_exist = Driver.query.filter_by(email=args['email']) \
                 .filter(Driver.driver_id != driver.driver_id).first()
             if is_email_exist:
@@ -107,43 +111,43 @@ class UpdateProfile(Resource):
 
             driver.email = args["email"]
         
-        if "password" in args:
+        if args.get("password"):
             is_password_okay, description = is_password_safe(args['password'])
             if not is_password_okay:
                 return res_error(400, description)
             driver.password = args["password"]
 
-        if "phone" in args:
+        if args.get("phone"):
             if not is_valid_phone(args['phone']):
                 return res_error(400, 'Invalid phone number')
             driver.phone = args["phone"]
 
-        if "first_name" in args:
+        if args.get("first_name"):
             driver.first_name = args["first_name"]
             require_approval = True
         
-        if "last_name" in args:
+        if args.get("last_name"):
             driver.last_name = args["last_name"]
             require_approval = True
                 
-        if "license_number" in args:
+        if args.get("license_number"):
             if not is_valid_license_number(args['license_number']):
                 return res_error(400, 'Invalid license number')
             driver.license_number = args["license_number"]
             require_approval = True
         
-        if "car_plate" in args:
+        if args.get("car_plate"):
             driver.car_plate = args["car_plate"]
             require_approval = True
         
-        if "license_image" in args:
+        if args.get("license_image"):
             url = save_file(args['license_image'])
             if not url:
                 return res_error(400, 'Unsupported Image File')
             driver.url_license_image = url
             require_approval = True
         
-        if "registration_paper" in args:
+        if args.get("registration_paper"):
             url = save_file(args['registration_paper'])
             if not url:
                 return res_error(400, 'Unsupported Image File')
