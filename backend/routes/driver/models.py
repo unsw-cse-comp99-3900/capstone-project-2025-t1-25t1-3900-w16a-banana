@@ -21,25 +21,21 @@ register_req_parser.add_argument("registration_paper", type=FileStorage, locatio
 # the non-approval needed attributes can be updated without admin approval,
 # and approval needed attributes (only for driver and restaurant) need admin approval.
 
-# all customer attributes can be updated without admin approval
-
 # for driver:
 # non approval needed: email, password, phone
 # approval needed: first_name, last_name, license_number, car_plate, license_image, car_image, registration_paper
+
+# The frotnend will send all attributesss together, and the backend will update the fields,
+# and set the registration status to pending when needed.
 """
 
-"""Response/Request for driver update non-approval"""
-update_no_approval_req = api.model('DriverUpdateNoApprovalModel', {
-    'email': fields.String(required=False, description="Email"),
-    'password': fields.String(required=False, description="Password"),
-    'phone': fields.String(required=False, description="Phone")
-})
-
-"""Response/Request for driver update approval"""
-update_approval_req_parser = reqparse.RequestParser()
-update_approval_req_parser.add_argument('first_name', type=str, required=False, help='First Name')
-update_approval_req_parser.add_argument('last_name', type=str, required=False, help='Last Name')
-update_approval_req_parser.add_argument('license_number', type=str, required=False, help='License Number')
-update_approval_req_parser.add_argument('car_plate', type=str, required=False, help='Car Plate')
-update_approval_req_parser.add_argument('license_image', type=FileStorage, location='files', required=False, help='License Image')
-update_approval_req_parser.add_argument('registration_paper', type=FileStorage, location='files', required=False, help='Registration Paper')
+update_req_parser = reqparse.RequestParser()
+update_req_parser.add_argument('email', type=str, required=False, help='Email')
+update_req_parser.add_argument('password', type=str, required=False, help='Password')
+update_req_parser.add_argument('phone', type=str, required=False, help='Phone')
+update_req_parser.add_argument('first_name', type=str, required=False, help='First Name')
+update_req_parser.add_argument('last_name', type=str, required=False, help='Last Name')
+update_req_parser.add_argument('license_number', type=str, required=False, help='License Number')
+update_req_parser.add_argument('car_plate', type=str, required=False, help='Car Plate')
+update_req_parser.add_argument('license_image', type=FileStorage, location='files', required=False, help='License Image')
+update_req_parser.add_argument('registration_paper', type=FileStorage, location='files', required=False, help='Registration Paper')
