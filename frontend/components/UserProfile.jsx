@@ -39,7 +39,7 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
         </Text>
 
         {/* Registration Status (For Driver & Restaurant) */}
-        {(isDriver || isRestaurant) && userProfile.registration_status === "PENDING" && (
+        {(isDriver || isRestaurant) && isSelfProfile && userProfile.registration_status === "PENDING" && (
           <>
             <Text style={{ marginTop: 10, color: "red", fontSize: 16, textAlign: "center" }}>
               Profile update is under system review.
