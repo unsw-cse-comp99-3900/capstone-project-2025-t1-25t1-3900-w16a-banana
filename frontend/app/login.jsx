@@ -6,10 +6,14 @@ import { Picker } from "@react-native-picker/picker";
 import useToast from "../hooks/useToast";
 import capitalize from "capitalize";
 import isEmail from "validator/lib/isEmail";
+import axios from "axios";
+import { BACKEND } from "./constants/backend";
+import useAuth from "../hooks/useAuth";
 
 export default function Login() {
   const router = useRouter();
   const { showToast } = useToast();
+  const { login } = useAuth();
 
   const [form, setForm] = useState({
     email: "",
@@ -23,10 +27,39 @@ export default function Login() {
     setForm({ ...form, [key]: value });
   };
 
-  const handleSubmit = () => {
-    // TODO: Add submit logic
-  };
+  const handleSubmit = async () => {
+    if (!form.email || !form.password || !form.userType) {
+      showToast("Please fill in all fields", "error");
+      return;
+    }
+  
+    if (!isEmail(form.email)) {
+      showToast("Please enter a valid email address", "error");
+      return;
+    }
 
+    // prepare
+    const url = `${BACKEND}/auth/login`;
+    
+    const data = {
+      email: form.email,
+      password: form.password,
+      user_type: form.userType,
+    }
+    
+    try {
+      const response = await axios.post(url, data);
+      const responseData = response.data;
+      console.log(responseData);
+      showToast("Login successful", "success");
+      login(responseData);
+      router.navigate(`/${form.userType}`);
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Login failed. Please try again.";
+      showToast(message, "error");
+    }
+  };
   const handleClear = () => {
     setForm({ email: "", password: "", userType: "" });
   };
@@ -51,11 +84,11 @@ export default function Login() {
             onChangeText={(text) => handleChange("email", text)}
             style={{ marginBottom: 8 }}
           />
-          {form.email && !isEmail(form.email) && (
+          {(form.email && !isEmail(form.email)) ? (
             <HelperText type="error" visible={true}>
               Please enter a valid email address
             </HelperText>
-          )}
+          ) : null}
           {/* Password Input */}
           <TextInput
             label="Password"
