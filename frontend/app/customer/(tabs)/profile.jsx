@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Button, Avatar } from "react-native-paper";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
@@ -34,7 +34,7 @@ export default function Profile() {
         setLoading(false);
       }
     };
-    
+
     fetchProfile();
   }, [contextProfile]);
 
@@ -59,7 +59,7 @@ export default function Profile() {
   }
 
   return (
-    <View style={{ flex: 1, alignItems: "center", padding: 16, backgroundColor: "#f9f9f9" }}>
+    <View style={{ flex: 1, alignItems: "center", paddingHorizontal: 16, paddingVertical: 25, backgroundColor: "#f9f9f9" }}>
       {/* Profile Image */}
       <View style={{ alignItems: "center", position: "relative" }}>
         <Avatar.Image
@@ -74,12 +74,9 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
 
-      {/* Username */}
+      {/* Username, here do not allow edit */}
       <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>{profile.username}</Text>
-        <TouchableOpacity onPress={() => console.log("Edit Username")}>
-          <Text style={{ marginLeft: 10, color: "#4CAF50" }}>✎</Text>
-        </TouchableOpacity>
+        <Text style={{ fontSize: 22, fontWeight: "bold" }}>{profile.username}</Text>
       </View>
 
       {/* Action Buttons */}
@@ -93,15 +90,32 @@ export default function Profile() {
       </View>
 
       {/* Personal Info */}
-      <View style={{ width: "100%", marginTop: 20, padding: 10, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
-        <Text style={{ fontWeight: "bold" }}>Phone</Text>
-        <Text>{profile.phone}</Text>
+      <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7 }}>Personal Information</Text>
+          <TouchableOpacity onPress={() => console.log("Edit Personal Info")}
+            style={{ padding: 5 }}>
+            <Text style={{ color: "#4CAF50" }}>✎</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Username:</Text> {profile.username}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Email:</Text> {profile.email}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Phone:</Text> {profile.phone}</Text>
       </View>
 
       {/* Address Info */}
-      <View style={{ width: "100%", marginTop: 10, padding: 10, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
-        <Text style={{ fontWeight: "bold" }}>Primary Address</Text>
-        <Text>{`${profile.address}, ${profile.suburb}, ${profile.state} ${profile.postcode}`}</Text>
+      <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7, }}>Primary Address</Text>
+          <TouchableOpacity onPress={() => console.log("Edit Address Info")}
+            style={{ padding: 5 }}>
+            <Text style={{ color: "#4CAF50" }}>✎</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Address:</Text> {profile.address}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Suburb:</Text> {profile.suburb}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>State:</Text> {profile.state}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Postcode:</Text> {profile.postcode}</Text>
       </View>
     </View>
   );
