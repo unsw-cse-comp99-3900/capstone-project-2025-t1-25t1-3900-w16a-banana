@@ -21,8 +21,14 @@ export default function EditProfileForm({ userType }) {
   const [isSensitiveChanged, setIsSensitiveChanged] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
 
+  // 4 functions
+  const isCustomer = userType === "customer";
+  const isDriver = userType === "driver";
+  const isRestaurant = userType === "restaurant";
+  const isAdmin = userType === "admin";
+
   const setInitialAttributes = () => {
-    if (userType === "customer") {
+    if (isCustomer) {
       setForm({
         username: contextProfile?.username || "",
         email: contextProfile?.email || "",
@@ -35,7 +41,7 @@ export default function EditProfileForm({ userType }) {
         state: contextProfile?.state || "",
         postcode: contextProfile?.postcode || "",
       });
-    } else if (userType === "driver") {
+    } else if (isDriver) {
       setForm({
         firstName: contextProfile?.first_name || "",
         lastName: contextProfile?.last_name || "",
@@ -48,7 +54,7 @@ export default function EditProfileForm({ userType }) {
         licenseImage: null,
         registrationImage: null,
       });
-    } else if (userType === "restaurant") {
+    } else if (isRestaurant) {
       setForm({
         businessName: contextProfile?.name || "",
         email: contextProfile?.email || "",
@@ -64,6 +70,15 @@ export default function EditProfileForm({ userType }) {
         image2: null,
         image3: null,
       });
+    } else if (isAdmin) {
+      // admin only has: first_name, last_name, email, password
+      setForm({
+        firstName: contextProfile?.first_name || "",
+        lastName: contextProfile?.last_name || "",
+        email: contextProfile?.email || "",
+        password: "",
+        confirmPassword: "",
+      });
     }
   };
 
@@ -76,7 +91,8 @@ export default function EditProfileForm({ userType }) {
     if (!contextProfile) return;
 
     let hasSensitiveChange = false;
-    if (userType === "driver") {
+
+    if (isDriver) {
       hasSensitiveChange =
         form.firstName !== contextProfile.first_name ||
         form.lastName !== contextProfile.last_name ||
@@ -84,7 +100,7 @@ export default function EditProfileForm({ userType }) {
         form.carPlate !== contextProfile.car_plate ||
         form.licenseImage !== null ||
         form.registrationImage !== null;
-    } else if (userType === "restaurant") {
+    } else if (isRestaurant) {
       hasSensitiveChange =
         form.businessName !== contextProfile.name ||
         form.abn !== contextProfile.abn ||
@@ -110,7 +126,7 @@ export default function EditProfileForm({ userType }) {
     }
 
     // check phone
-    if (!isMobilePhone(form.phone, "en-AU")) {
+    if (!isAdmin && !isMobilePhone(form.phone, "en-AU")) {
       showToast("Please enter a valid Australian phone number.", "error");
       return;
     }
@@ -127,19 +143,19 @@ export default function EditProfileForm({ userType }) {
     }
 
     // postcode 4 digits
-    if ((userType === "restaurant" || userType === "customer") && !isPostalCode(form.postcode, "AU")) {
+    if ((isRestaurant || isCustomer) && !isPostalCode(form.postcode, "AU")) {
       showToast("Please enter a valid Australian postcode.", "error");
       return;
     }
 
     // abn: 11 digits
-    if (userType === "restaurant" && !(form.abn.length === 11 && !isNaN(form.abn))) {
+    if (isRestaurant && !(form.abn.length === 11 && !isNaN(form.abn))) {
       showToast("Please enter a valid ABN.", "error");
       return;
     }
 
     // driver license number all digits
-    if (userType === "driver" && !form.licenseNumber.match(/^\d+$/)) {
+    if (isDriver && !form.licenseNumber.match(/^\d+$/)) {
       showToast("Please enter a valid license number.", "error");
       return;
     }
@@ -159,7 +175,7 @@ export default function EditProfileForm({ userType }) {
     const formData = new FormData();
 
     // consider the user types
-    if (userType === "customer") {
+    if (isCustomer) {
       if (form.username !== contextProfile.username) formData.append("username", form.username);
       if (form.email !== contextProfile.email) formData.append("email", form.email);
       if (form.phone !== contextProfile.phone) formData.append("phone", form.phone);
@@ -169,7 +185,7 @@ export default function EditProfileForm({ userType }) {
       if (form.state !== contextProfile.state) formData.append("state", form.state);
       if (form.postcode !== contextProfile.postcode) formData.append("postcode", form.postcode);
 
-    } else if (userType === "driver") {
+    } else if (isDriver) {
       if (form.firstName !== contextProfile.first_name) formData.append("first_name", form.firstName);
       if (form.lastName !== contextProfile.last_name) formData.append("last_name", form.lastName);
       if (form.email !== contextProfile.email) formData.append("email", form.email);
@@ -190,7 +206,7 @@ export default function EditProfileForm({ userType }) {
         formData.append("registration_paper", registrationImageBlob, "registration.jpg");
       }
 
-    } else if (userType === "restaurant") {
+    } else if (isRestaurant) {
       if (form.businessName !== contextProfile.name) formData.append("name", form.businessName);
       if (form.email !== contextProfile.email) formData.append("email", form.email);
       if (form.phone !== contextProfile.phone) formData.append("phone", form.phone);
@@ -219,6 +235,11 @@ export default function EditProfileForm({ userType }) {
         const image3Blob = await image3Response.blob();
         formData.append("image3", image3Blob, "restaurant_image3.jpg");
       }
+    } else if (isAdmin) {
+      if (form.firstName !== contextProfile.first_name) formData.append("first_name", form.firstName);
+      if (form.lastName !== contextProfile.last_name) formData.append("last_name", form.lastName);
+      if (form.email !== contextProfile.email) formData.append("email", form.email);
+      if (form.password) formData.append("password", form.password);
     }
 
     // API
