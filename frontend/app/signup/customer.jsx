@@ -6,6 +6,9 @@ import useToast from "../../hooks/useToast";
 import useAuth from "../../hooks/useAuth";
 import PersonalInfoForm from "../../components/PersonalInfoForm";
 import AddressForm from "../../components/AddressForm";
+import axios from "axios";
+import { isStrongPassword } from "validator";
+import { BACKEND } from "../constants/backend";
 
 export default function CustomerSignup() {
   const router = useRouter();
@@ -24,10 +27,47 @@ export default function CustomerSignup() {
     postcode: "",
   });
 
-  const handleSubmit = () => {
-    // TODO: Add submit
-  };
+  const handleSubmit = async () => {
+    // all fields are required
+    for (const key in form) {
+      if (!form[key]) {
+        showToast("Please fill all fields before submission.", "error");
+        return;
+      }
+    }
 
+    // password must be strong, and password and confirmPassword must match
+    if (!isStrongPassword(form.password)) {
+      showToast("Please pick a stronger password.", "error");
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      showToast("Passwords do not match.", "error");
+      return;
+    }
+
+    // API call
+    const url = `${BACKEND}/customer/register`;
+    
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      }
+    };
+
+    try {
+      const response = await axios.post(url, form, config);
+      showToast("Registration successful!", "success");
+      login(response.data);
+      router.push("/customer");
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
+      showToast(errorMessage, "error");
+    }
+  };
+  
   const handleClear = () => {
     setForm({
       username: "",
@@ -43,7 +83,7 @@ export default function CustomerSignup() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, padding: 20, backgroundColor: "#f9f9f9" }}>
       {/* Back Button & Title */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
         <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
