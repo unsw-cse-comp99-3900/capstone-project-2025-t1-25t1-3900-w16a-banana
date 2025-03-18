@@ -98,7 +98,7 @@ class CustomerUpdate(Resource):
         if args['email']:
             # the email must be unique
             is_email_exist = Customer.query.filter_by(email=args['email']) \
-                .filter(Customer.id != customer.id).first()
+                .filter(Customer.customer_id != customer.customer_id).first()
             if is_email_exist:
                 return res_error(400, 'Email already exist')
             customer.email = args['email']
@@ -109,6 +109,17 @@ class CustomerUpdate(Resource):
                 return res_error(400, 'Invalid phone number')
             customer.phone = args['phone']
         
+        # address, suburb, state, postcode
+        if args['address']:
+            if not args["address"]:
+                return res_error(400, 'Invalid address')
+            customer.address = args['address']
+        
+        if args['suburb']:
+            if not args["suburb"]:
+                return res_error(400, 'Invalid suburb')
+            customer.suburb = args['suburb']
+
         if args['postcode']:
             if not is_valid_postcode(args['postcode']):
                 return res_error(400, 'Invalid postcode')
@@ -118,7 +129,6 @@ class CustomerUpdate(Resource):
             if not is_valid_state(args['state']):
                 return res_error(400, 'Invalid state')
             customer.state = args['state']
-
 
         if args['profile_image']:
             url = save_file(args['profile_image'])
