@@ -64,6 +64,8 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
           
           {/* Common Fields */}
           {isCustomer && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Username:</Text> {userProfile.username}</Text>}
+          {isDriver && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Name:</Text> {`${userProfile.first_name} ${userProfile.last_name}`}</Text>}
+          {isRestaurant && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Name:</Text> {userProfile.name}</Text>}
           <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Email:</Text> {userProfile.email}</Text>
           <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Phone:</Text> {userProfile.phone}</Text>
 
