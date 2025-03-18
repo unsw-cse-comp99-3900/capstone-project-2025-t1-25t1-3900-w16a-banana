@@ -6,10 +6,16 @@ import useToast from "../../hooks/useToast";
 import PersonalInfoForm from "../../components/PersonalInfoForm";
 import AddressForm from "../../components/AddressForm";
 import ImageUploadForm from "../../components/ImageUploadForm";
+import { isPostalCode, isStrongPassword } from "validator";
+import axios from "axios";
+import isEmail from "validator/lib/isEmail";
+import { BACKEND } from "../constants/backend";
+import useAuth from "../../hooks/useAuth";
 
 export default function Restaurant () {
   const router = useRouter();
   const { showToast } = useToast();
+  const { login } = useAuth();
 
   const [form, setForm] = useState({
     businessName: "",
@@ -28,8 +34,99 @@ export default function Restaurant () {
     image3: null,
   });
 
-  const handleSubmit = () => {
-    // TODO: Add submit logic
+  // ABN: Australian Business Number, 11 digits
+  const isValidABN = form.abn && (form.abn.length !== 11 || isNaN(form.abn));
+
+  const handleSubmit = async () => {
+    for (const key in form) {
+      if (!form[key]) {
+        showToast("Please fill all required fields.", "error");
+        return;
+      }
+    }
+
+    // email must valid
+    if (!isEmail(form.email)) {
+      showToast("Please enter a valid email address.", "error");
+      return;
+    }
+
+    // ensure all three images are uploaded
+    if (!(form.image1 && form.image2 && form.image3)) {
+      showToast("Please upload all three images.", "error");
+      return;
+    }
+  
+    // Password needs to be strong
+    if (!isStrongPassword(form.password)) {
+      showToast("Password is not strong enough.", "error");
+      return;
+    }
+  
+    // Passwords must match
+    if (form.password !== form.confirmPassword) {
+      showToast("Passwords do not match.", "error");
+      return;
+    }
+  
+    // Validate ABN
+    if (isValidABN) {
+      showToast("Please enter a valid ABN number.", "error");
+      return;
+    }
+    
+    // Validate postcode
+    if (!isPostalCode(form.postcode, "AU")) {
+      showToast("Please enter a valid Australian postcode.", "error");
+      return;
+    }
+  
+    try {
+      // Create form data
+      const formData = new FormData();
+      
+      // process the 3 images
+      const image1Response = await fetch(form.image1);
+      const image1Blob = await image1Response.blob();
+      formData.append("image1", image1Blob, "restaurant_image1.jpg");
+      
+      const image2Response = await fetch(form.image2);
+      const image2Blob = await image2Response.blob();
+      formData.append("image2", image2Blob, "restaurant_image2.jpg");
+      
+      const image3Response = await fetch(form.image3);
+      const image3Blob = await image3Response.blob();
+      formData.append("image3", image3Blob, "restaurant_image3.jpg");
+  
+      // Append other form data
+      formData.append("name", form.businessName);
+      formData.append("email", form.email);
+      formData.append("password", form.password);
+      formData.append("phone", form.phone);
+      formData.append("address", form.address);
+      formData.append("suburb", form.suburb);
+      formData.append("state", form.state);
+      formData.append("postcode", form.postcode);
+      formData.append("abn", form.abn);
+      formData.append("description", form.description);
+  
+      const config = {
+        headers: {
+          Accept: "application/json",
+        }
+      };
+  
+      // Make the API call
+      const response = await axios.post(`${BACKEND}/restaurant/register`, formData, config);
+      
+      // Success
+      showToast("Restaurant registration successful!", "success");
+      login(response.data);
+      router.push("/restaurant");
+    } catch (error) {
+      console.error("Error:", error);
+      showToast(error.response?.data?.message || "An error occurred during registration.", "error");
+    }
   };
 
   const handleClear = () => {
@@ -52,9 +149,6 @@ export default function Restaurant () {
 
     showToast("Form cleared");
   };
-
-  // ABN: Australian Business Number, 11 digits
-  const isValidABN = form.abn && (form.abn.length !== 11 || isNaN(form.abn));
 
   return (
     <KeyboardAvoidingView
