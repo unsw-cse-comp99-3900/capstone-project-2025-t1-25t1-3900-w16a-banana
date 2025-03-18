@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, Icon } from "react-native-paper";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
 import { BACKEND } from "../../../constants/backend";
 import ApplicationTable from "../../../components/ApplicationTable";
+import MyScrollView from "../../../components/MyScrollView";
 
 export default function Applications() {
   const { contextProfile } = useAuth();
@@ -47,28 +48,34 @@ export default function Applications() {
   }
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <MyScrollView>
       <Text variant="headlineMedium" style={{ marginBottom: 10 }}>
         Pending Applications
       </Text>
 
-      {/* Restaurant Applications Table */}
-      <Text variant="titleMedium" style={{ marginBottom: 5 }}>Pending Restaurants</Text>
+      {/* Restaurant Applications Table with Icon */}
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10, gap: 10 }}>
+        <Icon source="silverware-fork-knife" size={24} color="#4fabc9"/>
+        <Text variant="titleMedium">Pending Restaurants</Text>
+      </View>
       <ApplicationTable
         data={restaurantApplications}
-        columns={["Name"]}
-        rowKeys={["name"]}
+        columns={["Name", "ABN", "Suburb", "Postcode"]}
+        rowKeys={["name", "abn", "suburb", "postcode"]}
         userType="restaurant"
       />
 
-      {/* Driver Applications Table */}
-      <Text variant="titleMedium" style={{ marginBottom: 5, marginTop: 20 }}>Pending Drivers</Text>
+      {/* Driver Applications Table with Icon */}
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10, marginTop: 20, gap: 10 }}>
+        <Icon source="car" size={24} color="#4fabc9"/>
+        <Text variant="titleMedium">Pending Drivers</Text>
+      </View>
       <ApplicationTable
         data={driverApplications}
-        columns={["First Name", "Last Name"]}
-        rowKeys={["first_name", "last_name"]}
+        columns={["First Name", "Last Name", "Driver License"]}
+        rowKeys={["first_name", "last_name", "license_number"]}
         userType="driver"
       />
-    </View>
+    </MyScrollView>
   );
 }
