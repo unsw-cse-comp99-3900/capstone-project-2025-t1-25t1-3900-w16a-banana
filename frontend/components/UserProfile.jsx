@@ -39,17 +39,29 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
         </Text>
 
         {/* Registration Status (For Driver & Restaurant) */}
-        {(isDriver || isRestaurant) && userProfile.registration_status === "PENDING" && (
+        {(isDriver || isRestaurant) && isSelfProfile && userProfile.registration_status === "PENDING" && (
           <>
             <Text style={{ marginTop: 10, color: "red", fontSize: 16, textAlign: "center" }}>
               Profile update is under system review.
             </Text>
             <Text style={{ color: "red", fontSize: 16, textAlign: "center" }}>
-              Approval required before full access.
+              The review will be completed within 24 hours.
             </Text>
           </>
         )}
 
+        {/* isDriver, isRestaurant, isSelfProfile, and the status is REJECTEd, ask the user to update the application profile */}
+        {(isDriver || isRestaurant) && isSelfProfile && userProfile.registration_status === "REJECTED" && (
+          <>
+            <Text style={{ marginTop: 10, color: "red", fontSize: 16, textAlign: "center" }}>
+              Your application has been rejected.
+            </Text>
+            <Text style={{ color: "red", fontSize: 16, textAlign: "center" }}>
+              Please update your profile and wait for approval again.
+            </Text>
+          </>
+        )}
+          
         {/* Customer Actions */}
         {isSelfProfile && isCustomer && (
           <View style={{ flexDirection: "row", marginTop: 20, gap: 10 }}>

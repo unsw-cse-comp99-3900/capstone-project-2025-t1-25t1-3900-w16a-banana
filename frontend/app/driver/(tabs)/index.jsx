@@ -23,6 +23,13 @@ export default function Home() {
           Your account is under review by the Admin. Please wait and come back later.
         </Text>
       ) : null}
+
+      {/* when the status is REJECTED, ask the user to update the profile and wait for approval again */}
+      {contextProfile.registration_status === "REJECTED" ? (
+        <Text style={{ marginTop: 10, color: "red", fontSize: 18, textAlign: "center" }}>
+          Your driver application has been rejected. Please update your profile and wait for approval again.
+        </Text>
+      ) : null}
     </View>
   );
 }
