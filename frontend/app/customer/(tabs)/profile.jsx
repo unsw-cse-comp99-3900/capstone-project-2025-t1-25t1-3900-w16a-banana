@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Button, Avatar } from "react-native-paper";
+import { Button, Avatar, Portal, Dialog } from "react-native-paper";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
@@ -12,11 +12,16 @@ export default function Profile() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
-  const { isContextLoading, contextProfile } = useAuth();
+  const { isContextLoading, contextProfile, login } = useAuth();
   const { showToast } = useToast();
+
+  // dialogue state variables
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [dialogVisible, setDialogVisible] = useState(false);
 
   useEffect(() => {
     if (isContextLoading) return;
+    if (profile) return;
 
     const fetchProfile = async () => {
       const url = `${BACKEND}/auth/me`;
@@ -26,6 +31,9 @@ export default function Profile() {
         const response = await axios.get(url, config);
         setProfile(response.data);
         console.log(response.data);
+
+        // also saves the latest profile
+        login(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
         showToast("Error fetching profile... Please try again later.", "error");
@@ -38,6 +46,7 @@ export default function Profile() {
     fetchProfile();
   }, [contextProfile]);
 
+  // pick the image
   const handleImagePick = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -45,8 +54,39 @@ export default function Profile() {
       aspect: [1, 1],
       quality: 1,
     });
+  
     if (!result.canceled) {
-      console.log("Selected Image:", result.assets[0].uri);
+      setSelectedImage(result.assets[0].uri);
+      setDialogVisible(true);  // Show confirmation dialog
+    }
+  };
+
+  // upload the image
+  const handleUploadImage = async () => {
+    setDialogVisible(false);
+    if (!selectedImage) return;
+  
+    const imageResponse = await fetch(selectedImage);
+    const imageBlob = await imageResponse.blob();
+  
+    const formData = new FormData();
+    formData.append("profile_image", imageBlob, "profile.jpg");
+  
+    // prepare
+    const url = `${BACKEND}/customer/update/profile`;
+    const config = { headers: { Authorization: contextProfile.token } };
+    
+    try {
+      const response = await axios.put(url, formData, config);
+      console.log(response)
+      showToast("Profile picture updated!", "success");
+
+      // save this to the profile
+      setProfile(response.data);
+      login(response.data);
+    } catch (error) {
+      console.log(error);
+      showToast(error.response?.data?.message || "Error updating profile picture.", "error");
     }
   };
 
@@ -60,10 +100,24 @@ export default function Profile() {
 
   return (
     <View style={{ flex: 1, alignItems: "center", paddingHorizontal: 16, paddingVertical: 25, backgroundColor: "#f9f9f9" }}>
+      {/* a dialogue component for the image upload */}
+      <Portal>
+        <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
+          <Dialog.Title>Upload Profile Picture</Dialog.Title>
+          <Dialog.Content>
+            <Text>Do you want to update your profile picture?</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDialogVisible(false)}>No</Button>
+            <Button onPress={handleUploadImage}>Yes</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
       {/* Profile Image */}
       <View style={{ alignItems: "center", position: "relative" }}>
         <Avatar.Image
-          size={100}
+          size={120}
           source={{ uri: `${BACKEND}/${profile.url_profile_image}` }}
         />
         <TouchableOpacity
