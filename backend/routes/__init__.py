@@ -7,6 +7,7 @@ from routes.restaurant.routes import api as restaurant_api
 from routes.restaurant_menu.routes import api as restaurant_menu_api
 from routes.query import api as query_api
 from routes.test import api as test_api
+from routes.profile.routes import api as profile_api
 
 api = Api(
     version = "1.0",
@@ -23,3 +24,4 @@ api.add_namespace(restaurant_api)
 api.add_namespace(restaurant_menu_api)
 api.add_namespace(query_api)
 api.add_namespace(test_api)
+api.add_namespace(profile_api)
