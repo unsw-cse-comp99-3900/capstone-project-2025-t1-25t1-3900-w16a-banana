@@ -63,7 +63,7 @@ class RegisterCustomer(Resource):
         return new_customer.dict(), 200
 
 
-@api.route('/update/profile')
+@api.route('/update')
 class CustomerUpdate(Resource):
     @api.expect(auth_header, update_profile_req_parser)
     @api.response(200, "Success")

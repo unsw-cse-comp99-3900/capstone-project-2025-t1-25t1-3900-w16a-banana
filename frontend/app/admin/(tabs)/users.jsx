@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-export default function Admin() {
+export default function Users() {
   return (
     <View>
-      <Text>Admin</Text>
+      <Text>Users</Text>
     </View>
   );
 }

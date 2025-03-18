@@ -21,6 +21,7 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
   const isDriver = userType === "driver";
   const isRestaurant = userType === "restaurant";
   const isCustomer = userType === "customer";
+  const isAdmin = userType === "admin";
 
   return (
     <MyScrollView>
@@ -33,7 +34,8 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
         <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 10 }}>
           {isDriver ? `${userProfile.first_name} ${userProfile.last_name}` :
            isRestaurant ? userProfile.name : 
-           userProfile.username}
+           isCustomer ? userProfile.username :
+           isAdmin? `${userProfile.first_name} ${userProfile.last_name} (Admin)` : ""}
         </Text>
 
         {/* Registration Status (For Driver & Restaurant) */}
@@ -67,7 +69,7 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
           {isDriver && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Name:</Text> {`${userProfile.first_name} ${userProfile.last_name}`}</Text>}
           {isRestaurant && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Name:</Text> {userProfile.name}</Text>}
           <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Email:</Text> {userProfile.email}</Text>
-          <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Phone:</Text> {userProfile.phone}</Text>
+          {!isAdmin && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Phone:</Text> {userProfile.phone}</Text>}
 
           {/* Driver-Specific Fields */}
           {isDriver && (
