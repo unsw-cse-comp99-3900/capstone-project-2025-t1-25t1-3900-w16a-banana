@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-export default function Driver() {
+export default function EditNonApproval() {
   return (
     <View>
-      <Text>Driver</Text>
+      <Text>EditNonApproval</Text>
     </View>
   );
 }
