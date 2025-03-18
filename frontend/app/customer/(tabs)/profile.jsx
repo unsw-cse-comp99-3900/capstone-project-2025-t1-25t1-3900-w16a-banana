@@ -10,40 +10,12 @@ import useToast from "../../../hooks/useToast";
 
 export default function Profile() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState(null);
   const { isContextLoading, contextProfile, login } = useAuth();
   const { showToast } = useToast();
 
   // dialogue state variables
   const [selectedImage, setSelectedImage] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
-
-  useEffect(() => {
-    if (isContextLoading) return;
-
-    const fetchProfile = async () => {
-      const url = `${BACKEND}/auth/me`;
-      const config = { headers: { Authorization: contextProfile.token } };
-
-      try {
-        const response = await axios.get(url, config);
-        setProfile(response.data);
-        console.log(response.data);
-
-        // also saves the latest profile
-        login(response.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        showToast("Error fetching profile... Please try again later.", "error");
-        router.navigate("/customer");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, [contextProfile]);
 
   // pick the image
   const handleImagePick = async () => {
@@ -81,7 +53,6 @@ export default function Profile() {
       showToast("Profile picture updated!", "success");
 
       // save this to the profile
-      setProfile(response.data);
       login(response.data);
     } catch (error) {
       console.log(error);
@@ -89,7 +60,7 @@ export default function Profile() {
     }
   };
 
-  if (loading) {
+  if (isContextLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#6200ee" />
@@ -117,7 +88,7 @@ export default function Profile() {
       <View style={{ alignItems: "center", position: "relative" }}>
         <Avatar.Image
           size={120}
-          source={{ uri: `${BACKEND}/${profile.url_profile_image}` }}
+          source={{ uri: `${BACKEND}/${contextProfile.url_profile_image}` }}
         />
         <TouchableOpacity
           onPress={handleImagePick}
@@ -129,7 +100,7 @@ export default function Profile() {
 
       {/* Username, here do not allow edit */}
       <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
-        <Text style={{ fontSize: 22, fontWeight: "bold" }}>{profile.username}</Text>
+        <Text style={{ fontSize: 22, fontWeight: "bold" }}>{contextProfile.username}</Text>
       </View>
 
       {/* Action Buttons */}
@@ -151,9 +122,9 @@ export default function Profile() {
             <Text style={{ color: "#4CAF50" }}>✎</Text>
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Username:</Text> {profile.username}</Text>
-        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Email:</Text> {profile.email}</Text>
-        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Phone:</Text> {profile.phone}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Username:</Text> {contextProfile.username}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Email:</Text> {contextProfile.email}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Phone:</Text> {contextProfile.phone}</Text>
       </View>
 
       {/* Address Info */}
@@ -165,10 +136,10 @@ export default function Profile() {
             <Text style={{ color: "#4CAF50" }}>✎</Text>
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Address:</Text> {profile.address}</Text>
-        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Suburb:</Text> {profile.suburb}</Text>
-        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>State:</Text> {profile.state}</Text>
-        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Postcode:</Text> {profile.postcode}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Address:</Text> {contextProfile.address}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Suburb:</Text> {contextProfile.suburb}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>State:</Text> {contextProfile.state}</Text>
+        <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Postcode:</Text> {contextProfile.postcode}</Text>
       </View>
     </View>
   );
