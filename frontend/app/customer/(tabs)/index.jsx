@@ -4,6 +4,7 @@ import { TextInput, Button } from "react-native-paper";
 import ReanimatedCarousel from "react-native-reanimated-carousel";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import MyScrollView from "../../../components/MyScrollView";
 
 const { width } = Dimensions.get("window");
 
@@ -35,7 +36,7 @@ export default function Home() {
   };
 
   return (
-    <ScrollView style={{ flex: 1, padding: 16, paddingTop: 20, backgroundColor: "#f9f9f9" }}>
+    <MyScrollView>
       {/* Search Bar */}
       <TextInput
         mode="outlined"
@@ -104,6 +105,6 @@ export default function Home() {
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>Restaurants</Text>
         <Text style={{ color: "gray" }}>Coming soon...</Text>
       </View>
-    </ScrollView>
+    </MyScrollView>
   );
 }

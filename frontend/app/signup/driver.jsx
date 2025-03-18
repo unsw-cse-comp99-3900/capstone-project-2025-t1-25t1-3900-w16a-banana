@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { View } from "react-native";
 import { useRouter } from "expo-router";
 import { Button, Text, IconButton } from "react-native-paper";
 import useToast from "../../hooks/useToast";
@@ -9,6 +9,7 @@ import ImageUploadForm from "../../components/ImageUploadForm";
 import { BACKEND } from "../../constants/backend";
 import { isStrongPassword } from "validator";
 import axios from "axios";
+import MyScrollView from "../../components/MyScrollView";
 
 export default function DriverSignup() {
   const router = useRouter();
@@ -113,38 +114,29 @@ export default function DriverSignup() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: "#f9f9f9" }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-    >
-      <ScrollView 
-        contentContainerStyle={{ padding: 20 }}
-        showsVerticalScrollIndicator={true}
-      >
-        {/* Back Button & Title */}
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
-          <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
-          <Text variant="headlineMedium" style={{ marginLeft: 10 }}>
-            New Driver Form
-          </Text>
-        </View>
+    <MyScrollView>
+      {/* Back Button & Title */}
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
+        <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
+        <Text variant="headlineMedium" style={{ marginLeft: 10 }}>
+          New Driver Form
+        </Text>
+      </View>
 
-        {/* Personal Info Section */}
-        <Text variant="titleMedium" style={{ marginBottom: 10 }}>Personal Information</Text>
-        <PersonalInfoForm form={form} setForm={setForm} userType="driver" />
+      {/* Personal Info Section */}
+      <Text variant="titleMedium" style={{ marginBottom: 10 }}>Personal Information</Text>
+      <PersonalInfoForm form={form} setForm={setForm} userType="driver" />
 
-        {/* Driver Info Section: Upload two images: license image, and car image */}
-        <Text variant="titleMedium" style={{ marginTop: 15, marginBottom: 10 }}>Driver Information</Text>
-        <ImageUploadForm label="License Number" form={form} setForm={setForm} inputKey="licenseNumber" imageKey="licenseImage" buttonText="Upload License Image" />
-        <ImageUploadForm label="Car Plate Number" form={form} setForm={setForm} inputKey="carPlate" imageKey="registrationImage" buttonText="Upload Registration Paper Image"/>
-        
-        {/* Submit & Clear Buttons */}
-        <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 8, marginBottom: 20 }}>
-          <Button mode="outlined" onPress={handleClear}>Clear</Button>
-          <Button mode="contained" onPress={handleSubmit}>Submit</Button>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      {/* Driver Info Section: Upload two images: license image, and car image */}
+      <Text variant="titleMedium" style={{ marginTop: 15, marginBottom: 10 }}>Driver Information</Text>
+      <ImageUploadForm label="License Number" form={form} setForm={setForm} inputKey="licenseNumber" imageKey="licenseImage" buttonText="Upload License Image" />
+      <ImageUploadForm label="Car Plate Number" form={form} setForm={setForm} inputKey="carPlate" imageKey="registrationImage" buttonText="Upload Registration Paper Image"/>
+      
+      {/* Submit & Clear Buttons */}
+      <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 8, marginBottom: 20 }}>
+        <Button mode="outlined" onPress={handleClear}>Clear</Button>
+        <Button mode="contained" onPress={handleSubmit}>Submit</Button>
+      </View>
+    </MyScrollView>
   );
 }
