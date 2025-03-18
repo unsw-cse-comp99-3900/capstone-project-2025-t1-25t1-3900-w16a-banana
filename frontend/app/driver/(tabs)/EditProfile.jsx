@@ -19,17 +19,15 @@ export default function EditProfile() {
   const [form, setForm] = useState({});
 
   useEffect(() => {
-    if (!contextProfile) return;
-
     setForm({
-      firstName: contextProfile.first_name,
-      lastName: contextProfile.last_name,
-      email: contextProfile.email,
-      phone: contextProfile.phone,
+      firstName: contextProfile?.first_name || "",
+      lastName: contextProfile?.last_name || "",
+      email: contextProfile?.email || "",
+      phone: contextProfile?.phone || "",
       password: "",
       confirmPassword: "",
-      licenseNumber: contextProfile.license_number,
-      carPlate: contextProfile.car_plate,
+      licenseNumber: contextProfile?.license_number || "",
+      carPlate: contextProfile?.car_plate || "",
       licenseImage: null,
       registrationImage: null,
     });
@@ -192,7 +190,7 @@ export default function EditProfile() {
       {/* Helper Text for Sensitive Changes */}
       {isSensitiveChanged ? (
         <HelperText type="error" visible={true}>
-          You have modified sensitive fields. Your account will be temporarily blocked until admin approval.
+          Submission Notice: You have modified sensitive fields. Your account will be temporarily blocked until admin approval.
         </HelperText>
       ) : null}
       
