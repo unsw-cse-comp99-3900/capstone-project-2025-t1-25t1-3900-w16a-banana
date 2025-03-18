@@ -166,6 +166,9 @@ class Admin(BaseModel):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
 
+    # profile page
+    url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/admin.png")
+
 # about the menu:
 # each restaurant own one menu
 # this menu is separated into several categories
