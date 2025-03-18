@@ -9,8 +9,7 @@ const tabs = [
   { name: "notifications", title: "Notifications", icon: "bell", visible: true },
   { name: "profile", title: "Profile", icon: "account", visible: true },
   // Hidden tabs
-  { name: "EditNonApproval", title: "Edit Without Approval", icon: "account-edit", visible: false },
-  { name: "EditRequireApproval", title: "Edit With Approval", icon: "account-check", visible: false },
+  { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
 ];
 
 // when the driver application status is pending, use these tabs
@@ -21,8 +20,7 @@ const pendingTabs = [
   { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
   { name: "history", title: "History", icon: "history", visible: false },
   { name: "notifications", title: "Notifications", icon: "bell", visible: false },
-  { name: "EditNonApproval", title: "Edit Without Approval", icon: "account-edit", visible: false },
-  { name: "EditRequireApproval", title: "Edit With Approval", icon: "account-check", visible: false },
+  { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
 ]
 
 export default function TabLayout() {

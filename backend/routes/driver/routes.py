@@ -61,76 +61,101 @@ class RegisterDriver(Resource):
         return new_driver.dict(), 200
 
 
-@api.route('/update/non-approval')
-class DriverNonApprovalUpdate(Resource):
-    @api.expect(auth_header, update_no_approval_req)
+update_route_doc = """
+The driver sends a token and update some fields. 
+
+The driver can update some fields without admin approval:
+* email
+* password
+* phone
+
+But the following updates will turn the registration status to pending,
+and require admin approval again:
+* first_name
+* last_name
+* license_number
+* car_plate
+* license_image
+* registration_paper
+
+During the request, the frontend sends all attributes together,
+and the backend will update the fields, and set the registration status to pending
+when needed.
+"""
+
+@api.route("/update")
+class UpdateProfile(Resource):
+    @api.expect(auth_header, update_req_parser)
+    @api.doc(description=update_route_doc)
     def put(self):
-        """Driver updates profile (email, password, phone) - No admin approval needed"""
+        """Driver updates profile, may turn the registration status to pending for admin review"""
 
         driver = check_token(auth_header, Driver)
         if not driver:
             return res_error(401)
+        
+        # get the request
+        args = update_req_parser.parse_args()
+        print(args)
 
-        # Get request data
-        data = request.json
+        require_approval = False
 
-        if 'password' in data:
-            is_password_okay, description = is_password_safe(data['password'])
-            if not is_password_okay:
-                return res_error(400, description)
-
-        # Validate phone number
-        if 'phone' in data and not is_valid_phone(data['phone']):
-            return res_error(400, 'Invalid phone number')
-
-        # Validate unique email
-        if 'email' in data:
-            is_email_exist = Driver.query.filter_by(email=data['email']) \
+        # some fields may not be updated, but the parse_args will always have that key,
+        # so here use args["email"] or args.get("email") to check if the field is updated, 
+        # not "if email in args"
+        if args.get("email"):
+            is_email_exist = Driver.query.filter_by(email=args['email']) \
                 .filter(Driver.driver_id != driver.driver_id).first()
             if is_email_exist:
                 return res_error(400, 'Email already exists')
 
-        # Update driver attributes
-        for key, value in data.items():
-            setattr(driver, key, value)
+            driver.email = args["email"]
+        
+        if args.get("password"):
+            is_password_okay, description = is_password_safe(args['password'])
+            if not is_password_okay:
+                return res_error(400, description)
+            driver.password = args["password"]
 
-        db.session.commit()
-        return driver.dict(), 200
+        if args.get("phone"):
+            if not is_valid_phone(args['phone']):
+                return res_error(400, 'Invalid phone number')
+            driver.phone = args["phone"]
 
-@api.route('/update/require-approval')
-class DriverUpdateRequireApproval(Resource):
-    @api.expect(auth_header, update_approval_req_parser)
-    def put(self):
-        """Driver updates his profile, admin approval needed"""
-
-        driver = check_token(auth_header, Driver)
-        if not driver:
-            return res_error(401)
-
-        # data
-        args = update_approval_req_parser.parse_args()
-
-        if args['frist_name']: driver.first_name = args['first_name']
-        if args['last_name']: driver.last_name = args['last_name']
-        if args['car_plate']: driver.car_plate = args['car_plate']
-        if args['license_number']:
+        if args.get("first_name"):
+            driver.first_name = args["first_name"]
+            require_approval = True
+        
+        if args.get("last_name"):
+            driver.last_name = args["last_name"]
+            require_approval = True
+                
+        if args.get("license_number"):
             if not is_valid_license_number(args['license_number']):
                 return res_error(400, 'Invalid license number')
-            driver.license_number = args['license_number']
-        if args['license_image']:
+            driver.license_number = args["license_number"]
+            require_approval = True
+        
+        if args.get("car_plate"):
+            driver.car_plate = args["car_plate"]
+            require_approval = True
+        
+        if args.get("license_image"):
             url = save_file(args['license_image'])
             if not url:
                 return res_error(400, 'Unsupported Image File')
             driver.url_license_image = url
+            require_approval = True
         
-        if args['profile_image']:
-            url = save_file(args['profile_image'])
+        if args.get("registration_paper"):
+            url = save_file(args['registration_paper'])
             if not url:
                 return res_error(400, 'Unsupported Image File')
-            driver.url_profile_image = url
+            driver.url_registration_paper = url
+            require_approval = True
         
-        # set to pending
-        driver.status = RegistrationStatus.PENDING
+        if require_approval:
+            driver.status = RegistrationStatus.PENDING
+        
         db.session.commit()
-
         return driver.dict(), 200

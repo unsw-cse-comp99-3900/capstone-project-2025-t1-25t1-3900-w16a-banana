@@ -1,64 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Button, Avatar, Portal, Dialog } from "react-native-paper";
+import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
-import * as ImagePicker from "expo-image-picker";
-import axios from "axios";
-import { BACKEND } from "../../../constants/backend";
 import useAuth from "../../../hooks/useAuth";
 import useToast from "../../../hooks/useToast";
+import ProfileAvatar from "../../../components/ProfileAvatar";
+import LogoutButton from "../../../components/LogoutButton";
 
 export default function Profile() {
   const router = useRouter();
-  const { isContextLoading, contextProfile, login } = useAuth();
+  const { isContextLoading, contextProfile, logout } = useAuth();
   const { showToast } = useToast();
-
-  // dialogue state variables
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [dialogVisible, setDialogVisible] = useState(false);
-
-  // pick the image
-  const handleImagePick = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-  
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-      setDialogVisible(true);  // Show confirmation dialog
-    }
-  };
-
-  // upload the image
-  const handleUploadImage = async () => {
-    setDialogVisible(false);
-    if (!selectedImage) return;
-  
-    const imageResponse = await fetch(selectedImage);
-    const imageBlob = await imageResponse.blob();
-  
-    const formData = new FormData();
-    formData.append("profile_image", imageBlob, "profile.jpg");
-  
-    // prepare
-    const url = `${BACKEND}/customer/update/profile`;
-    const config = { headers: { Authorization: contextProfile.token } };
-    
-    try {
-      const response = await axios.put(url, formData, config);
-      console.log(response)
-      showToast("Profile picture updated!", "success");
-
-      // save this to the profile
-      login(response.data);
-    } catch (error) {
-      console.log(error);
-      showToast(error.response?.data?.message || "Error updating profile picture.", "error");
-    }
-  };
 
   if (isContextLoading) {
     return (
@@ -70,33 +22,8 @@ export default function Profile() {
 
   return (
     <View style={{ flex: 1, alignItems: "center", paddingHorizontal: 16, paddingVertical: 25, backgroundColor: "#f9f9f9" }}>
-      {/* a dialogue component for the image upload */}
-      <Portal>
-        <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
-          <Dialog.Title>Upload Profile Picture</Dialog.Title>
-          <Dialog.Content>
-            <Text>Do you want to update your profile picture?</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)}>No</Button>
-            <Button onPress={handleUploadImage}>Yes</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-
-      {/* Profile Image */}
-      <View style={{ alignItems: "center", position: "relative" }}>
-        <Avatar.Image
-          size={120}
-          source={{ uri: `${BACKEND}/${contextProfile.url_profile_image}` }}
-        />
-        <TouchableOpacity
-          onPress={handleImagePick}
-          style={{ position: "absolute", bottom: 0, right: -10, backgroundColor: "#4CAF50", borderRadius: 20, padding: 5 }}
-        >
-          <Text style={{ color: "white", fontSize: 12 }}>✎</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Profile Image Section */}
+      <ProfileAvatar userType="customer"/>
 
       {/* Username, here do not allow edit */}
       <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
@@ -105,20 +32,15 @@ export default function Profile() {
 
       {/* Action Buttons */}
       <View style={{ flexDirection: "row", marginTop: 20, gap: 10 }}>
-        <Button mode="outlined" icon="heart" onPress={() => router.push("/customer/favourites")}>
-          Favourites
-        </Button>
-        <Button mode="outlined" icon="history" onPress={() => router.push("/customer/history")}>
-          History
-        </Button>
+        <Button mode="outlined" icon="heart" onPress={() => router.push("/customer/favourites")}>Favourites</Button>
+        <Button mode="outlined" icon="history" onPress={() => router.push("/customer/history")}>History</Button>
       </View>
 
       {/* Personal Info */}
       <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7 }}>Personal Information</Text>
-          <TouchableOpacity onPress={() => router.push("/customer/EditPersonalInfo")}
-            style={{ padding: 5 }}>
+          <TouchableOpacity onPress={() => router.push("/customer/EditPersonalInfo")} style={{ padding: 5 }}>
             <Text style={{ color: "#4CAF50" }}>✎</Text>
           </TouchableOpacity>
         </View>
@@ -131,8 +53,7 @@ export default function Profile() {
       <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7, }}>Primary Address</Text>
-          <TouchableOpacity onPress={() => router.push("/customer/EditAddress")}
-            style={{ padding: 5 }}>
+          <TouchableOpacity onPress={() => router.push("/customer/EditAddress")} style={{ padding: 5 }}>
             <Text style={{ color: "#4CAF50" }}>✎</Text>
           </TouchableOpacity>
         </View>
@@ -141,6 +62,9 @@ export default function Profile() {
         <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>State:</Text> {contextProfile.state}</Text>
         <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Postcode:</Text> {contextProfile.postcode}</Text>
       </View>
+
+      {/* logout button with an icon */}
+      <LogoutButton />
     </View>
   );
 }
