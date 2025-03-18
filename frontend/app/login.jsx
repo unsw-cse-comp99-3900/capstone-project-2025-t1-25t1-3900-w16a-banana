@@ -7,7 +7,7 @@ import useToast from "../hooks/useToast";
 import capitalize from "capitalize";
 import isEmail from "validator/lib/isEmail";
 import axios from "axios";
-import { BACKEND } from "./constants/backend";
+import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 
 export default function Login() {
