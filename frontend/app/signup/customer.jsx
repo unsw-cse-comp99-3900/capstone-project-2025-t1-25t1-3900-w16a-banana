@@ -61,7 +61,7 @@ export default function CustomerSignup() {
       const response = await axios.post(url, form, config);
       showToast("Registration successful!", "success");
       login(response.data);
-      router.push("/dashboard");
+      router.push("/customer");
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
       showToast(errorMessage, "error");

@@ -3,6 +3,7 @@ import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { Button, Text, IconButton } from "react-native-paper";
 import useToast from "../../hooks/useToast";
+import useAuth from "../../hooks/useAuth";
 import PersonalInfoForm from "../../components/PersonalInfoForm";
 import ImageUploadForm from "../../components/ImageUploadForm";
 import { BACKEND } from "../constants/backend";
@@ -12,6 +13,7 @@ import axios from "axios";
 export default function DriverSignup() {
   const router = useRouter();
   const { showToast } = useToast();
+  const { login } = useAuth();
 
   const [form, setForm] = useState({
     firstName: "",
@@ -26,192 +28,75 @@ export default function DriverSignup() {
     registrationImage: null
   });
 
-  // const handleSubmit = async () => {
-  //   // All fields should be filled
-  //   for (const key in form) {
-  //     if (!form[key]) {
-  //       showToast('Please fill all fields before submission.', 'error');
-  //       console.log("key", key);
-  //       return;
-  //     }
-  //   }
-  
-  //   // Check if images are uploaded
-  //   if (!form.licenseImage) {
-  //     showToast("Please upload your license image", "error");
-  //     return;
-  //   }
-  
-  //   if (!form.registrationImage) {
-  //     showToast("Please upload your car registration paper image", "error");
-  //     return;
-  //   }
-  
-  //   // Password validation
-  //   if (!isStrongPassword(form.password)) {
-  //     showToast("Please pick a stronger password.", "error");
-  //     return;
-  //   }
-  
-  //   if (form.password !== form.confirmPassword) {
-  //     showToast("Passwords do not match.", "error");
-  //     return;
-  //   }
-  
-  //   // Prepare URL with query parameters
-  //   const baseUrl = `${BACKEND}/driver/register`;
-
-  //   const queryParams = new URLSearchParams({
-  //     email: form.email,
-  //     password: form.password,
-  //     phone: form.phone,
-  //     first_name: form.firstName,
-  //     last_name: form.lastName,
-  //     license_number: form.licenseNumber,
-  //     car_plate: form.carPlate
-  //   });
-  
-  //   const url = `${baseUrl}?${queryParams.toString()}`;
-  
-  //   // Form data
-  //   const formData = new FormData();
-  //   // formData.append('license_image', form.licenseImage);
-  //   // formData.append('registration_paper', form.registrationImage);
-
-  //   // append the actual file object
-  //   formData.append('license_image', {
-  //     uri: form.licenseImage.uri,
-  //     type: 'image/jpeg',
-  //     name: 'license_image.jpg'
-  //   });
-
-  //   formData.append('registration_paper', {
-  //     uri: form.registrationImage.uri,
-  //     type: 'image/jpeg',
-  //     name: 'registration_paper.jpg'
-  //   });
-
-  //   const config = {
-  //     headers: {
-  //       'accept': 'application/json',
-  //     }
-  //   };
-
-  //   console.log("FormData before sending:", formData.get('license_image'));
-  //   console.log("FormData:", formData);
-  //   for (var pair of formData.entries()) {
-  //     console.log(pair[0] + ", " + JSON.stringify(pair[1]));
-  //   }
-  //   try {
-  //     const response = await axios.post(url, formData, config);
-  //     showToast("Registration successful!", "success");
-  //     login(response.data);
-  //     router.push("/dashboard");
-  //   } catch (error) {
-  //     console.log(error);
-  //     const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
-  //     showToast(errorMessage, "error");
-  //   }
-  // };
-
   const handleSubmit = async () => {
-    // All fields should be filled
+    // Validate required fields
     for (const key in form) {
       if (!form[key]) {
-        showToast('Please fill all fields before submission.', 'error');
-        console.log("key", key);
+        showToast("Please fill all fields.", "error");
         return;
       }
     }
   
-    // Check if images are uploaded
-    if (!form.licenseImage) {
-      showToast("Please upload your license image", "error");
+    // Ensure images are uploaded
+    if (!form.licenseImage || !form.registrationImage) {
+      showToast("Please upload both images.", "error");
       return;
     }
-    
-    if (!form.registrationImage) {
-      showToast("Please upload your car registration paper image", "error");
-      return;
-    }
-  
-    // Password validation
+
+    // Password needs to be strong
     if (!isStrongPassword(form.password)) {
-      showToast("Please pick a stronger password.", "error");
+      showToast("Password is not strong enough.", "error");
       return;
     }
-    
+
+    // Passwords must match
     if (form.password !== form.confirmPassword) {
       showToast("Passwords do not match.", "error");
       return;
     }
-  
-    // Prepare URL with query parameters
-    const baseUrl = `${BACKEND}/driver/register`;
-    const queryParams = new URLSearchParams({
-      email: form.email,
-      password: form.password,
-      phone: form.phone,
-      first_name: form.firstName,
-      last_name: form.lastName,
-      license_number: form.licenseNumber,
-      car_plate: form.carPlate
-    });
-    
-    const url = `${baseUrl}?${queryParams.toString()}`;
-  
-    // Form data
-    const formData = new FormData();
-    
-    // Create file objects from URIs
-    const licenseImageName = form.licenseImage.split('/').pop();
-    const licenseImageType = licenseImageName.endsWith('.png') ? 'image/png' : 
-                             licenseImageName.endsWith('.jpg') || licenseImageName.endsWith('.jpeg') ? 'image/jpeg' : 
-                             'image/jpg';
-    
-    const registrationImageName = form.registrationImage.split('/').pop();
-    const registrationImageType = registrationImageName.endsWith('.png') ? 'image/png' : 
-                                  registrationImageName.endsWith('.jpg') || registrationImageName.endsWith('.jpeg') ? 'image/jpeg' : 
-                                  'image/jpg';
-    
-    // Append files to form data with proper format
-    formData.append('license_image', {
-      uri: form.licenseImage,
-      name: licenseImageName,
-      type: licenseImageType
-    });
-    
-    formData.append('registration_paper', {
-      uri: form.registrationImage,
-      name: registrationImageName,
-      type: registrationImageType
-    });
-  
-    const config = {
-      headers: {
-        'accept': 'application/json',
-        'Content-Type': 'multipart/form-data'
-      }
-    };
 
-    console.log("License Image:", form.licenseImage);
-    console.log("Registration Paper:", form.registrationImage);
-    
-  
     try {
-      console.log("Submitting form data:", formData);
-      const response = await axios.post(url, formData, config);
+      // Convert the URI to a blod
+      const licenseImageResponse = await fetch(form.licenseImage);
+      const licenseImageBlob = await licenseImageResponse.blob();
+  
+      const registrationImageResponse = await fetch(form.registrationImage);
+      const registrationImageBlob = await registrationImageResponse.blob();
+  
+      // Create form data
+      const formData = new FormData();
+  
+      // Append images to form data, add the third parameter to make sure it is a file
+      formData.append("license_image", licenseImageBlob, "license.jpg");
+      formData.append("registration_paper", registrationImageBlob, "registration.jpg");
+  
+      // Append other form data
+      formData.append("email", form.email);
+      formData.append("password", form.password);
+      formData.append("phone", form.phone);
+      formData.append("first_name", form.firstName);
+      formData.append("last_name", form.lastName);
+      formData.append("license_number", form.licenseNumber);
+      formData.append("car_plate", form.carPlate);
+
+      const config = {
+        headers: {
+          Accept: "application/json",
+        }
+      }
+
+      // make the API call
+      const response = await axios.post(`${BACKEND}/driver/register`, formData, config);
+
       showToast("Registration successful!", "success");
       login(response.data);
-      router.push("/dashboard");
+      router.push("/driver");
     } catch (error) {
-      console.log("Error submitting form:", error);
-      const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
-      showToast(errorMessage, "error");
+      console.error("Error:", error);
+      showToast(error.response?.data?.message || "An error occurred.", "error");
     }
   };
-
-
+  
   const handleClear = () => {
     setForm({
       firstName: "",
