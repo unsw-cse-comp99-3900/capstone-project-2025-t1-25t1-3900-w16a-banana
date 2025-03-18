@@ -155,7 +155,7 @@ class UpdateProfile(Resource):
             require_approval = True
         
         if require_approval:
-            driver.status = RegistrationStatus.PENDING
+            driver.registration_status = RegistrationStatus.PENDING
         
         db.session.commit()
         return driver.dict(), 200
