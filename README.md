@@ -4,7 +4,7 @@
 
 With the growing demand for on-demand food delivery, restaurants are seeking efficient solutions to connect with customers and manage orders seamlessly. Many current food delivery platforms face challenges such as inefficient order management, poor communication between customers, restaurants, and delivery drivers. To address these issues, this project proposes a food delivery mobile application that provides a seamless and user-friendly experience for all participants. We will present our solutions to improve order efficiency, enhance communication, and optimize the delivery process, ensuring a smooth and reliable service for both businesses and customers. In addition, we integrate the ChatGPT API. We encourage restaurant managers to build their own chatbots for automated customer interaction during ordering and menu recommendations. Furthermore, customers can also use the chatbots to get quick responses to common queries, such as order status and payment inquiries.
 
-## 2. Docker Setup (for week 5, week 8, week 10 demo)
+## 2. Demo Setup (for week 5, week 8, week 10 demo)
 
 1. **Clone the repository**
 
@@ -18,13 +18,29 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
     Open **Docker Desktop** on your machine.
 
-3. **Build and start all services**
+3. (Only for Windows) The backend has a shell script [backend/entrypoint.sh](./backend/entrypoint.sh) that may be converted to CRLF line endings when on Windows. So we need to convert it to LF line endings before running the docker service. 
+
+    ```sh
+    # open a git bash terminal(!!) at the project root folder.
+
+    dos2unix backend/entrypoint.sh
+
+    # the terminal will show:
+    # dos2unix: converting file backend/entrypoint.sh to Unix format ...
+    # then you can close the terminal
+    ```
+
+4. **Build and start all services**
 
     ```sh
     docker-compose up --force-recreate --build
     ```
 
-    Visit either [http://localhost:8081](http://localhost:8081) or [http://localhost:19006](http://localhost:19006) to view the frontend.
+    Visit [http://localhost:19006](http://localhost:19006) to use the app.
+
+5. Default data
+
+    The project has default data for all user types. Please view [demo-materials/README.md](./demo-materials/README.md) for more information. And we have also prepared some images for you to upload during using the app. They are in the [demo-materials folder](./demo-materials/).
 
 ## 3. Backend Setup & Testing
 ## 3-1A. Setup Server (Local)
