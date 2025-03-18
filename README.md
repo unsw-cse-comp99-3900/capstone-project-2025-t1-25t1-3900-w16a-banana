@@ -4,7 +4,7 @@
 
 With the growing demand for on-demand food delivery, restaurants are seeking efficient solutions to connect with customers and manage orders seamlessly. Many current food delivery platforms face challenges such as inefficient order management, poor communication between customers, restaurants, and delivery drivers. To address these issues, this project proposes a food delivery mobile application that provides a seamless and user-friendly experience for all participants. We will present our solutions to improve order efficiency, enhance communication, and optimize the delivery process, ensuring a smooth and reliable service for both businesses and customers. In addition, we integrate the ChatGPT API. We encourage restaurant managers to build their own chatbots for automated customer interaction during ordering and menu recommendations. Furthermore, customers can also use the chatbots to get quick responses to common queries, such as order status and payment inquiries.
 
-## 2. Docker Setup (for week 5, week 8, week 10 demo)
+## 2. Demo Setup (for week 5, week 8, week 10 demo)
 
 1. **Clone the repository**
 
@@ -25,6 +25,40 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
     ```
 
     Visit either [http://localhost:8081](http://localhost:8081) or [http://localhost:19006](http://localhost:19006) to view the frontend.
+
+4. Default data
+
+    The project has default data for all user types. You can use the following credentials to login. Only the first 2 records per user type are shown here. 
+
+    * **Admin**  
+
+        | Name        | Email               | Password   | User Type  |
+        |------------|--------------------|------------|------------|
+        | Tom Smith  | admin@example.com   | Abcd1234!  | Admin      |
+
+    * **Customers**  
+
+        | Name          | Email             | Password   | User Type  |
+        |--------------|------------------|------------|------------|
+        | John Doe     | john@example.com  | Abcd1234!  | Customer   |
+        | Jane Smith   | jane@example.com  | Abcd1234!  | Customer   |
+
+
+    * **Drivers**  
+
+        | Name           | Email               | Password   | User Type  |
+        |---------------|--------------------|------------|------------|
+        | Alex Johnson  | alex@example.com    | Abcd1234!  | Driver     |
+        | Sophia Wilson | sophia@example.com  | Abcd1234!  | Driver     |
+
+    * **Restaurants**  
+
+        | Name            | Email                  | Password   | User Type  |
+        |----------------|------------------------|------------|------------|
+        | Sydney Eats    | sydneyeats@example.com  | Abcd1234!  | Restaurant |
+        | Harbour Grill  | harbourgrill@example.com | Abcd1234!  | Restaurant |
+
+5. We have also prepared some demo materials (like license image, registration paper, restaurant image) in the [demo-materials folder](./demo-materials/) for you to upload during using the app. 
 
 ## 3. Backend Setup & Testing
 ## 3-1A. Setup Server (Local)
