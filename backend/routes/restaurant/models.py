@@ -35,29 +35,25 @@ register_res = api.model("Admin Register Reponse", {
 # the non-approval needed attributes can be updated without admin approval,
 # and approval needed attributes (only for driver and restaurant) need admin approval.
 
-# all customer attributes can be updated without admin approval
-
 # for restaurant:
 # non approval needed: email, password, phone, url_img1, url_img2, url_img3, description
 # approval needed: name, address, suburb, state, postcode, abn
+
+# The request parse for the non-approval and approval needed attributes are grouped together. 
+# The backend route will determine whether to turn the registration status to PENDING or not. 
 """
 
-"""Response/Request for restaurant update non approval"""
-update_non_approval_req_parser = reqparse.RequestParser()
-update_non_approval_req_parser.add_argument('email', type=str, required=True, help="Email is required")
-update_non_approval_req_parser.add_argument('password', type=str, required=True, help="Password is required")
-update_non_approval_req_parser.add_argument('phone', type=str, required=True, help="Phone number (04xxxxxxxx)")
-update_non_approval_req_parser.add_argument('description', type=str, required=True, help="Restaurant description")
-update_non_approval_req_parser.add_argument('image1', type=FileStorage, location='files', required=False, help="First image")
-update_non_approval_req_parser.add_argument('image2', type=FileStorage, location='files', required=False, help="Second image")
-update_non_approval_req_parser.add_argument('image3', type=FileStorage, location='files', required=False, help="Third image")
-
-"""Response/Request for restaurant update approval"""
-update_approval_req = api.model('RestaurantModel', {
-    'name': fields.String(required=True, description='Name'),
-    'address': fields.String(required=True, description='Address'),
-    'suburb': fields.String(required=True, description='Suburb'),
-    'state': fields.String(required=True, description='State'),
-    'postcode': fields.String(required=True, description='Postcode (4 digits)'),
-    'abn': fields.String(required=True, description='ABN (11 digits)')
-})
+update_req_parser = reqparse.RequestParser()
+update_req_parser.add_argument('name', type=str, required=False, help="Name is required")
+update_req_parser.add_argument('email', type=str, required=False, help="Email is required")
+update_req_parser.add_argument('password', type=str, required=False, help="Password is required")
+update_req_parser.add_argument('phone', type=str, required=False, help="Phone number (04xxxxxxxx)")
+update_req_parser.add_argument('address', type=str, required=False, help="Address")
+update_req_parser.add_argument('suburb', type=str, required=False, help="Suburb")
+update_req_parser.add_argument('state', type=str, required=False, help="State (ACT, NSW, NT, QLD, SA, TAS, VIC, WA)")
+update_req_parser.add_argument('postcode', type=str, required=False, help="Postcode (4 digits)")
+update_req_parser.add_argument('abn', type=str, required=False, help="ABN (11 digits)")
+update_req_parser.add_argument('description', type=str, required=False, help="Restaurant description")
+update_req_parser.add_argument('image1', type=FileStorage, location='files', required=False, help="First image")
+update_req_parser.add_argument('image2', type=FileStorage, location='files', required=False, help="Second image")
+update_req_parser.add_argument('image3', type=FileStorage, location='files', required=False, help="Third image")

@@ -93,91 +93,103 @@ class RegisterRestaurant(Resource):
         # the application status will be pending
         return {'message': 'Registration Success'}, 200
 
-@api.route('/update/non-approval')
-class RestaurantNonApprovalUpdate(Resource):
-    @api.expect(auth_header, update_non_approval_req_parser)
+
+@api.route("/update")
+class RestaurantUpdate(Resource):
+    @api.expect(auth_header, update_req_parser)
     @api.response(200, "Success")
     @api.response(400, "Bad Request", error_res)
     @api.response(400, "Unauthorised", error_res)
     def put(self):
-        """Restaurant updates profile (email, password, phone, images, description) - No admin approval needed"""
-
-        args = update_non_approval_req_parser.parse_args()
-        
-        # Authenticate restaurant
-        restaurant = check_token(auth_header, Restaurant)
-        if not restaurant:
-            return res_error(401)
-
-        # Validate phone number
-        if args['phone']:
-            if not is_valid_phone(args['phone']):
-                return res_error(400, 'Invalid phone number')
-            restaurant.phone = args['phone']
-
-        # Validate unique email
-        if args['email']:
-            is_email_exist = Restaurant.query.filter(
-                Restaurant.email == args['email'],
-                Restaurant.restaurant_id != restaurant.restaurant_id
-            ).first()
-            if is_email_exist:
-                return res_error(400, 'Email already exists')
-            restaurant.email = args['email']
-
-        # Process and save image uploads
-        if args['image1']:
-            url = save_image(args['image1'])
-            if not url:
-                return res_error(400, 'Unsupported Image File')
-            restaurant.url_img1 = url
-        if args['image2']:
-            url = save_image(args['image2'])
-            if not url:
-                return res_error(400, 'Unsupported Image File')
-            restaurant.url_img2 = url
-        if args['image3']:
-            url = save_image(args['image3'])
-            if not url:
-                return res_error(400, 'Unsupported Image File')
-            restaurant.url_img3 = url
-
-        db.session.commit()
-        return restaurant.dict(), 200
-
-@api.route('/update/require-approval')
-class RestaurantUpdateRequireApproval(Resource):
-    @api.expect(auth_header, update_approval_req)
-    @api.response(200, "Success")
-    @api.response(400, "Bad Request", error_res)
-    @api.response(400, "Unauthorised", error_res)
-    def put(self):
-        """Restaurant updates his profile, admin approval needed"""
+        """ Restaurant update all profiles using this route, the backend may change registration status to PENDING """
 
         restaurant = check_token(auth_header, Restaurant)
         if not restaurant:
             return res_error(401)
 
         # data
-        data = request.json
+        args = update_req_parser.parse_args()
 
-        if data['abn']:
-            if not is_valid_abn(data['abn']):
-                return res_error(400, 'Invalid ABN')
-            restaurant.abn = data['abn']
+        # track the sensitive data update
+        require_approval = False
 
-        if data['postcode']:
-            if not is_valid_postcode(data['postcode']):
-                return res_error(400, 'Invalid postcode')
-            restaurant.postcode = data['postcode']
-
-        if data['state']:
-            if not is_valid_state(data['state']):
-                return res_error(400, 'Invalid state')
-            restaurant.state = data['state']
+        if args.get('name'):
+            restaurant.name = args['name']
+            require_approval = True
         
-        # set to pending
-        restaurant.status = RegistrationStatus.PENDING
-        db.session.commit()
+        if args.get("email"):
+            is_email_exist = Restaurant.query.filter_by(email=args['email']) \
+                .filter(Restaurant.restaurant_id != restaurant.restaurant_id).first()
+            if is_email_exist:
+                return res_error(400, 'Email already exists')    
+            restaurant.email = args["email"]
+        
+        if args.get("password"):
+            is_password_okay, description = is_password_safe(args['password'])
+            if not is_password_okay:
+                return res_error(400, description)
+            restaurant.password = args["password"]
+        
+        if args.get("phone"):
+            if not is_valid_phone(args['phone']):
+                return res_error(400, 'Invalid phone number')
+            restaurant.phone = args["phone"]
 
+        if args.get("address"):
+            restaurant.address = args["address"]
+            require_approval = True
+        
+        if args.get("suburb"):
+            restaurant.suburb = args["suburb"]
+            require_approval = True
+        
+        if args.get("state"):
+            if not is_valid_state(args['state']):
+                return res_error(400, 'Invalid state')
+            restaurant.state = args["state"]
+            require_approval = True
+        
+        if args.get("postcode"):
+            if not is_valid_postcode(args['postcode']):
+                return res_error(400, 'Invalid postcode')
+            restaurant.postcode = args["postcode"]
+            require_approval = True
+        
+        if args.get("abn"):
+            if not is_valid_abn(args['abn']):
+                return res_error(400, 'Invalid ABN')
+            restaurant.abn = args["abn"]
+            require_approval = True
+
+        if args.get("description"):
+            restaurant.description = args["description"]
+            require_approval = False
+        
+        # process images if given
+        if args.get("image1"):
+            url = save_image(args['image1'])
+            if not url:
+                return res_error(400, 'Unsupported Image File')
+            restaurant.url_img1 = url
+            require_approval = False
+    
+        if args.get("image2"):
+            url = save_image(args['image2'])
+            if not url:
+                return res_error(400, 'Unsupported Image File')
+            restaurant.url_img2 = url
+            require_approval = False
+        
+        if args.get("image3"):
+            url = save_image(args['image3'])
+            if not url:
+                return res_error(400, 'Unsupported Image File')
+            restaurant.url_img3 = url
+            require_approval = False
+        
+        # track the require-approval fields
+        if require_approval:
+            restaurant.status = RegistrationStatus.PENDING
+        
+        db.session.commit()
         return restaurant.dict(), 200
