@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 
 from settings import Config 
@@ -15,6 +15,12 @@ api.init_app(app)
 
 # cors
 CORS(app)
+
+# send static file from the folder
+@app.route('/uploads/<path:filename>')
+def send_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 
 # run the app
 if __name__ == '__main__':
