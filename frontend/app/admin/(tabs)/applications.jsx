@@ -49,32 +49,34 @@ export default function Applications() {
 
   return (
     <MyScrollView>
-      <Text variant="headlineMedium" style={{ marginBottom: 10 }}>
+      <Text variant="headlineMedium" style={{ marginBottom: 20 }}>
         Pending Applications
       </Text>
 
       {/* Restaurant Applications Table with Icon */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10, gap: 10 }}>
         <Icon source="silverware-fork-knife" size={24} color="#4fabc9"/>
-        <Text variant="titleMedium">Pending Restaurants</Text>
+        <Text variant="titleMedium">{`Pending Restaurant Applications (Count ${restaurantApplications.length})`}</Text>
       </View>
       <ApplicationTable
         data={restaurantApplications}
         columns={["Name", "ABN", "Suburb", "Postcode"]}
         rowKeys={["name", "abn", "suburb", "postcode"]}
         userType="restaurant"
+        forceReload={fetchApplications}
       />
 
       {/* Driver Applications Table with Icon */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10, marginTop: 20, gap: 10 }}>
         <Icon source="car" size={24} color="#4fabc9"/>
-        <Text variant="titleMedium">Pending Drivers</Text>
+        <Text variant="titleMedium">{`Pending Driver Applications (Count ${driverApplications.length})`}</Text>
       </View>
       <ApplicationTable
         data={driverApplications}
         columns={["First Name", "Last Name", "Driver License"]}
         rowKeys={["first_name", "last_name", "license_number"]}
         userType="driver"
+        forceReload={fetchApplications}
       />
     </MyScrollView>
   );
