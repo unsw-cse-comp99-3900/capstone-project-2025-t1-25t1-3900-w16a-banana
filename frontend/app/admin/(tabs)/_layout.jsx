@@ -8,7 +8,7 @@ const tabs = [
   { name: "users", title: "Users", icon: "account-group", visible: true },
   { name: "profile", title: "Profile", icon: "account", visible: true },
   // hide favourites from the tab bar
-  // { name: "EditProfile", title: "Edit Profile", icon: "map-marker", visible: false },
+  { name: "EditProfile", title: "Edit Profile", icon: "map-marker", visible: false },
 ];
 
 export default function TabLayout() {
