@@ -29,6 +29,8 @@ export const AuthProvider = ({ children }) => {
       setContextProfile(profile);
     } catch (error) {
       console.error("Error saving profile:", error);
+    } finally {
+      setIsContextLoading(false);
     }
   };
 
@@ -38,6 +40,8 @@ export const AuthProvider = ({ children }) => {
       setContextProfile(null);
     } catch (error) {
       console.error("Error removing profile:", error);
+    } finally {
+      setIsContextLoading(false);
     }
   };
 
