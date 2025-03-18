@@ -90,7 +90,7 @@ export default function DriverSignup() {
 
       showToast("Registration successful!", "success");
       login(response.data);
-      router.push("/driver");
+      router.navigate("/driver");
     } catch (error) {
       console.error("Error:", error);
       showToast(error.response?.data?.message || "An error occurred.", "error");

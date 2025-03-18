@@ -122,7 +122,7 @@ export default function Restaurant () {
       // Success
       showToast("Restaurant registration successful!", "success");
       login(response.data);
-      router.push("/restaurant");
+      router.navigate("/restaurant");
     } catch (error) {
       console.error("Error:", error);
       showToast(error.response?.data?.message || "An error occurred during registration.", "error");
