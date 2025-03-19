@@ -4,35 +4,35 @@ This folder contains demo materials prepared for you to upload during using the 
 
 ## Default Accounts to Login
 
-    There are also some default accounts and data in the database. 
+There are also some default accounts and data in the database. 
 
-    * **Admin**  
+* **Admin**  
 
-        | Name        | Email               | Password   | User Type  |
-        |------------|--------------------|------------|------------|
-        | Tom Smith  | admin@example.com   | Abcd1234!  | Admin      |
+    | Name        | Email               | Password   | User Type  |
+    |------------|--------------------|------------|------------|
+    | Tom Smith  | admin@example.com   | Abcd1234!  | Admin      |
 
-    * **Customers**  
+* **Customers**  
 
-        | Name          | Email             | Password   | User Type  |
-        |--------------|------------------|------------|------------|
-        | John Doe     | john@example.com  | Abcd1234!  | Customer   |
-        | Jane Smith   | jane@example.com  | Abcd1234!  | Customer   |
+    | Name          | Email             | Password   | User Type  |
+    |--------------|------------------|------------|------------|
+    | John Doe     | john@example.com  | Abcd1234!  | Customer   |
+    | Jane Smith   | jane@example.com  | Abcd1234!  | Customer   |
 
 
-    * **Drivers**  
+* **Drivers**  
 
-        | Name           | Email               | Password   | User Type  |
-        |---------------|--------------------|------------|------------|
-        | Alex Johnson  | alex@example.com    | Abcd1234!  | Driver     |
-        | Sophia Wilson | sophia@example.com  | Abcd1234!  | Driver     |
+    | Name           | Email               | Password   | User Type  |
+    |---------------|--------------------|------------|------------|
+    | Alex Johnson  | alex@example.com    | Abcd1234!  | Driver     |
+    | Sophia Wilson | sophia@example.com  | Abcd1234!  | Driver     |
 
-    * **Restaurants**  
+* **Restaurants**  
 
-        | Name            | Email                  | Password   | User Type  |
-        |----------------|------------------------|------------|------------|
-        | Sydney Eats    | sydneyeats@example.com  | Abcd1234!  | Restaurant |
-        | Harbour Grill  | harbourgrill@example.com | Abcd1234!  | Restaurant |
+    | Name            | Email                  | Password   | User Type  |
+    |----------------|------------------------|------------|------------|
+    | Sydney Eats    | sydneyeats@example.com  | Abcd1234!  | Restaurant |
+    | Harbour Grill  | harbourgrill@example.com | Abcd1234!  | Restaurant |
 
 ## New Accounts to Set up
 
