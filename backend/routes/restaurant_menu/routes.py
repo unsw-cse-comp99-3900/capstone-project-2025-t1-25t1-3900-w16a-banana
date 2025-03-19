@@ -5,9 +5,10 @@ import secrets
 from utils.db import db
 from utils.file import save_image
 from utils.check import *
-from utils.header import auth_header
+from utils.header import auth_header, get_token_from_header
 from utils.response import res_error
 from db_model import *
+from db_model.db_query import *
 from routes.restaurant_menu.models import *
 from routes.restaurant_menu.services import *
 
@@ -23,11 +24,11 @@ class MenuCategories(Resource):
     @api.response(400, "Unauthorised", error_res)
     def get(self):
         """Get all menu categories"""
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
         
-        categories = get_all_menu_categories(restaurant)
+        categories = get_all_menu_categories_from_restaurant(restaurant.restaurant_id)
         return {"categories": category.dict() for category in categories}, 200
 
 
@@ -40,12 +41,12 @@ class NewMenuCategory(Resource):
     def post(self):
         """Restaurant creates a new menu category"""
 
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 
         name = request.json['name']
-        if get_menu_category_by_name(restaurant, name):
+        if get_menu_category_from_restaurant_by_name(restaurant.restaurant_id, name):
             return res_error(400, 'Category already exists')
 
         category = MenuCategory(restaurant_id=restaurant.restaurant_id, name=name)
@@ -64,16 +65,20 @@ class MenuCategoryUpdate(Resource):
     def put(self, category_id):
         """Restaurant updates an existing menu category name"""
 
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 
-        category = get_menu_category_by_id(restaurant, category_id)
+        # Check Category
+        category = get_menu_category_from_restaurant_by_id(
+            restaurant_id = restaurant.restaurant_id,
+            category_id = category_id
+        )
         if not category:
-            return res_error(404, 'Category not found')
+            return res_error(404, "Category not found")
 
-        new_name = request.get_json['name']
-        if get_menu_category_by_name(restaurant, new_name):
+        new_name: str = request.get_json['name']
+        if get_menu_category_from_restaurant_by_name(restaurant.restaurant_id, new_name):
             return res_error(400, 'Category name already exists')
 
         category.name = new_name
@@ -88,13 +93,17 @@ class MenuCategoryDelete(Resource):
     def delete(self, category_id):
         """Restaurant deletes an existing menu category"""
 
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 
-        category = get_menu_category_by_id(restaurant, category_id)
+        # Check Category
+        category = get_menu_category_from_restaurant_by_id(
+            restaurant_id = restaurant.restaurant_id,
+            category_id = category_id
+        )
         if not category:
-            return res_error(404, 'Category not found')
+            return res_error(404, "Category not found")
 
         db.session.delete(category)
         db.session.commit()
@@ -108,12 +117,12 @@ class GetAllItemsInRestaurant(Resource):
     def get(self):
         """Get all items in category"""
         # Check restaurant
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 
         # Get items in the restaurant
-        items = get_all_menu_items_by_restaurant(restaurant=restaurant)
+        items = get_all_menu_items_from_restaurant(restaurant.restaurant_id)
 
         return {'items': item.dict() for item in items}, 200
 
@@ -125,15 +134,20 @@ class GetAllItemsInCategory(Resource):
     def get(self, category_id):
         """Get all items in category"""
         # Check restaurant
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
+        
         # Check Category
-        category = get_menu_category_by_id(restaurant, category_id)
+        category = get_menu_category_from_restaurant_by_id(
+            restaurant_id = restaurant.restaurant_id,
+            category_id = category_id
+        )
         if not category:
-            return res_error(404, 'Category not found')
+            return res_error(404, "Category not found")
+
         # Get items in the category
-        items = get_all_menu_items_by_category(menuCategory=category)
+        items = get_all_menu_items_from_category(category.category_id)
 
         return {'items': item.dict() for item in items}, 200
 
@@ -148,18 +162,24 @@ class NewMenuItem(Resource):
         """Restaurant creates a new menu item under a category"""
 
         # Authentication
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 
         args = post_item_req_parser.parse_args()
 
-        category = get_menu_category_by_id(restaurant, category_id)
+        category = get_menu_category_from_restaurant_by_id(
+            restaurant_id = restaurant.restaurant_id,
+            category_id = category_id
+        )
         if not category:
             return res_error(404, "Category not found")
 
         # Validate duplicate item names
-        if get_menu_item_by_restaurant_item_name(restaurant, args['name']):
+        if get_menu_item_from_restaurant_by_name(
+            restaurant_id = restaurant.restaurant_id,
+            name = args['name']
+        ):
             return res_error(400, "Item name already exists")
         
         if args['is_available'] != 'true' and\
@@ -197,15 +217,18 @@ class ManageMenuItem(Resource):
     def put(self, item_id):
         """Update existing menu item attributes (can update any provided fields)"""
 
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
         
         # Get specific item
-        item = get_menu_item_by_restaurant_item_id(restaurant=restaurant, item_id=item_id)
+        item = get_menu_item_from_restaurant_by_id(
+            restaurant_id = restaurant.restaurant_id,
+            id = item_id
+        )
         if not item:
             return res_error(404, 'Menu item not found')
-
+        
         args = update_item_req_parser.parse_args()
 
         # Update Image. Check If files saved
@@ -217,9 +240,9 @@ class ManageMenuItem(Resource):
 
         # Update Name. Check if name conflicts
         if args['name']:
-            if get_menu_item_by_restaurant_item_name(
-                restaurant=restaurant,
-                item_name=args['name']
+            if get_menu_item_from_restaurant_by_name(
+                restaurant_id = restaurant.restaurant_id,
+                name = args['name']
             ):
                 return res_error(400, "Duplicate Item Name")
             item.name = args['name']
@@ -249,11 +272,15 @@ class DeleteMenuItem(Resource):
     def delete(self, item_id):
         """Delete a menu item permenantly"""
 
-        restaurant = get_restaurant_by_header(auth_header)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 
-        item = get_menu_item_by_restaurant_item_id(restaurant=restaurant, item_id=item_id)
+        # Get specific item
+        item = get_menu_item_from_restaurant_by_id(
+            restaurant_id = restaurant.restaurant_id,
+            id = item_id
+        )
 
         if not item:
             return res_error(404, 'Menu item not found')

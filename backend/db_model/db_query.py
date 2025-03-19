@@ -71,28 +71,46 @@ def get_menu_item_from_category_by_name(category_id: int, name: str) -> Optional
     ).first()
 
 def get_menu_item_from_restaurant_by_name(restaurant_id: int, name: str) -> Optional[MenuItem]:
+    """Find Menu Item from given Restaurant with Given Name"""
     return MenuItem.query.join(MenuCategory).filter(
             MenuCategory.restaurant_id == restaurant_id,
-            MenuItem.item_id == name
+            MenuItem.name == name
+    ).first()
+
+def get_menu_item_from_restaurant_by_id(restaurant_id: int, id: int) -> Optional[MenuItem]:
+    """Find Menu Item from given Restaurant with Given ID"""
+    return MenuItem.query.join(MenuCategory).filter(
+            MenuCategory.restaurant_id == restaurant_id,
+            MenuItem.item_id == id
     ).first()
 
 "---------------------------------------------------------"
 """Functions realted to Menu Categories"""
 "---------------------------------------------------------"
 def get_menu_category_by_id(id: int) -> Optional[MenuCategory]:
+    """Find Menu Category given ID"""
     return MenuCategory.query.filter_by(category_id=id).first()
 
 
 def get_all_menu_categories_from_restaurant(restaurant_id: int) -> List[MenuCategory]:
+    """Find All Menu Category from given Restaurant"""
     return MenuCategory.query.filter_by(
         restaurant_id=restaurant_id
     ).all()
 
 
 def get_menu_category_from_restaurant_by_name(restaurant_id: int, category_name: str) -> Optional[MenuCategory]:
+    """Find Menu Category from given Restaurant with given Name"""
     return MenuCategory.query.filter_by(
         restaurant_id = restaurant_id,
         name = category_name
+    ).first()
+
+def get_menu_category_from_restaurant_by_id(restaurant_id: int, category_id: int) -> Optional[MenuCategory]:
+    """Find Menu Category from given Restaurant with given ID"""
+    return MenuCategory.query.filter_by(
+        restaurant_id = restaurant_id,
+        category_id = category_id
     ).first()
 
 
