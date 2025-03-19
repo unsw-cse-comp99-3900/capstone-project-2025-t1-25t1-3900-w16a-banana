@@ -18,16 +18,20 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
     Open **Docker Desktop** on your machine.
 
-3. (Only for Windows) The backend has a shell script [backend/entrypoint.sh](./backend/entrypoint.sh) that may be converted to CRLF line endings when on Windows. So we need to convert it to LF line endings before running the docker service. 
+3. (Only for Windows) The backend has a shell script [backend/entrypoint.sh](./backend/entrypoint.sh) that may be converted to CRLF line endings when on Windows. So we need to convert it to LF line endings before running the docker service. We also need to `chmod +x` on the file to make sure it can run.
 
     ```sh
     # open a git bash terminal(!!) at the project root folder.
 
     dos2unix backend/entrypoint.sh
-
+    
     # the terminal will show:
     # dos2unix: converting file backend/entrypoint.sh to Unix format ...
-    # then you can close the terminal
+    # then apply the chmod +x line:
+
+    chmod +x backend/entrypoint.sh
+
+    # this command will not return any results.
     ```
 
 4. **Build and start all services**
