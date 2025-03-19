@@ -5,9 +5,10 @@ import secrets
 from utils.db import db
 from utils.file import save_file
 from utils.check import *
-from utils.header import auth_header, check_token
+from utils.header import auth_header, check_token, get_token_from_header
 from utils.response import res_error
 from db_model import *
+from db_model.db_query import *
 from routes.customer.models import *
 
 @api.route('/register')
@@ -72,7 +73,7 @@ class CustomerUpdate(Resource):
     def put(self):
         """Customer updates his profile, no admin approval needed"""
 
-        customer = check_token(auth_header, Customer)
+        customer = get_customer_by_token(get_token_from_header(auth_header))
         if not customer:
             return res_error(401)
 
@@ -143,30 +144,44 @@ class CustomerUpdate(Resource):
 @api.route('/cart')
 class ShopItems(Resource):
     @api.expect(auth_header)
-    @api.response(200, "Success")
+    @api.response(200, "Success", cart_item_get_res)
     @api.response(400, "Bad Request", error_res)
     @api.response(401, "Unauthorised", error_res)
     def get(self):
         """Get All Items' ID in the shopping cart"""
         # Check customer token
-        customer = check_token(auth_header, Customer)
+        customer = get_customer_by_token(get_token_from_header(auth_header))
         if not customer:
             return res_error(401)
 
         # Get all items in the cart
-        cart_items = CartItem.query.filter_by(customer_id=customer.id)
-        item_id = []
+        cart_items = get_all_cart_item_by_customer_id(customer.customer_id)
+        items = []
         for cart_item in cart_items:
-            item_id += cart_item.item_id
+            restaurant = get_restaurant_by_menu_item_id(cart_item.item_id)
+            menu = get_menu_item_by_id(cart_item.item_id)
+            items.append({
+                'item_id': menu.item_id,
+                'item_name': menu.name,
+                'restaurant_id': restaurant.restaurant_id,
+                'restaurant_name': restaurant.name,
+                'description': menu.description,
+                'price': menu.price,
+                'quantity': cart_item.quantity,
+                'total_price': cart_item.quantity * menu.price,
+                'url_img': menu.url_img
+            })
 
-        return {item_id: item_id}, 200
+        return {'items': items}, 200
     
     ## TODO: Add response model and response
     @api.expect(auth_header, cart_item_update_req)
+    @api.response(200, "Success", cart_item_update_res)
+    @api.response(400, "Bad Request", error_res)
+    @api.response(401, "Unauthorised", error_res)
     def put(self):
         """Update/Add/Remove item in the cart. Quantity 0 will remove the item."""
-        # Check customer token
-        customer = check_token(auth_header, Customer)
+        customer = get_customer_by_token(get_token_from_header(auth_header))
         if not customer:
             return res_error(401)
 
@@ -181,6 +196,7 @@ class ShopItems(Resource):
         # Check if item already exists
         cart_item = CartItem.query.filter_by(customer_id=customer.id, item_id=data['item_id']).first()
 
+        message = ""
         # If there is no same item, add one
         if not cart_item:
             new_cart_item = CartItem(
@@ -189,10 +205,15 @@ class ShopItems(Resource):
                 quantity=data['quantity']
             )
             db.session.add(new_cart_item)
+            message = "Item Added"
         # If the quantity is 0, delete the item
         elif data['quantity'] == 0:
             db.session.delete(cart_item)
+            message = "Item Deleted"
         # Otherwise, update the item
         else:
             cart_item.quantity = data['quantity']
+            message = "Item Updated"
         db.session.commit()
+
+        return {'message': message}, 200
