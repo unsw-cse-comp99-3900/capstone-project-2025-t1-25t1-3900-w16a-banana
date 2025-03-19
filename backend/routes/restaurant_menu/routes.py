@@ -24,12 +24,15 @@ class MenuCategories(Resource):
     @api.response(400, "Unauthorised", error_res)
     def get(self):
         """Get all menu categories"""
+        # Authenticate
         restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
-        
+
+        # Get every categories
         categories = get_all_menu_categories_from_restaurant(restaurant.restaurant_id)
-        return {"categories": category.dict() for category in categories}, 200
+
+        return {"categories": [category.dict() for category in categories]}, 200
 
 
 @api.route('/category/new')
@@ -40,22 +43,28 @@ class NewMenuCategory(Resource):
     @api.response(401, "Unauthorised", error_res)
     def post(self):
         """Restaurant creates a new menu category"""
-
+        # Authenticate
         restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 
         name = request.json['name']
+
+        # Check for duplicate name
         if get_menu_category_from_restaurant_by_name(restaurant.restaurant_id, name):
             return res_error(400, 'Category already exists')
-
-        category = MenuCategory(restaurant_id=restaurant.restaurant_id, name=name)
+        
+        # Make and commit new category
+        category = MenuCategory(
+            restaurant_id=restaurant.restaurant_id,
+            name=name
+        )
         db.session.add(category)
         db.session.commit()
         
         return category.dict(), 200
 
-@api.route('/category/update/<int:category_id>')
+@api.route('/category/<int:category_id>')
 class MenuCategoryUpdate(Resource):
     @api.expect(auth_header, update_menu_category_req)
     @api.response(200, "Success", menu_category_res)
@@ -65,6 +74,7 @@ class MenuCategoryUpdate(Resource):
     def put(self, category_id):
         """Restaurant updates an existing menu category name"""
 
+        # Authenticate
         restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
@@ -77,22 +87,23 @@ class MenuCategoryUpdate(Resource):
         if not category:
             return res_error(404, "Category not found")
 
-        new_name: str = request.get_json['name']
+        new_name = request.json['name']
+
+        # Check for duplicate name
         if get_menu_category_from_restaurant_by_name(restaurant.restaurant_id, new_name):
             return res_error(400, 'Category name already exists')
 
+        # Update and commit
         category.name = new_name
         db.session.commit()
 
         return category.dict(), 200
-
-
-@api.route('/category/delete/<int:category_id>')
-class MenuCategoryDelete(Resource):
+    
     @api.expect(auth_header)
     def delete(self, category_id):
         """Restaurant deletes an existing menu category"""
 
+        # Autheticate
         restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
@@ -105,8 +116,10 @@ class MenuCategoryDelete(Resource):
         if not category:
             return res_error(404, "Category not found")
 
+        # Update and commit
         db.session.delete(category)
         db.session.commit()
+
         return {'message': 'Category deleted successfully'}, 200
 
 
@@ -124,7 +137,7 @@ class GetAllItemsInRestaurant(Resource):
         # Get items in the restaurant
         items = get_all_menu_items_from_restaurant(restaurant.restaurant_id)
 
-        return {'items': item.dict() for item in items}, 200
+        return {'items': [item.dict() for item in items]}, 200
 
 
 @api.route('/items/<int:category_id>')
@@ -149,7 +162,7 @@ class GetAllItemsInCategory(Resource):
         # Get items in the category
         items = get_all_menu_items_from_category(category.category_id)
 
-        return {'items': item.dict() for item in items}, 200
+        return {'items': [item.dict() for item in items]}, 200
 
 @api.route('/item/new/<int:category_id>')
 class NewMenuItem(Resource):
@@ -161,13 +174,14 @@ class NewMenuItem(Resource):
     def post(self, category_id):
         """Restaurant creates a new menu item under a category"""
 
-        # Authentication
+        # Authenticate
         restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 
         args = post_item_req_parser.parse_args()
 
+        # Check category
         category = get_menu_category_from_restaurant_by_id(
             restaurant_id = restaurant.restaurant_id,
             category_id = category_id
@@ -175,13 +189,14 @@ class NewMenuItem(Resource):
         if not category:
             return res_error(404, "Category not found")
 
-        # Validate duplicate item names
+        # Check duplicate name
         if get_menu_item_from_restaurant_by_name(
             restaurant_id = restaurant.restaurant_id,
             name = args['name']
         ):
             return res_error(400, "Item name already exists")
         
+        # Check for right string for availability
         if args['is_available'] != 'true' and\
             args['is_available'] != 'false':
             return res_error(400, "Availability Must be 'true' or 'false'")
@@ -202,12 +217,13 @@ class NewMenuItem(Resource):
             is_available=True if str(args['is_available']) == 'true' else False
         )
 
+        # Push and commit
         db.session.add(new_item)
         db.session.commit()
 
         return new_item.dict(), 200
 
-@api.route('/item/update/<int:item_id>')
+@api.route('/item/<int:item_id>')
 class ManageMenuItem(Resource):
     @api.expect(auth_header, update_item_req_parser)
     @api.response(200, 'Updated Item Data')
@@ -217,6 +233,7 @@ class ManageMenuItem(Resource):
     def put(self, item_id):
         """Update existing menu item attributes (can update any provided fields)"""
 
+        # Authenticate
         restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
@@ -261,9 +278,6 @@ class ManageMenuItem(Resource):
         db.session.commit()
         return item.dict(), 200
 
-
-@api.route('/item/delete/<int:item_id>')
-class DeleteMenuItem(Resource):
     @api.expect(auth_header)
     @api.response(200, 'Simple message JSON for success')
     @api.response(400, "Bad Request ", error_res)
@@ -271,7 +285,7 @@ class DeleteMenuItem(Resource):
     @api.response(404, "Not Found", error_res)
     def delete(self, item_id):
         """Delete a menu item permenantly"""
-
+        # Authenticate
         restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
@@ -281,10 +295,10 @@ class DeleteMenuItem(Resource):
             restaurant_id = restaurant.restaurant_id,
             id = item_id
         )
-
         if not item:
             return res_error(404, 'Menu item not found')
         
+        # Delete and commit
         db.session.delete(item)
         db.session.commit()
 
