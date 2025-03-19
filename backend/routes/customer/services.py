@@ -1,3 +1,1 @@
-# Common functions for customer goes here.
-
-
+"""Common functions for customer goes here."""
