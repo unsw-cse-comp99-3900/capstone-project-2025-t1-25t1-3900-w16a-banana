@@ -182,8 +182,12 @@ class ShopItems(Resource):
 
         data = request.json
 
-        if not get_menu_item_by_id(data['item_id']):
+        menu_item = get_menu_item_by_id(data['item_id'])
+        if not menu_item:
             return res_error(400, 'Wrong Item ID')
+        
+        if not menu_item.is_available:
+            return res_error(400, 'Item not available')
 
         if data['quantity'] < 0:
             return res_error(400, 'Wrong Item Quantity')
