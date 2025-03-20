@@ -4,6 +4,7 @@ from flask import request
 from utils.db import db
 from utils.header import auth_header, get_token_from_header
 from utils.response import res_error
+from utils.check import *
 from db_model import *
 from db_model.db_query import *
 from routes.customer_order.models import *
@@ -80,46 +81,90 @@ class ShopItems(Resource):
         return {'message': message}, 200
 
 
+@api.route('/orders')
+class GetAllOrders(Resource):
+    @api.expect(auth_header)
+    def get(self):
+        "See all orders of a customer"
+        customer = get_customer_by_token(get_token_from_header(auth_header))
+        if not customer:
+            return res_error(401)
+        
+        orders = get_all_customer_order_from_customer(customer.customer_id)
+        return {'customer_orders': order.dict() for order in orders}, 200
+
+@api.route('/order/<int:order_id>')
+class GetOrderItems(Resource):
+    @api.expect(auth_header)
+    @api.response(200, 'Success', get_order_res)
+    @api.response(400, 'Bad Request', error_res)
+    @api.response(401, 'Unauthorised', error_res)
+    def get(self, order_id: int):
+        """See placed order with given ID"""
+        customer = get_customer_by_token(get_token_from_header(auth_header))
+        if not customer:
+            return res_error(401)
+
+        customer_order = get_customer_order_from_customer_by_id(
+            customer_id=customer.customer_id,
+            order_id=order_id
+        )
+
+        if not customer_order:
+            return res_error(400, 'Invalid Customer Order ID')
+        return customer_order.dict(), 200
+
+
 @api.route('/order')
 class OrderItems(Resource):
     @api.expect(auth_header, post_order_req)
+    @api.response(200, 'Success', post_order_res)
+    @api.response(400, 'Bad Request', error_res)
+    @api.response(401, 'Unauthorised', error_res)
     def post(self):
-        """Place order for Given Restaurant ID"""
+        """
+        Place order for Given Restaurant ID.
+        This function also works when there are items from different restaurant.
+        """
         customer = get_customer_by_token(get_token_from_header(auth_header))
         if not customer:
             return res_error(401)
         
         data = request.get_json()
-        
-        cart_items = get_all_cart_item_from_customer(customer.customer_id)
 
+        # Get all cart items that belong to this restaurant
         cart_items = format_cart_items_with_restaurant_filter(
-            cart_items = cart_items,
+            cart_items = get_all_cart_item_from_customer(customer.customer_id),
             restaurant_id = data['restaurant_id']
         )
-
         if not cart_items:
-            return res_error(400, 'Wrong Restaurant ID')
+            return res_error(400, 'Cart Empty')
         
-        try:
-            State(data['state'])
-        except ValueError:
-            return res_error(401, 'Invalid State')
+        # Check the payload for validity
+        if not is_valid_state(data['state']):
+            return res_error(400, 'Invalid State')
+        if not is_valid_postcode(data['postcode']):
+            return res_error(400, 'Invalid Postcode')
+        if not is_valid_card_format(data['card_number']):
+            return res_error(400, 'Invalid Card Number')
         
-        # Make new menu items
+        # Make new customer order with wrong info.
         new_customer_order = format_customer_order(
             customer_id=customer.customer_id,
             data=data,
         )
 
+        # Push it first
         db.session.add(new_customer_order)
         db.session.commit()
 
+        # Make order items. Update order accordingly.
         new_order_items = format_order_items(
             customer_order=new_customer_order,
             formatted_cart_items=cart_items
         )
 
+        # Push each order item
         for new_order_item in new_order_items:
             db.session.add(new_order_item)
         db.session.commit()

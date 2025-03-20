@@ -34,6 +34,34 @@ cart_item_update_res = api.model("Cart Item Update Response Model", {
     "message": fields.String(description="Success Message", example="Cart Item Update/Delete Successful")
 })
 
+"""Response/Request for customer viewing customer order"""
+get_order_res = api.model("Get Order Response", {
+    "order_id": fields.Integer(),
+    "customer_id": fields.Integer(),
+    "driver_id": fields.Integer(),
+    "restaurant_id": fields.Integer(),
+    "order_status": fields.String(),
+    "address":  fields.String(),
+    "suburb": fields.String(),
+    "state": fields.String(),
+    "postcode": fields.String(),
+    "order_price": fields.Float(),
+    "delivery_fee": fields.Float(),
+    "total_price": fields.Float(),
+    "order_time": fields.String(description="YYYY-MM-DD HH:MM:SS"),
+    "pickup_time": fields.String(),
+    "delivery_time": fields.String(description="YYYY-MM-DD HH:MM:SS"),
+    "customer_notes": fields.String(),
+    "restaurant_notes": fields.String(),
+    "card_number": fields.String()
+})
+
+get_all_orders_res = api.model("Get All Orders Response", {
+    "customer_orders": fields.List(fields.Nested(get_order_res))
+})
+
+
+"""Response/Request for customer placing order"""
 post_order_req = api.model("Order From Cart Request", {
     'restaurant_id': fields.Integer(required=True),
     'address': fields.String(required=True),
@@ -42,4 +70,24 @@ post_order_req = api.model("Order From Cart Request", {
     'postcode': fields.String(required=True),
     'customer_notes': fields.String(required=True, default='2000'),
     'card_number': fields.String(required=True)
+})
+post_order_res = api.model("Order From Cart Response", {
+    "order_id": fields.Integer(),
+    "customer_id": fields.Integer(),
+    "driver_id": fields.Integer(),
+    "restaurant_id": fields.Integer(),
+    "order_status": fields.String(),
+    "address":  fields.String(),
+    "suburb": fields.String(),
+    "state": fields.String(),
+    "postcode": fields.String(),
+    "order_price": fields.Float(),
+    "delivery_fee": fields.Float(),
+    "total_price": fields.Float(),
+    "order_time": fields.String(description="YYYY-MM-DD HH:MM:SS"),
+    "pickup_time": fields.String(),
+    "delivery_time": fields.String(description="YYYY-MM-DD HH:MM:SS"),
+    "customer_notes": fields.String(),
+    "restaurant_notes": fields.String(),
+    "card_number": fields.String()
 })
