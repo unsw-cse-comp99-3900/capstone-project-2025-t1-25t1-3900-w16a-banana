@@ -20,7 +20,10 @@ class BaseModel(db.Model):
             # ignore password
             if col.name == 'password':
                 continue
-            elif col.name == "created_at" or col.name == "updated_at":
+            elif (col.name == "created_at"\
+                or col.name == "updated_at"\
+                or 'time' in col.name)\
+                and val:
                 val = val.strftime("%Y-%m-%d %H:%M:%S")
             elif isinstance(val, enum.Enum):
                 val = val.value 
