@@ -63,6 +63,23 @@ def get_cart_item_from_customer_by_id(customer_id, menu_item_id: int) -> Optiona
 
 
 "---------------------------------------------------------"
+"""Functions related to Customer Order"""
+"---------------------------------------------------------"
+def get_customer_order_by_id(order_id: int) -> Optional[CustomerOrder]:
+    return CustomerOrder.query.filter_by(order_id = order_id).first()
+
+def get_customer_order_from_customer_by_id(customer_id: int, order_id: int) -> Optional[CustomerOrder]:
+    return CustomerOrder.query.filter_by(
+        order_id = order_id,
+        customer_id = customer_id
+    ).first()
+
+def get_all_customer_order_from_customer(customer_id: int) -> List[CustomerOrder]:
+    return CustomerOrder.query.filter_by(
+        customer_id = customer_id
+    ).all()
+
+"---------------------------------------------------------"
 """Functions related to Menus Items"""
 "---------------------------------------------------------"
 def get_menu_item_by_id(id: int) -> Optional[MenuItem]:
