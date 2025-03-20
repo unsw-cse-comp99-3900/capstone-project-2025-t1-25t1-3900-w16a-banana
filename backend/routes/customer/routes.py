@@ -37,8 +37,8 @@ class RegisterCustomer(Resource):
             return res_error(400, 'Invalid state')
         
         # the username and email must be unique
-        is_username_exist = Customer.query.filter_by(username=data['username']).first()
-        is_email_exist = Customer.query.filter_by(email=data['email']).first()
+        is_username_exist = get_customer_by_username(data['username'])
+        is_email_exist = get_customer_by_email(data['email'])
         if is_username_exist or is_email_exist:
             return res_error(400, 'Username or email already exist')
         
@@ -88,19 +88,15 @@ class CustomerUpdate(Resource):
 
         if args['username']:
             # the username must be unique
-            is_username_exist = Customer.query.filter(
-                Customer.username == args['username'],
-                Customer.customer_id != customer.customer_id
-            ).first()
-            if is_username_exist:
+            user = get_customer_by_username(args['username'])
+            if user and user.customer_id == customer.customer_id:
                 return res_error(400, 'Username already exist')
             customer.username = args['username']
         
         if args['email']:
             # the email must be unique
-            is_email_exist = Customer.query.filter_by(email=args['email']) \
-                .filter(Customer.customer_id != customer.customer_id).first()
-            if is_email_exist:
+            user = get_customer_by_email(args['email'])
+            if user and user.customer_id == customer.customer_id:
                 return res_error(400, 'Email already exist')
             customer.email = args['email']
         
@@ -155,7 +151,7 @@ class ShopItems(Resource):
             return res_error(401)
 
         # Get all items in the cart
-        cart_items = get_all_cart_item_by_customer_id(customer.customer_id)
+        cart_items = get_all_cart_item_from_customer(customer.customer_id)
         items = []
         for cart_item in cart_items:
             restaurant = get_restaurant_by_menu_item_id(cart_item.item_id)
@@ -174,7 +170,6 @@ class ShopItems(Resource):
 
         return {'items': items}, 200
     
-    ## TODO: Add response model and response
     @api.expect(auth_header, cart_item_update_req)
     @api.response(200, "Success", cart_item_update_res)
     @api.response(400, "Bad Request", error_res)
@@ -187,20 +182,23 @@ class ShopItems(Resource):
 
         data = request.json
 
-        if not MenuItem.query.filter_by(item_id=data['item_id']).first():
+        if not get_menu_item_by_id(data['item_id']):
             return res_error(400, 'Wrong Item ID')
 
         if data['quantity'] < 0:
             return res_error(400, 'Wrong Item Quantity')
 
         # Check if item already exists
-        cart_item = CartItem.query.filter_by(customer_id=customer.id, item_id=data['item_id']).first()
+        cart_item = get_cart_item_from_customer_by_id(
+            customer_id=customer.customer_id,
+            menu_item_id=data['item_id']
+        )
 
         message = ""
         # If there is no same item, add one
         if not cart_item:
             new_cart_item = CartItem(
-                customer_id=customer.id,
+                customer_id=customer.customer_id,
                 item_id=data['item_id'],
                 quantity=data['quantity']
             )

@@ -36,15 +36,30 @@ def get_restaurant_by_menu_item_id(id: int) -> Optional[Restaurant]:
     if not item:
         return None
     category = get_menu_category_by_id(item.category_id)
-    return Restaurant.query.filter_by(restaurant_id=category.category_id)
+    return Restaurant.query.filter_by(restaurant_id=category.category_id).first()
 
+
+"---------------------------------------------------------"
+"""Functions related to Customer"""
+"---------------------------------------------------------"
+def get_customer_by_email(email: str) -> Optional[Customer]:
+    return Customer.query.filter_by(email = email).first()
+
+def get_customer_by_username(username: str) -> Optional[Customer]:
+    return Customer.query.filter_by(username = username).first()
 
 
 "---------------------------------------------------------"
 """Functions related to Customer Cart"""
 "---------------------------------------------------------"
-def get_all_cart_item_by_customer_id(id: int) -> List[CartItem]:
-    return CartItem.query.filter_by(customer_id=id)
+def get_all_cart_item_from_customer(customer_id: int) -> List[CartItem]:
+    return CartItem.query.filter_by(customer_id=customer_id).all()
+
+def get_cart_item_from_customer_by_id(customer_id, menu_item_id: int) -> Optional[CartItem]:
+    return CartItem.query.filter_by(
+        customer_id = customer_id,
+        item_id = menu_item_id
+    ).first()
 
 
 "---------------------------------------------------------"
