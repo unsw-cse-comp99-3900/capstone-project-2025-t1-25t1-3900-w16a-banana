@@ -5,9 +5,10 @@ import secrets
 from utils.db import db
 from utils.file import save_image
 from utils.check import *
-from utils.header import auth_header, check_token
+from utils.header import auth_header, get_token_from_header
 from utils.response import res_error
 from db_model import *
+from db_model.db_query import *
 from routes.restaurant.models import *
 
 
@@ -103,7 +104,7 @@ class RestaurantUpdate(Resource):
     def put(self):
         """ Restaurant update all profiles using this route, the backend may change registration status to PENDING """
 
-        restaurant = check_token(auth_header, Restaurant)
+        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)
 

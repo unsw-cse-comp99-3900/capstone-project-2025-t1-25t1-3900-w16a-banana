@@ -5,7 +5,7 @@ api = Namespace('restaurant-menu', description='APIs for Restaurants')
 
 
 """Error Response"""
-error_res= api.model("Error", {
+error_res = api.model("Error", {
     "message": fields.String(description="Error message", example="Error Description")
 })
 
@@ -25,6 +25,7 @@ get_menu_categories_res = api.model('Get All Categories', {
 post_menu_category_req = api.model('New Category', {
     'name': fields.String(required=True, description='Menu category name')
 })
+
 
 update_menu_category_req = api.model('Update Category', {
     'name': fields.String(required=True, description='Menu category name')

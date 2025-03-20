@@ -35,9 +35,3 @@ update_profile_req_parser.add_argument('suburb', type=str, required=False)
 update_profile_req_parser.add_argument('state', type=str, required=False)
 update_profile_req_parser.add_argument('postcode', type=str, required=False)
 update_profile_req_parser.add_argument("profile_image", type=FileStorage, location="files", required=False, help="Profile Image")
-
-"""Response/Request for customer cart update"""
-cart_item_update_req = api.model('Cart Item Delete Model', {
-    'item_id': fields.Integer(required=True, description='Item ID to Delete', default=1),
-    'quantity': fields.Integer(required=True, description='Quantity of item', default=1)
-})

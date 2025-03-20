@@ -1,14 +1,16 @@
-from flask_restx import Namespace, Resource, fields, reqparse
+from flask_restx import Resource
 from flask import request
 import secrets
 
 from utils.db import db
 from utils.file import save_file
 from utils.check import *
-from utils.header import auth_header, check_token
+from utils.header import auth_header, get_token_from_header
 from utils.response import res_error
 from db_model import *
+from db_model.db_query import *
 from routes.customer.models import *
+from routes.customer.services import *
 
 @api.route('/register')
 class RegisterCustomer(Resource):
@@ -36,8 +38,8 @@ class RegisterCustomer(Resource):
             return res_error(400, 'Invalid state')
         
         # the username and email must be unique
-        is_username_exist = Customer.query.filter_by(username=data['username']).first()
-        is_email_exist = Customer.query.filter_by(email=data['email']).first()
+        is_username_exist = get_customer_by_username(data['username'])
+        is_email_exist = get_customer_by_email(data['email'])
         if is_username_exist or is_email_exist:
             return res_error(400, 'Username or email already exist')
         
@@ -59,7 +61,6 @@ class RegisterCustomer(Resource):
         db.session.commit()
 
         # return the new customer object
-        # return {'message': 'Registration Success'}, 200
         return new_customer.dict(), 200
 
 
@@ -72,7 +73,7 @@ class CustomerUpdate(Resource):
     def put(self):
         """Customer updates his profile, no admin approval needed"""
 
-        customer = check_token(auth_header, Customer)
+        customer = get_customer_by_token(get_token_from_header(auth_header))
         if not customer:
             return res_error(401)
 
@@ -87,19 +88,15 @@ class CustomerUpdate(Resource):
 
         if args['username']:
             # the username must be unique
-            is_username_exist = Customer.query.filter(
-                Customer.username == args['username'],
-                Customer.customer_id != customer.customer_id
-            ).first()
-            if is_username_exist:
+            user = get_customer_by_username(args['username'])
+            if user and user.customer_id == customer.customer_id:
                 return res_error(400, 'Username already exist')
             customer.username = args['username']
         
         if args['email']:
             # the email must be unique
-            is_email_exist = Customer.query.filter_by(email=args['email']) \
-                .filter(Customer.customer_id != customer.customer_id).first()
-            if is_email_exist:
+            user = get_customer_by_email(args['email'])
+            if user and user.customer_id == customer.customer_id:
                 return res_error(400, 'Email already exist')
             customer.email = args['email']
         
@@ -139,60 +136,3 @@ class CustomerUpdate(Resource):
         
         db.session.commit()
         return customer.dict(), 200
-
-@api.route('/cart')
-class ShopItems(Resource):
-    @api.expect(auth_header)
-    @api.response(200, "Success")
-    @api.response(400, "Bad Request", error_res)
-    @api.response(401, "Unauthorised", error_res)
-    def get(self):
-        """Get All Items' ID in the shopping cart"""
-        # Check customer token
-        customer = check_token(auth_header, Customer)
-        if not customer:
-            return res_error(401)
-
-        # Get all items in the cart
-        cart_items = CartItem.query.filter_by(customer_id=customer.id)
-        item_id = []
-        for cart_item in cart_items:
-            item_id += cart_item.item_id
-
-        return {item_id: item_id}, 200
-    
-    ## TODO: Add response model and response
-    @api.expect(auth_header, cart_item_update_req)
-    def put(self):
-        """Update/Add/Remove item in the cart. Quantity 0 will remove the item."""
-        # Check customer token
-        customer = check_token(auth_header, Customer)
-        if not customer:
-            return res_error(401)
-
-        data = request.json
-
-        if not MenuItem.query.filter_by(item_id=data['item_id']).first():
-            return res_error(400, 'Wrong Item ID')
-
-        if data['quantity'] < 0:
-            return res_error(400, 'Wrong Item Quantity')
-
-        # Check if item already exists
-        cart_item = CartItem.query.filter_by(customer_id=customer.id, item_id=data['item_id']).first()
-
-        # If there is no same item, add one
-        if not cart_item:
-            new_cart_item = CartItem(
-                customer_id=customer.id,
-                item_id=data['item_id'],
-                quantity=data['quantity']
-            )
-            db.session.add(new_cart_item)
-        # If the quantity is 0, delete the item
-        elif data['quantity'] == 0:
-            db.session.delete(cart_item)
-        # Otherwise, update the item
-        else:
-            cart_item.quantity = data['quantity']
-        db.session.commit()
