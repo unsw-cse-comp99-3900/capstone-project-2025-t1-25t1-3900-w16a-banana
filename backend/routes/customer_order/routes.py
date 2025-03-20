@@ -149,7 +149,7 @@ class OrderItems(Resource):
             return res_error(400, 'Invalid Card Number')
         
         # Make new customer order with wrong info.
-        new_customer_order = format_customer_order(
+        new_customer_order = make_customer_order(
             customer_id=customer.customer_id,
             data=data,
         )
@@ -159,7 +159,7 @@ class OrderItems(Resource):
         db.session.commit()
 
         # Make order items. Update order accordingly.
-        new_order_items = format_order_items(
+        new_order_items = attach_order_items(
             customer_order=new_customer_order,
             formatted_cart_items=cart_items
         )
@@ -168,5 +168,8 @@ class OrderItems(Resource):
         for new_order_item in new_order_items:
             db.session.add(new_order_item)
         db.session.commit()
+
+        # Empty the cart
+        empty_cart_items_from_restaurant(customer.customer_id, data['restaurant_id'])
 
         return new_customer_order.dict(), 200

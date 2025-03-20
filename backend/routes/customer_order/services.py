@@ -2,6 +2,7 @@
 from typing import List, TypedDict, Tuple, Any
 from db_model import *
 from db_model.db_query import *
+from utils.db import db
 
 class FormatCartItems(TypedDict):
     item_id: int 
@@ -15,6 +16,7 @@ class FormatCartItems(TypedDict):
     url_img: str
 
 def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
+    """Format raw cart item model into more understandable format"""
     items = []
     for cart_item in cart_items:
         restaurant = get_restaurant_by_menu_item_id(cart_item.item_id)
@@ -34,6 +36,10 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
     return items
 
 def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaurant_id: int) -> List[FormatCartItems]:
+    """
+    Format raw cart item model into more understandable format.
+    Filter cart items from given restaurant id
+    """
     items = []
     for cart_item in cart_items:
         restaurant = get_restaurant_by_menu_item_id(cart_item.item_id)
@@ -55,10 +61,14 @@ def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaur
     return items
 
 # TODO: Add delivery fee calculation
-def format_customer_order(
+def make_customer_order(
         customer_id: int,
         data: Any #This will be json data
 ) -> CustomerOrder:
+    """
+    Make customer order with limited information.
+    Have no order items attached.
+    """
     # Make fake order
     return CustomerOrder(
         customer_id = customer_id,
@@ -74,11 +84,14 @@ def format_customer_order(
         card_number = data['card_number']
     )
 
-def format_order_items(
+def attach_order_items(
         customer_order: CustomerOrder,
         formatted_cart_items: List[FormatCartItems]
 ) -> List[OrderItem]:
-
+    """
+    Attach order items to given customer order.
+    Customer order will now have updated information.
+    """
     order_items: List[OrderItem] = []
     total_price = 0
     for formatted_cart_item in formatted_cart_items:
@@ -96,3 +109,11 @@ def format_order_items(
     customer_order.total_price = customer_order.order_price + customer_order.delivery_fee
     
     return order_items
+
+def empty_cart_items_from_restaurant(customer_id: int, restaurant_id: int) -> None:
+    cart_items = get_all_cart_item_from_customer(customer_id)
+    for cart_item in cart_items:
+        restaurant = get_restaurant_by_menu_item_id(cart_item.item_id)
+        if restaurant.restaurant_id == restaurant_id:
+            db.session.delete(cart_item)
+    db.session.commit()
