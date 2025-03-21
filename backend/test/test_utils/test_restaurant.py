@@ -32,6 +32,7 @@ class RestaurantTest():
         self.image3 = image3
 
         self.menu_categories = []
+        self.menu_items = []
 
     def login(self, client):
         res = client.post('/auth/login', json={
@@ -41,7 +42,7 @@ class RestaurantTest():
         })
         if res.status_code == 200:
             self.token = res.get_json()['token']
-            self.header = {
+            self.headers = {
                 "Authorization": self.token
             }
             self.id = res.get_json()['restaurant_id']
@@ -76,7 +77,7 @@ class RestaurantTest():
         res = client.post(
             '/restaurant-menu/category/new',
             json={"name": name},
-            header = self.header
+            headers = self.headers
         )
 
         if res.status_code == 200:
@@ -91,11 +92,37 @@ class RestaurantTest():
         res = client.put(
             f'/restaurant-menu/category/{id}',
             json={'name': new_name},
-            header = self.header
+            headers = self.headers
         )
 
         if res.status_code == 200:
             for cat in self.menu_categories:
                 if cat['category_id'] == id:
                     cat['name'] = new_name
+        return res
+    
+    def item_create(
+        self,
+        client,
+        name: str,
+        description: str,
+        price: float,
+        is_available: bool,
+        img: bytes,
+        category_id: int
+    ):
+        res = client.post(
+            f'/restaurant-menu/item/new/{category_id}',
+            headers = self.headers,
+            content_type = 'multipart/form-data',
+            data = {'img': img},
+            query_string = {
+                'name': name,
+                'description': description,
+                'price': price,
+                'is_available': 'true' if is_available else 'false'            }
+        )
+
+        if res.status_code == 200:
+            self.menu_items.append(res.get_json())
         return res

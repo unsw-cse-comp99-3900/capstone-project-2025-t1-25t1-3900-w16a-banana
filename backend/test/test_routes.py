@@ -82,10 +82,13 @@ def test_05_restaurant_menu(client):
     # Create new menu category
     response = restaurant1.category_create(client, 'category1')
     assert response.status_code == 200
+
+    cat1_data = response.get_json()
+
     # Update Name
     response = restaurant1.category_update(
         client,
-        response.get_json()['category_id'],
+        cat1_data['category_id'],
         'category_1'
     )
     assert response.status_code == 200
@@ -99,4 +102,12 @@ def test_05_restaurant_menu(client):
         response.get_json()['category_id'],
         'category_1'
     )
+    assert response.status_code == 400
+
+    # Create new menu item
+    response = restaurant1.item_create(
+        client, 'menu1', 'description', 10.0, True,
+        (resources / "test.png").open("rb"), cat1_data['category_id']
+    )
     assert response.status_code == 200
+
