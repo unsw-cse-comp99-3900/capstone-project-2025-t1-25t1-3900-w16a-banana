@@ -31,6 +31,8 @@ class RestaurantTest():
         self.image2 = image2
         self.image3 = image3
 
+        self.menu_categories = []
+
     def login(self, client):
         res = client.post('/auth/login', json={
             'email': self.email,
@@ -39,7 +41,7 @@ class RestaurantTest():
         })
         if res.status_code == 200:
             self.token = res.get_json()['token']
-            self.auth_header = {
+            self.header = {
                 "Authorization": self.token
             }
             self.id = res.get_json()['restaurant_id']
@@ -69,3 +71,31 @@ class RestaurantTest():
     
     def get_id(self) -> int:
         return self.id
+    
+    def category_create(self, client, name: str):
+        res = client.post(
+            '/restaurant-menu/category/new',
+            json={"name": name},
+            header = self.header
+        )
+
+        if res.status_code == 200:
+            self.menu_categories.append({
+                'category_id': res.get_json()['category_id'],
+                'restaurant_id': self.id,
+                'name': name
+            })
+        return res
+
+    def category_update(self, client, id: int, new_name: str):
+        res = client.put(
+            f'/restaurant-menu/category/{id}',
+            json={'name': new_name},
+            header = self.header
+        )
+
+        if res.status_code == 200:
+            for cat in self.menu_categories:
+                if cat['category_id'] == id:
+                    cat['name'] = new_name
+        return res

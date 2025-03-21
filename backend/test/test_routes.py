@@ -3,9 +3,9 @@ from .test_utils.test_admin import *
 from .test_utils.test_restaurant import *
 from .test_utils.test_customer import *
 
-from .test_data.test_data_admin import *
-from .test_data.test_data_restaurant import *
-from .test_data.test_data_customer import *
+from .test_data.admin import *
+from .test_data.restaurant import *
+from .test_data.customer import *
 from pathlib import Path
 
 resources = Path(__file__).parent / "resources"
@@ -65,7 +65,7 @@ def test_03_customer_register_login(client):
 
     
 # Test to see pending restaurants
-def test_03_check_pending_restaurant(client):
+def test_04_check_pending_restaurant(client):
     # Get all pending applications of the restaurant
     response = admin1.get_pending_application(client, 'restaurant')
 
@@ -78,3 +78,25 @@ def test_03_check_pending_restaurant(client):
     response = admin1.pending_application_action(client, 'restaurant', restaurant1.get_id(), 'approve')
     assert response.status_code == 200
 
+def test_05_restaurant_menu(client):
+    # Create new menu category
+    response = restaurant1.category_create(client, 'category1')
+    assert response.status_code == 200
+    # Update Name
+    response = restaurant1.category_update(
+        client,
+        response.get_json()['category_id'],
+        'category_1'
+    )
+    assert response.status_code == 200
+
+    # Create new
+    response = restaurant1.category_create(client, 'category1')
+    assert response.status_code == 200
+    # Update to duplicate name fails
+    response = restaurant1.category_update(
+        client,
+        response.get_json()['category_id'],
+        'category_1'
+    )
+    assert response.status_code == 200
