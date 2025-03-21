@@ -205,7 +205,7 @@ class MenuItem(BaseModel):
 # enum for the order status
 class OrderStatus(enum.Enum):
     PENDING = 'PENDING'
-    CONFIRMED = 'CONFIRMED'
+    ACCEPTED = 'ACCEPTED'
     READY_FOR_PICKUP = 'READY_FOR_PICKUP'
     DELIVERING = 'DELIVERING'
     DELIVERED = 'DELIVERED'
