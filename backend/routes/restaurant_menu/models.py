@@ -1,7 +1,7 @@
 from flask_restx import Namespace, fields, reqparse
 from werkzeug.datastructures import FileStorage
 
-api = Namespace('restaurant-menu', description='APIs for Restaurants')
+api = Namespace('restaurant-menu', description='APIs for Restaurant Menus')
 
 
 """Error Response"""
