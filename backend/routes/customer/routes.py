@@ -136,3 +136,14 @@ class CustomerUpdate(Resource):
         
         db.session.commit()
         return customer.dict(), 200
+
+
+@api.route('/favourites')
+class GetFavourites(Resource):
+    @api.expect(auth_header)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    @api.response(401, "Unauthorised", error_res)
+    def get(self):
+        """TODO: ADD CODE HERE"""
+        return

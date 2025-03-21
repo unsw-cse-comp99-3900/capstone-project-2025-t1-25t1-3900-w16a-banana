@@ -1,6 +1,13 @@
 # perform some simple checks on the phone number, postcode, and state
-from db_model import State
+from db_model import State, OrderStatus
 import re
+
+def is_valid_order_status(status: str) -> bool:
+    try:
+        OrderStatus(status)
+        return True
+    except:
+        return False
 
 def is_valid_card_format(s: str) -> bool:
     """

@@ -1,109 +1,80 @@
 from .test_conf import client
+from .test_utils.test_admin import *
+from .test_utils.test_restaurant import *
+from .test_utils.test_customer import *
+
+from .test_data.test_data_admin import *
+from .test_data.test_data_restaurant import *
+from .test_data.test_data_customer import *
 from pathlib import Path
 
 resources = Path(__file__).parent / "resources"
 
-
-# Global test configurations
-ADMIN_EMAIL = "admin@example.com"
-ADMIN_PASSWORD ="SafePass12!@!"
-ADMIN_TOKEN = ""
-
-RESTAURANT_EMAIL = "restaurant@example.com"
-RESTAURANT_PASSWORD = "SecurePassword12!@"
-RESTAURANT_TOKEN = ""
-
 # Test for admin register
 def test_01_admin_register_login(client):
-    response = client.post('/admin/register', json={
-        "email": ADMIN_EMAIL,
-        "password": ADMIN_PASSWORD,
-        "first_name": "John",
-        "last_name": "Doe"
-    })
 
+    response = admin1.register(client)
     assert response.status_code == 200
 
     # Sign up using same email fails
-    response = client.post('/admin/register', json={
-        "email": ADMIN_EMAIL,
-        "password": ADMIN_PASSWORD,
-        "first_name": "John",
-        "last_name": "Doe"
-    })
-
+    response = admin_same_email.register(client)
     assert response.status_code == 400
     
     # Sign up with weak password fails
-    response = client.post('/admin/register', json={
-        "email": "newadmin@example.com",
-        "password": "SafePass12",
-        "first_name": "John",
-        "last_name": "Doe"
-    })
-
+    response = admin_weak_password.register(client)
     assert response.status_code == 400
 
     # Get the toekn by loggin in with admin account
-    response = client.post('/auth/login', json={
-        'email': ADMIN_EMAIL,
-        'password': ADMIN_PASSWORD,
-        'user_type': 'admin'
-    })
-
+    response = admin1.login(client)
     assert response.status_code == 200
     assert 'token' in response.get_json()
-
-    global ADMIN_TOKEN
-    ADMIN_TOKEN = response.get_json()['token']
 
 #Test for restaurant register
 def test_02_restaurant_register_login(client):
-    data = {
-        "email": RESTAURANT_EMAIL,
-        "password": RESTAURANT_PASSWORD,
-        "phone": "0412345678",
-        "name": "A Restaurant",
-        "address": "111 Street",
-        "suburb": "Kensington",
-        "state": "NSW",
-        "postcode": "2000",
-        "abn": "11111111111",
-        "description": "A good restaurant",
-        'image1': (resources / "test.png").open("rb"),
-        'image2': (resources / "test.png").open("rb"),
-        'image3': (resources / "test.png").open("rb")
-    }
-
     # Check if the register was successful
-    response = client.post('/restaurant/register', content_type='multipart/form-data', data=data)
+    response = restaurant1.register(client)
+    assert response.status_code == 200
+    response = restaurant2.register(client)
     assert response.status_code == 200
 
-    response = client.post('/auth/login', json={
-        'email': RESTAURANT_EMAIL,
-        'password': RESTAURANT_PASSWORD,
-        'user_type': 'restaurant'
-    })
+    # Same email register fails
+    response = restaurant_fail_same_email.register(client)
+    assert response.status_code == 400
 
+    # Login should be successful. Get the token
+    response = restaurant1.login(client)
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
-    global RESTAURANT_TOKEN
-    RESTAURANT_TOKEN = response.get_json()['token']
-    
-    
+#Test for restaurant register
+def test_03_customer_register_login(client):
+    # Check if the register was successful
+    response = customer1.register(client)
+    assert response.status_code == 200
+    response = customer2.register(client)
+    assert response.status_code == 200
 
+    # Same email register fails
+    response = customer_fail_same_email.register(client)
+    assert response.status_code == 400
+
+    # Login should be successful. Get the token
+    response = customer1.login(client)
+    assert response.status_code == 200
+    assert 'token' in response.get_json()
+
+    
 # Test to see pending restaurants
 def test_03_check_pending_restaurant(client):
-    # Token for admin
-    admin_headers = {
-        "Authorization": ADMIN_TOKEN
-    }
     # Get all pending applications of the restaurant
-    response = client.get('/admin/pending/restaurant', headers=admin_headers)
+    response = admin1.get_pending_application(client, 'restaurant')
 
     # Check the response
     assert response.status_code == 200
-    assert response.get_json()[0]['email'] == RESTAURANT_EMAIL
+    assert response.get_json()[0]['email'] == restaurant1.email
     assert response.get_json()[0]['registration_status'] == 'PENDING'
+
+    # Approve 
+    response = admin1.pending_application_action(client, 'restaurant', restaurant1.get_id(), 'approve')
+    assert response.status_code == 200
 

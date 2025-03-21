@@ -1,6 +1,6 @@
 from flask_restx import Namespace, fields, reqparse
 
-api = Namespace('customeOrder', description='APIs for Customer')
+api = Namespace('custome-order', description='APIs for Customer')
 
 """Error Response"""
 error_res= api.model("Error", {

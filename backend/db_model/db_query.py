@@ -31,6 +31,14 @@ def get_restaurant_by_token(token: str) -> Optional[Restaurant]:
 "---------------------------------------------------------"
 """Functions related to Restaurant"""
 "---------------------------------------------------------"
+def get_restaurant_by_email(email: str)-> Optional[Restaurant]:
+    """Get the Restaurant with Given Email"""
+    return Restaurant.query.filter_by(email=email).first()
+
+def get_restaurant_by_abn(abn: str)-> Optional[Restaurant]:
+    """Get the Restaurant with Given ABN"""
+    return Restaurant.query.filter_by(abn = abn).first()
+
 def get_restaurant_by_menu_item_id(id: int) -> Optional[Restaurant]:
     item = get_menu_item_by_id(id)
     if not item:
@@ -66,18 +74,28 @@ def get_cart_item_from_customer_by_id(customer_id, menu_item_id: int) -> Optiona
 """Functions related to Customer Order"""
 "---------------------------------------------------------"
 def get_customer_order_by_id(order_id: int) -> Optional[CustomerOrder]:
+    """Get Customer Order with given ID"""
     return CustomerOrder.query.filter_by(order_id = order_id).first()
 
 def get_customer_order_from_customer_by_id(customer_id: int, order_id: int) -> Optional[CustomerOrder]:
+    """Get Customer Order from given Customer with given Order ID"""
     return CustomerOrder.query.filter_by(
         order_id = order_id,
         customer_id = customer_id
     ).first()
 
 def get_all_customer_order_from_customer(customer_id: int) -> List[CustomerOrder]:
+    """Get All Customer Orders from given Customer"""
     return CustomerOrder.query.filter_by(
         customer_id = customer_id
     ).all()
+
+def get_all_customer_order_from_restaurant(restaurant_id: int) -> List[CustomerOrder]:
+    """Get All Cusomter Orders from given Restaurant"""
+    return CustomerOrder.query.filter_by(
+        restaurant_id = restaurant_id
+    ).all()
+
 
 "---------------------------------------------------------"
 """Functions related to Menus Items"""
