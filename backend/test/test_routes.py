@@ -1,9 +1,11 @@
 from .test_conf import client
 from .test_utils.test_admin import *
 from .test_utils.test_restaurant import *
+from .test_utils.test_customer import *
 
 from .test_data.test_data_admin import *
 from .test_data.test_data_restaurant import *
+from .test_data.test_data_customer import *
 from pathlib import Path
 
 resources = Path(__file__).parent / "resources"
@@ -26,9 +28,6 @@ def test_01_admin_register_login(client):
     response = admin1.login(client)
     assert response.status_code == 200
     assert 'token' in response.get_json()
-    
-    # Set the token information
-    admin1.set_token(response.get_json()['token'])
 
 #Test for restaurant register
 def test_02_restaurant_register_login(client):
@@ -47,8 +46,23 @@ def test_02_restaurant_register_login(client):
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
-    # Set the token information
-    restaurant1.set_token(response.get_json()['token'])
+#Test for restaurant register
+def test_03_customer_register_login(client):
+    # Check if the register was successful
+    response = customer1.register(client)
+    assert response.status_code == 200
+    response = customer2.register(client)
+    assert response.status_code == 200
+
+    # Same email register fails
+    response = customer_fail_same_email.register(client)
+    assert response.status_code == 400
+
+    # Login should be successful. Get the token
+    response = customer1.login(client)
+    assert response.status_code == 200
+    assert 'token' in response.get_json()
+
     
 # Test to see pending restaurants
 def test_03_check_pending_restaurant(client):
@@ -59,4 +73,8 @@ def test_03_check_pending_restaurant(client):
     assert response.status_code == 200
     assert response.get_json()[0]['email'] == restaurant1.email
     assert response.get_json()[0]['registration_status'] == 'PENDING'
+
+    # Approve 
+    response = admin1.pending_application_action(client, 'restaurant', restaurant1.get_id(), 'approve')
+    assert response.status_code == 200
 

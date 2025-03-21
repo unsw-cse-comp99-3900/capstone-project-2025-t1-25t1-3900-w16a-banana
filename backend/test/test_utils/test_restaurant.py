@@ -1,5 +1,4 @@
 from ..test_conf import client
-from pathlib import Path
 
 class RestaurantTest():
     def __init__(
@@ -33,11 +32,19 @@ class RestaurantTest():
         self.image3 = image3
 
     def login(self, client):
-        return client.post('/auth/login', json={
+        res = client.post('/auth/login', json={
             'email': self.email,
             'password': self.password,
             'user_type': 'restaurant'
         })
+        if res.status_code == 200:
+            self.token = res.get_json()['token']
+            self.auth_header = {
+                "Authorization": self.token
+            }
+            self.id = res.get_json()['restaurant_id']
+        return res
+
 
     def register(self, client):
         return client.post(
@@ -60,5 +67,5 @@ class RestaurantTest():
             }
         )
     
-    def set_token(self, token: str):
-        self.token = token
+    def get_id(self) -> int:
+        return self.id

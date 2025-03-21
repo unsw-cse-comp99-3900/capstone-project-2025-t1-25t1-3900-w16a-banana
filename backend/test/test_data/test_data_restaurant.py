@@ -14,9 +14,9 @@ restaurant1 = RestaurantTest(
     postcode = '2000',
     abn = '01234567891',
     description = "Sydney's best restaurant",
-    image1 = (resources / "test.png").open("rb"),
-    image2 = (resources / "test.png").open("rb"),
-    image3 = (resources / "test.png").open("rb")
+    image1 = (resources / 'restaurant_img1.jpg').open("rb"),
+    image2 = (resources / 'restaurant_img2.jpg').open("rb"),
+    image3 = (resources / 'restaurant_img3.jpg').open("rb")
 )
 
 restaurant2 = RestaurantTest(
@@ -30,9 +30,9 @@ restaurant2 = RestaurantTest(
     postcode = '2000',
     abn = '01234567899',
     description = "Sydney's best restaurant",
-    image1 = (resources / "test.png").open("rb"),
-    image2 = (resources / "test.png").open("rb"),
-    image3 = (resources / "test.png").open("rb")
+    image1 = (resources / 'restaurant_img1.jpg').open("rb"),
+    image2 = (resources / 'restaurant_img2.jpg').open("rb"),
+    image3 = (resources / 'restaurant_img3.jpg').open("rb")
 )
 
 restaurant_fail_same_email = RestaurantTest(
@@ -46,7 +46,7 @@ restaurant_fail_same_email = RestaurantTest(
     postcode = '2124',
     abn = '01234567890',
     description = "Parramatta's best restaurant",
-    image1 = (resources / "test.png").open("rb"),
-    image2 = (resources / "test.png").open("rb"),
-    image3 = (resources / "test.png").open("rb")
+    image1 = (resources / 'restaurant_img1.jpg').open("rb"),
+    image2 = (resources / 'restaurant_img2.jpg').open("rb"),
+    image3 = (resources / 'restaurant_img3.jpg').open("rb")
 )
