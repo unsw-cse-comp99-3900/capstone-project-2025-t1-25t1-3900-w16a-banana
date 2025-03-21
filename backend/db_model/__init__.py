@@ -204,11 +204,12 @@ class MenuItem(BaseModel):
 # one order can contain multiple items
 # enum for the order status
 class OrderStatus(enum.Enum):
-    PENDING = "PENDING"
-    CONFIRMED = "CONFIRMED"
-    DELIVERING = "DELIVERING"
-    DELIVERED = "DELIVERED"
-    CANCELLED = "CANCELLED"
+    PENDING = 'PENDING'
+    CONFIRMED = 'CONFIRMED'
+    READY_FOR_PICKUP = 'READY_FOR_PICKUP'
+    DELIVERING = 'DELIVERING'
+    DELIVERED = 'DELIVERED'
+    CANCELLED = 'CANCELLED'
 
 class CartItem(BaseModel):
     __tablename__ = "cart_items"
