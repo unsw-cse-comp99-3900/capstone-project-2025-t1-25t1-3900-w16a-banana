@@ -25,8 +25,10 @@ class CustomerTest:
         self.postcode = postcode
         self.profile_image = profile_image
 
+        self.cart = []
+
     def register(self, client):
-        """Register a new customer via multipart form"""
+        """POST /customer/register"""
         return client.post(
             '/customer/register',
             json={
@@ -42,7 +44,7 @@ class CustomerTest:
         )
 
     def login(self, client):
-        """Login the customer"""
+        """POST /customer/register"""
         res = client.post('/auth/login', json={
             'email': self.email,
             'password': self.password,
@@ -50,11 +52,67 @@ class CustomerTest:
         })
         if res.status_code == 200:
             self.token = res.get_json()['token']
-            self.auth_header = {
+            self.headers = {
                 "Authorization": self.token
             }
             self.id = res.get_json()['customer_id']
         return res
 
     def get_id(self) -> int:
+        """Get customer ID"""
         return self.id
+    
+
+    def cart_update(
+        self,
+        client,
+        item_id: int,
+        quantity: int
+    ):
+        """PUT /customer-order/cart"""
+        res = client.put(
+            '/customer-order/cart',
+            headers = self.headers,
+            json = {
+                'item_id': item_id,
+                'quantity': quantity
+            }
+        )
+        return res
+    
+    def cart_get(self, client):
+        """GET /customer-order/cart"""
+        return client.get('/customer-order/cart', headers = self.headers)
+    
+    def order_new(
+        self,
+        client,
+        restaurant_id: int,
+        address: str,
+        suburb: str,
+        state: str,
+        postcode: str,
+        customer_notes: str,
+        card_number: str
+    ):
+        """POST /customer-order/order"""
+        res = client.post(
+            '/customer-order/order',
+            headers = self.headers,
+            json={
+                'restaurant_id': restaurant_id,
+                'address': address,
+                'suburb': suburb,
+                'state': state,
+                'postcode': postcode,
+                'customer_notes': customer_notes,
+                'card_number': card_number
+            }
+        )
+        return res
+    
+    def orders_get(self, client):
+        return client.get(
+            '/customer-order/orders',
+            headers = self.headers
+        )

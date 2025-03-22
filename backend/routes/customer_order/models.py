@@ -1,6 +1,6 @@
 from flask_restx import Namespace, fields, reqparse
 
-api = Namespace('custome-order', description='APIs for Customer')
+api = Namespace('customer-order', description='APIs for Customer')
 
 """Error Response"""
 error_res= api.model("Error", {
@@ -57,7 +57,7 @@ get_order_res = api.model("Get Order Response", {
 })
 
 get_all_orders_res = api.model("Get All Orders Response", {
-    "customer_orders": fields.List(fields.Nested(get_order_res))
+    "orders": fields.List(fields.Nested(get_order_res))
 })
 
 

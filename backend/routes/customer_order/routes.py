@@ -84,6 +84,9 @@ class ShopItems(Resource):
 @api.route('/orders')
 class GetAllOrders(Resource):
     @api.expect(auth_header)
+    @api.response(200, 'Success', get_all_orders_res)
+    @api.response(400, 'Bad Request', error_res)
+    @api.response(401, 'Unauthorised', error_res)
     def get(self):
         "See all orders of a customer"
         customer = get_customer_by_token(get_token_from_header(auth_header))
@@ -91,7 +94,7 @@ class GetAllOrders(Resource):
             return res_error(401)
         
         orders = get_all_customer_order_from_customer(customer.customer_id)
-        return {'customer_orders': order.dict() for order in orders}, 200
+        return {'orders': [order.dict() for order in orders]}, 200
 
 @api.route('/order/<int:order_id>')
 class GetOrderItems(Resource):

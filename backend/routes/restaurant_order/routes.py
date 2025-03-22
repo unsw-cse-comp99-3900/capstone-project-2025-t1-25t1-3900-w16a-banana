@@ -24,7 +24,7 @@ class OrderActions(Resource):
     @api.response(200, 'Success', error_res)
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
-    def get(self, action: str, order_id: int):
+    def post(self, action: str, order_id: int):
         restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
         if not restaurant:
             return res_error(401)

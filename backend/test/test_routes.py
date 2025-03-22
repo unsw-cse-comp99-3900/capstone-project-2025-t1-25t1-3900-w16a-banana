@@ -3,9 +3,9 @@ from .test_utils.test_admin import *
 from .test_utils.test_restaurant import *
 from .test_utils.test_customer import *
 
-from .test_data.test_data_admin import *
-from .test_data.test_data_restaurant import *
-from .test_data.test_data_customer import *
+from .test_data.admin import *
+from .test_data.restaurant import *
+from .test_data.customer import *
 from pathlib import Path
 
 resources = Path(__file__).parent / "resources"
@@ -65,7 +65,7 @@ def test_03_customer_register_login(client):
 
     
 # Test to see pending restaurants
-def test_03_check_pending_restaurant(client):
+def test_04_check_pending_restaurant(client):
     # Get all pending applications of the restaurant
     response = admin1.get_pending_application(client, 'restaurant')
 
@@ -78,3 +78,118 @@ def test_03_check_pending_restaurant(client):
     response = admin1.pending_application_action(client, 'restaurant', restaurant1.get_id(), 'approve')
     assert response.status_code == 200
 
+def test_05_restaurant_menu(client):
+    # Create new menu category
+    response = restaurant1.category_create(client, 'category1')
+    assert response.status_code == 200
+
+    cat1_data = response.get_json()
+
+    # Update Name
+    response = restaurant1.category_update(
+        client,
+        cat1_data['category_id'],
+        'category_1'
+    )
+    assert response.status_code == 200
+
+    # Create new
+    response = restaurant1.category_create(client, 'category1')
+    assert response.status_code == 200
+    # Update to duplicate name fails
+    response = restaurant1.category_update(
+        client,
+        response.get_json()['category_id'],
+        'category_1'
+    )
+    assert response.status_code == 400
+
+    # Create new menu item
+    response = restaurant1.item_create(
+        client, 'menu1', 'description', 10.0, True,
+        (resources / "test.png").open("rb"), cat1_data['category_id']
+    )
+    assert response.status_code == 200
+
+def test_06_customer_order(client):
+    # Check for the empty cart
+    response = customer1.cart_get(client)
+    assert response.status_code == 200
+    assert len(response.get_json()['items']) == 0
+
+    # Get the first item from the restaurant
+    item_id = restaurant1.items_get(client).get_json()['items'][0]['item_id']
+
+    # Add to the cart
+    response = customer1.cart_update(client, item_id, 4)
+    assert response.status_code == 200
+
+    # Check if successfully added
+    response = customer1.cart_get(client)
+    assert response.status_code == 200
+    assert len(response.get_json()['items']) == 1
+
+    # Update the quantity
+    response = customer1.cart_update(client, item_id, 20)
+    assert response.status_code == 200
+
+    # Check if the item is still there and updated.
+    response = customer1.cart_get(client)
+    assert response.status_code == 200
+    assert len(response.get_json()['items']) == 1
+    assert response.get_json()['items'][0]['quantity'] == 20
+
+    # Delete item
+    response = customer1.cart_update(client, item_id, 0)
+    assert response.status_code == 200
+
+    # Check if the item is still there and updated.
+    response = customer1.cart_get(client)
+    assert response.status_code == 200
+    assert len(response.get_json()['items']) == 0
+
+    # Add to the cart again
+    response = customer1.cart_update(client, item_id, 4)
+    assert response.status_code == 200
+
+    # Order the food
+    response = customer1.order_new(
+        client=client,
+        restaurant_id=restaurant1.get_id(),
+        address='someaddree',
+        suburb='some suburb',
+        state='NSW',
+        postcode='2000',
+        customer_notes='Hello this is note',
+        card_number='1234-1234-4567-7890'
+    )
+    assert response.status_code == 200
+
+    # Cart should be empty now
+    response = customer1.cart_get(client)
+    assert response.status_code == 200
+    assert len(response.get_json()['items']) == 0
+
+def test_07_restaurant_accept(client):
+    # Get all the pending orders
+    response = restaurant1.orders_get(client, 'pending')
+    assert response.status_code == 200
+    assert response.get_json()['orders'][0]['order_status'] == 'PENDING'
+
+    order_id = response.get_json()['orders'][0]['order_id']
+
+    # Accept the order
+    response = restaurant1.order_action(client, 'accept', order_id)
+    assert response.status_code == 200
+
+    # The order should be active now
+    response = restaurant1.orders_get(client, 'active')
+    assert response.status_code == 200
+    assert response.get_json()['orders'][0]['order_status'] == 'ACCEPTED'
+
+    # Ready for pickup
+    response = restaurant1.order_action(client, 'ready', order_id)
+    assert response.status_code == 200
+    response = restaurant1.orders_get(client, 'active')
+    assert response.status_code == 200
+    assert response.get_json()['orders'][0]['order_status'] == 'READY_FOR_PICKUP'
