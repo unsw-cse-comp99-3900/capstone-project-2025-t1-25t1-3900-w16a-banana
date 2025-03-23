@@ -1,6 +1,5 @@
 from flask_restx import Resource
 from flask import request
-import secrets
 
 from utils.db import db
 from utils.file import save_file
@@ -51,8 +50,6 @@ class RegisterDriver(Resource):
             car_plate=args['car_plate'],
             url_license_image=url_license_image,
             url_registration_paper=url_registration_paper,
-            # create the token now
-            token=secrets.token_urlsafe(16)
         )
 
         db.session.add(new_driver)
