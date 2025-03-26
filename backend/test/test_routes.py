@@ -2,13 +2,12 @@ from .test_conf import client
 from .test_utils.test_admin import *
 from .test_utils.test_restaurant import *
 from .test_utils.test_customer import *
+from .test_utils.test_driver import *
 
 from .test_data.admin import *
 from .test_data.restaurant import *
 from .test_data.customer import *
-from pathlib import Path
-
-resources = Path(__file__).parent / "resources"
+from .test_data.driver import *
 
 # Test for admin register
 def test_01_admin_register_login(client):
@@ -30,7 +29,7 @@ def test_01_admin_register_login(client):
     assert 'token' in response.get_json()
 
 #Test for restaurant register
-def test_02_restaurant_register_login(client):
+def test_01_restaurant_register_login(client):
     # Check if the register was successful
     response = restaurant1.register(client)
     assert response.status_code == 200
@@ -47,7 +46,7 @@ def test_02_restaurant_register_login(client):
     assert 'token' in response.get_json()
 
 #Test for restaurant register
-def test_03_customer_register_login(client):
+def test_01_customer_register_login(client):
     # Check if the register was successful
     response = customer1.register(client)
     assert response.status_code == 200
@@ -63,9 +62,20 @@ def test_03_customer_register_login(client):
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
+
+def test_01_driver_register_login(client):
+    response = driver1.register(client)
+    assert response.status_code == 200
+    response = driver2.register(client)
+    assert response.status_code == 200
+
+    response = driver1.login(client)
+    assert response.status_code == 200
+
+
     
 # Test to see pending restaurants
-def test_04_check_pending_restaurant(client):
+def test_02_check_pending_restaurant(client):
     # Get all pending applications of the restaurant
     response = admin1.get_pending_application(client, 'restaurant')
 
@@ -78,7 +88,7 @@ def test_04_check_pending_restaurant(client):
     response = admin1.pending_application_action(client, 'restaurant', restaurant1.get_id(), 'approve')
     assert response.status_code == 200
 
-def test_05_restaurant_menu(client):
+def test_03_restaurant_menu(client):
     # Create new menu category
     response = restaurant1.category_create(client, 'category1')
     assert response.status_code == 200
@@ -111,7 +121,7 @@ def test_05_restaurant_menu(client):
     )
     assert response.status_code == 200
 
-def test_06_customer_order(client):
+def test_04_customer_order(client):
     # Check for the empty cart
     response = customer1.cart_get(client)
     assert response.status_code == 200
@@ -170,7 +180,7 @@ def test_06_customer_order(client):
     assert response.status_code == 200
     assert len(response.get_json()['items']) == 0
 
-def test_07_restaurant_accept(client):
+def test_05_restaurant_accept(client):
     # Get all the pending orders
     response = restaurant1.orders_get(client, 'pending')
     assert response.status_code == 200
@@ -193,3 +203,37 @@ def test_07_restaurant_accept(client):
     response = restaurant1.orders_get(client, 'active')
     assert response.status_code == 200
     assert response.get_json()['orders'][0]['order_status'] == 'READY_FOR_PICKUP'
+
+def test_06_driver_handling_order(client):
+    response = driver1.get_available_orders(client)
+    assert response.status_code == 200
+
+    data = response.get_json()
+    assert len(data['orders']) == 1
+    assert data['orders'][0]['customer_id'] == customer1.get_id()
+    assert data['orders'][0]['restaurant_id'] == restaurant1.get_id()
+    order = data['orders'][0]
+
+    # Pick up or complete should fail when not accepted by driver
+    response = driver1.pickup_order(client, order['order_id'])
+    assert response.status_code == 404
+    response = driver1.complete_order(client, order['order_id'])
+    assert response.status_code == 404
+
+    # accept the order
+    response = driver1.accept_order(client, order['order_id'])
+    assert response.status_code == 200
+
+    # Accept or complete should fail when not picked up
+    response = driver1.accept_order(client, order['order_id'])
+    assert response.status_code == 404
+    response = driver1.complete_order(client, order['order_id'])
+    assert response.status_code == 400
+
+    # Pick up the order
+    response = driver1.pickup_order(client, order['order_id'])
+    assert response.status_code == 200
+
+    # Complete the order
+    response = driver1.complete_order(client, order['order_id'])
+    assert response.status_code == 200

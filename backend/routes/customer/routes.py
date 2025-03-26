@@ -5,7 +5,7 @@ import secrets
 from utils.db import db
 from utils.file import save_file
 from utils.check import *
-from utils.header import auth_header, get_token_from_header
+from utils.header import auth_header, tokenize
 from utils.response import res_error
 from db_model import *
 from db_model.db_query import *
@@ -73,7 +73,7 @@ class CustomerUpdate(Resource):
     def put(self):
         """Customer updates his profile, no admin approval needed"""
 
-        customer = get_customer_by_token(get_token_from_header(auth_header))
+        customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401)
 

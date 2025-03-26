@@ -6,7 +6,7 @@ import secrets
 from utils.db import db
 from utils.file import save_image
 from utils.check import *
-from utils.header import auth_header, check_token
+from utils.header import auth_header
 from db_model import *
 
 

@@ -1,11 +1,10 @@
 from flask_restx import Resource
 from flask import request
-import secrets
 
 from utils.db import db
 from utils.file import save_file
 from utils.check import *
-from utils.header import auth_header, get_token_from_header
+from utils.header import auth_header, tokenize
 from utils.response import res_error
 from db_model import *
 from db_model.db_query import get_driver_by_token
@@ -51,8 +50,6 @@ class RegisterDriver(Resource):
             car_plate=args['car_plate'],
             url_license_image=url_license_image,
             url_registration_paper=url_registration_paper,
-            # create the token now
-            token=secrets.token_urlsafe(16)
         )
 
         db.session.add(new_driver)
@@ -91,7 +88,7 @@ class UpdateProfile(Resource):
     def put(self):
         """Driver updates profile, may turn the registration status to pending for admin review"""
 
-        driver = get_driver_by_token(get_token_from_header(auth_header))
+        driver = get_driver_by_token(tokenize(request.headers))
         if not driver:
             return res_error(401)
         

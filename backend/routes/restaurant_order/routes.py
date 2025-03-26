@@ -3,7 +3,7 @@ from flask import request
 
 from utils.db import db
 from utils.check import *
-from utils.header import auth_header, get_token_from_header
+from utils.header import auth_header, tokenize
 from utils.response import res_error
 from db_model import *
 from db_model.db_query import *
@@ -25,7 +25,7 @@ class OrderActions(Resource):
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def post(self, action: str, order_id: int):
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
         # Get the customer order
@@ -57,7 +57,7 @@ class GetPendingOrders(Resource):
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def get(self):
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
         
@@ -79,7 +79,7 @@ class GetActiveOrders(Resource):
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def get(self):
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
         
@@ -90,7 +90,7 @@ class GetActiveOrders(Resource):
             status = customer_order.order_status
             if status == OrderStatus.ACCEPTED\
                 or status == OrderStatus.READY_FOR_PICKUP\
-                or status == OrderStatus.DELIVERING:
+                or status == OrderStatus.PICKED_UP:
                 activeOrders.append(customer_order)
 
         return {
@@ -104,7 +104,7 @@ class GetCompleteOrders(Resource):
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def get(self):
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
         

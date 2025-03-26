@@ -4,7 +4,7 @@ from flask import request
 from utils.db import db
 from utils.check import *
 from utils.file import save_file
-from utils.header import auth_header, get_token_from_header
+from utils.header import auth_header, tokenize
 from utils.response import res_error
 from db_model import *
 from db_model.db_query import get_admin_by_token
@@ -52,7 +52,7 @@ class AdminUpdate(Resource):
     def put(self):
         """ Admin can update his first_name, last_name, email, password, profile image """
 
-        admin = get_admin_by_token(get_token_from_header(auth_header))
+        admin = get_admin_by_token(tokenize(request.headers))
         if not admin:
             return res_error(401)
 
@@ -110,7 +110,7 @@ class PendingApplications(Resource):
             return error_res(400, 'Invalid application type')
 
         # check the token
-        admin = get_admin_by_token(get_token_from_header(auth_header))
+        admin = get_admin_by_token(tokenize(request.headers))
         if not admin:
             return res_error(401)
 
@@ -140,7 +140,7 @@ class ApproveApplication(Resource):
         """Admin action on the application"""
 
         # check the token
-        admin = get_admin_by_token(get_token_from_header(auth_header))
+        admin = get_admin_by_token(tokenize(request.headers))
         if not admin:
             return res_error(401, 'Unauthorized')
 

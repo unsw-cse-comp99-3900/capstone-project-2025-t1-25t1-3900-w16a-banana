@@ -31,6 +31,10 @@ def get_restaurant_by_token(token: str) -> Optional[Restaurant]:
 "---------------------------------------------------------"
 """Functions related to Restaurant"""
 "---------------------------------------------------------"
+def get_restaurant_by_id(id: int)-> Optional[Restaurant]:
+    """Get the Restaurant with Given id"""
+    return Restaurant.query.filter_by(restaurant_id=id).first()
+
 def get_restaurant_by_email(email: str)-> Optional[Restaurant]:
     """Get the Restaurant with Given Email"""
     return Restaurant.query.filter_by(email=email).first()
@@ -94,6 +98,13 @@ def get_all_customer_order_from_restaurant(restaurant_id: int) -> List[CustomerO
     """Get All Cusomter Orders from given Restaurant"""
     return CustomerOrder.query.filter_by(
         restaurant_id = restaurant_id
+    ).all()
+
+def get_all_customer_order_driver_waiting() -> List[CustomerOrder]:
+    """Get All Customer Orders that is waiting for driver"""
+    return CustomerOrder.query.filter(
+        CustomerOrder.driver_id.is_(None),
+        CustomerOrder.order_status != OrderStatus.CANCELLED
     ).all()
 
 

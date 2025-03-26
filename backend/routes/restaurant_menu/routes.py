@@ -5,7 +5,7 @@ import secrets
 from utils.db import db
 from utils.file import save_image
 from utils.check import *
-from utils.header import auth_header, get_token_from_header
+from utils.header import auth_header, tokenize
 from utils.response import res_error
 from db_model import *
 from db_model.db_query import *
@@ -25,7 +25,7 @@ class MenuCategories(Resource):
     def get(self):
         """Get all menu categories"""
         # Authenticate
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
 
@@ -44,7 +44,7 @@ class NewMenuCategory(Resource):
     def post(self):
         """Restaurant creates a new menu category"""
         # Authenticate
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
 
@@ -75,7 +75,7 @@ class MenuCategoryUpdate(Resource):
         """Restaurant updates an existing menu category name"""
 
         # Authenticate
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
 
@@ -104,7 +104,7 @@ class MenuCategoryUpdate(Resource):
         """Restaurant deletes an existing menu category"""
 
         # Autheticate
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
 
@@ -130,7 +130,7 @@ class GetAllItemsInRestaurant(Resource):
     def get(self):
         """Get all items in category"""
         # Check restaurant
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
 
@@ -147,7 +147,7 @@ class GetAllItemsInCategory(Resource):
     def get(self, category_id):
         """Get all items in category"""
         # Check restaurant
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
         
@@ -175,7 +175,7 @@ class NewMenuItem(Resource):
         """Restaurant creates a new menu item under a category"""
 
         # Authenticate
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
 
@@ -234,7 +234,7 @@ class ManageMenuItem(Resource):
         """Update existing menu item attributes (can update any provided fields)"""
 
         # Authenticate
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
         
@@ -286,7 +286,7 @@ class ManageMenuItem(Resource):
     def delete(self, item_id):
         """Delete a menu item permenantly"""
         # Authenticate
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
 
