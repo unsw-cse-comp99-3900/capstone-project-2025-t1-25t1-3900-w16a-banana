@@ -4,7 +4,7 @@ from flask import request
 from utils.db import db
 from utils.file import save_image
 from utils.check import *
-from utils.header import auth_header, get_token_from_header
+from utils.header import auth_header, tokenize
 from utils.response import res_error
 from db_model import *
 from db_model.db_query import *
@@ -78,7 +78,7 @@ class RestaurantUpdate(Resource):
     def put(self):
         """ Restaurant update all profiles using this route, the backend may change registration status to PENDING """
 
-        restaurant = get_restaurant_by_token(get_token_from_header(auth_header))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
 

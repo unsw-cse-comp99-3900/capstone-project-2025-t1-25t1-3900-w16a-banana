@@ -4,7 +4,7 @@ from flask import request
 from utils.db import db
 from utils.file import save_file
 from utils.check import *
-from utils.header import auth_header, get_token_from_header
+from utils.header import auth_header, tokenize
 from utils.response import res_error
 from db_model import *
 from db_model.db_query import get_driver_by_token
@@ -88,7 +88,7 @@ class UpdateProfile(Resource):
     def put(self):
         """Driver updates profile, may turn the registration status to pending for admin review"""
 
-        driver = get_driver_by_token(get_token_from_header(auth_header))
+        driver = get_driver_by_token(tokenize(request.headers))
         if not driver:
             return res_error(401)
         

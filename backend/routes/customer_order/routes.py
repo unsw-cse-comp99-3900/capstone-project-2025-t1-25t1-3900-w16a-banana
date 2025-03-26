@@ -2,7 +2,7 @@ from flask_restx import Resource
 from flask import request
 
 from utils.db import db
-from utils.header import auth_header, get_token_from_header
+from utils.header import auth_header, tokenize
 from utils.response import res_error
 from utils.check import *
 from db_model import *
@@ -20,7 +20,7 @@ class ShopItems(Resource):
     def get(self):
         """Get All Items' ID in the shopping cart"""
         # Check customer token
-        customer = get_customer_by_token(get_token_from_header(auth_header))
+        customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401)
 
@@ -36,7 +36,7 @@ class ShopItems(Resource):
     @api.response(401, "Unauthorised", error_res)
     def put(self):
         """Update/Add/Remove item in the cart. Quantity 0 will remove the item."""
-        customer = get_customer_by_token(get_token_from_header(auth_header))
+        customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401)
 
@@ -89,7 +89,7 @@ class GetAllOrders(Resource):
     @api.response(401, 'Unauthorised', error_res)
     def get(self):
         "See all orders of a customer"
-        customer = get_customer_by_token(get_token_from_header(auth_header))
+        customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401)
         
@@ -104,7 +104,7 @@ class GetOrderItems(Resource):
     @api.response(401, 'Unauthorised', error_res)
     def get(self, order_id: int):
         """See placed order with given ID"""
-        customer = get_customer_by_token(get_token_from_header(auth_header))
+        customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401)
 
@@ -129,7 +129,7 @@ class OrderItems(Resource):
         Place order for Given Restaurant ID.
         This function also works when there are items from different restaurant.
         """
-        customer = get_customer_by_token(get_token_from_header(auth_header))
+        customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401)
         
