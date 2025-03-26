@@ -1,6 +1,8 @@
 """DB Query functions"""
 from typing import Optional, List
 from db_model import *
+from sqlalchemy import or_, and_
+from collections import defaultdict
 
 
 "---------------------------------------------------------"
@@ -54,11 +56,22 @@ def get_restaurant_by_menu_item_id(id: int) -> Optional[Restaurant]:
 "---------------------------------------------------------"
 """Functions related to Customer"""
 "---------------------------------------------------------"
+def get_customer_by_id(id: int) -> Optional[Customer]:
+    """Get Customer by ID"""
+    return Customer.query.filter_by(customer_id = id).first()
+
 def get_customer_by_email(email: str) -> Optional[Customer]:
     return Customer.query.filter_by(email = email).first()
 
 def get_customer_by_username(username: str) -> Optional[Customer]:
     return Customer.query.filter_by(username = username).first()
+
+"---------------------------------------------------------"
+"""Functions related to Customer"""
+"---------------------------------------------------------"
+def get_driver_by_id(id: int) -> Optional[Driver]:
+    """Get Driver by ID"""
+    return Driver.query.filter_by(driver_id = id).first()
 
 
 "---------------------------------------------------------"
@@ -173,6 +186,58 @@ def get_menu_category_from_restaurant_by_id(restaurant_id: int, category_id: int
         restaurant_id = restaurant_id,
         category_id = category_id
     ).first()
+
+
+"---------------------------------------------------------"
+"""Functions related to Chat"""
+"---------------------------------------------------------"
+def get_chats_by_user(user_type: ChatSupportUserType, user_id: int):
+    """
+    Get all chats involving the user and group them by the other user involved.
+
+    :param user_type: Enum value of ChatSupportUserType (e.g., ChatSupportUserType.Customer)
+    :param user_id: Integer user ID
+    :return: Dictionary grouped by (other_user_type, other_user_id)
+    """
+    chats = Chat.query.filter(
+        or_(
+            (Chat.from_type == user_type) & (Chat.from_id == user_id),
+            (Chat.to_type == user_type) & (Chat.to_id == user_id)
+        )
+    ).order_by(Chat.time.asc()).all()
+
+    grouped_chats = defaultdict(list)
+
+    for chat in chats:
+        if chat.from_type == user_type and chat.from_id == user_id:
+            other_user = (chat.to_type, chat.to_id)
+        else:
+            other_user = (chat.from_type, chat.from_id)
+        
+        grouped_chats[other_user].append(chat)
+
+    return grouped_chats
+
+def get_chats_between_users(user1_type: ChatSupportUserType, user1_id: int, user2_type: ChatSupportUserType, user2_id: int) -> List[Chat]:
+    """
+    Get all chat logs exchanged between two users (in either direction).
+
+    :param user1_type: Enum value of ChatSupportUserType (e.g., ChatSupportUserType.Customer)
+    :param user1_id: Integer ID of the first user
+    :param user2_type: Enum value of ChatSupportUserType
+    :param user2_id: Integer ID of the second user
+    :return: List of Chat objects sorted by time
+    """
+    chats = Chat.query.filter(
+        or_(
+            and_(Chat.from_type == user1_type, Chat.from_id == user1_id,
+                 Chat.to_type == user2_type, Chat.to_id == user2_id),
+            and_(Chat.from_type == user2_type, Chat.from_id == user2_id,
+                 Chat.to_type == user1_type, Chat.to_id == user1_id)
+        )
+    ).order_by(Chat.time.asc()).all()
+    
+    return chats
 
 
 
