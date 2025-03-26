@@ -31,6 +31,10 @@ def get_restaurant_by_token(token: str) -> Optional[Restaurant]:
 "---------------------------------------------------------"
 """Functions related to Restaurant"""
 "---------------------------------------------------------"
+def get_restaurant_by_id(id: int)-> Optional[Restaurant]:
+    """Get the Restaurant with Given id"""
+    return Restaurant.query.filter_by(restaurant_id=id).first()
+
 def get_restaurant_by_email(email: str)-> Optional[Restaurant]:
     """Get the Restaurant with Given Email"""
     return Restaurant.query.filter_by(email=email).first()
