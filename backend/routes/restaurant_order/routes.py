@@ -90,7 +90,7 @@ class GetActiveOrders(Resource):
             status = customer_order.order_status
             if status == OrderStatus.ACCEPTED\
                 or status == OrderStatus.READY_FOR_PICKUP\
-                or status == OrderStatus.DELIVERING:
+                or status == OrderStatus.PICKED_UP:
                 activeOrders.append(customer_order)
 
         return {
