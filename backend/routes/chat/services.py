@@ -2,7 +2,7 @@ from typing import Optional, Union
 from db_model import *
 from db_model.db_query import *
 
-def get_user_by_token(token: str) -> Optional[Union[Customer|Restaurant|Driver]]:
+def get_user_by_token(token: str) -> Optional[Union[Customer, Restaurant, Driver]]:
     restuarant = get_restaurant_by_token(token)
     driver = get_driver_by_token(token)
     customer = get_customer_by_token(token)
