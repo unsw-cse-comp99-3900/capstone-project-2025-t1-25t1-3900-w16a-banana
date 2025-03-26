@@ -15,6 +15,9 @@ from routes.driver_order.services import *
 @api.route('/orders/available')
 class AvailableOrders(Resource):
     @api.expect(auth_header)
+    @api.response(200, 'Success', get_available_orders_res)
+    @api.response(400, 'Bad Request', message_res)
+    @api.response(401, 'Unauthorised', message_res)
     def get(self):
         """Get all Orders that is waiting for driver to be assigned"""
         driver = get_driver_by_token(tokenize(request.headers))
@@ -33,6 +36,9 @@ class AvailableOrders(Resource):
 })
 class AcceptOrder(Resource):
     @api.expect(auth_header)
+    @api.response(200, 'Success', message_res)
+    @api.response(400, 'Bad Request', message_res)
+    @api.response(401, 'Unauthorised', message_res)
     def post(self, order_id: int):
         """Accept given customer order"""
         driver = get_driver_by_token(tokenize(request.headers))
@@ -43,7 +49,6 @@ class AcceptOrder(Resource):
         customer_order = get_customer_order_by_id(order_id)
         if not customer_order\
             or customer_order.driver_id:
-            print(customer_order.driver_id)
             return res_error(404, 'Order Not Found')
         
         if customer_order.order_status != OrderStatus.ACCEPTED\
@@ -62,6 +67,9 @@ class AcceptOrder(Resource):
 })
 class PickupOrder(Resource):
     @api.expect(auth_header)
+    @api.response(200, 'Success', message_res)
+    @api.response(400, 'Bad Request', message_res)
+    @api.response(401, 'Unauthorised', message_res)
     def post(self, order_id: int):
         """Pickup for already accepted orders"""
         driver = get_driver_by_token(tokenize(request.headers))
