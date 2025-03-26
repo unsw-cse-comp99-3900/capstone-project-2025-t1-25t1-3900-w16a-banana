@@ -1,5 +1,6 @@
 from flask_restx import Resource
 from flask import request
+from datetime import datetime
 
 from utils.db import db
 from utils.file import save_file
@@ -12,10 +13,10 @@ from routes.driver_order.models import *
 from routes.driver_order.services import *
 
 @api.route('/orders/available')
-class IncomingOrders(Resource):
+class AvailableOrders(Resource):
     @api.expect(auth_header)
     def get(self):
-        """Get all available (Waiting for a driver) offers"""
+        """Get all Orders that is waiting for driver to be assigned"""
         driver = get_driver_by_token(tokenize(request.headers))
         if not driver:
             return res_error(401)
@@ -23,12 +24,57 @@ class IncomingOrders(Resource):
         orders = get_all_customer_order_driver_waiting()
         
         return {
-            orders: [format_order(order) for order in orders]
+            'orders': [format_order(order) for order in orders]
         }, 200
 
 
-@api.route('/orders/<int:order_id>')
-class HandleOffers(Resource):
-    def post(self, order_id):
-        """Accept or reject incoming offers"""
+@api.route('/order/pickup/<int:order_id>')
+@api.doc(params={
+    'order_id': 'Customer order ID'
+})
+class PickupOrder(Resource):
+    @api.expect(auth_header)
+    def post(self, order_id: int):
+        """Pickup for already accepted orders"""
+        driver = get_driver_by_token(tokenize(request.headers))
+        if not driver:
+            return res_error(401)
+
+        # Get the customer order
+        customer_order = get_customer_order_by_id(order_id)
+        if not customer_order\
+            or customer_order.driver_id != driver.driver_id:
+            return res_error(404, 'Order Not Found')
+        
+        customer_order.order_status = OrderStatus.PICKED_UP
+        customer_order.pickup_time = datetime.now
+
+        db.session.commit()
+        return
+
+@api.route('/order/complete/<int:order_id>')
+@api.doc(params={
+    'order_id': 'Customer order ID'
+})
+class CompleteOrder(Resource):
+    @api.expect(auth_header)
+    def post(self, order_id: int):
+        """Complete delivery for already accepted orders"""
+        driver = get_driver_by_token(tokenize(request.headers))
+        if not driver:
+            return res_error(401)
+
+        # Get the customer order
+        customer_order = get_customer_order_by_id(order_id)
+        if not customer_order\
+            or customer_order.driver_id != driver.driver_id:
+            return res_error(404, 'Order Not Found')
+        
+        if customer_order.order_status != OrderStatus.PICKED_UP:
+            return res_error(400, 'Order Not Picked Up')
+        
+        customer_order.order_status = OrderStatus.DELIVERED
+        customer_order.delivery_time = datetime.now
+
+        db.session.commit()
         return
