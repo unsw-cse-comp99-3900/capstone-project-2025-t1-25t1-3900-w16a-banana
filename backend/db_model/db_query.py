@@ -100,6 +100,13 @@ def get_all_customer_order_from_restaurant(restaurant_id: int) -> List[CustomerO
         restaurant_id = restaurant_id
     ).all()
 
+def get_all_customer_order_driver_waiting() -> List[CustomerOrder]:
+    """Get All Customer Orders that is waiting for driver"""
+    return CustomerOrder.query.filter(
+        CustomerOrder.driver_id.is_(None),
+        CustomerOrder.status != OrderStatus.CANCELLED
+    ).all()
+
 
 "---------------------------------------------------------"
 """Functions related to Menus Items"""
