@@ -104,7 +104,7 @@ def get_all_customer_order_driver_waiting() -> List[CustomerOrder]:
     """Get All Customer Orders that is waiting for driver"""
     return CustomerOrder.query.filter(
         CustomerOrder.driver_id.is_(None),
-        CustomerOrder.status != OrderStatus.CANCELLED
+        CustomerOrder.order_status != OrderStatus.CANCELLED
     ).all()
 
 
