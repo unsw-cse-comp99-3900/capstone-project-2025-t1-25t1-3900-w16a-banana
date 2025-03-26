@@ -305,3 +305,20 @@ class Review(BaseModel):
 
 
 # more works: chat system table (maybe in sprint 2, 3)
+
+# User type that can send chat to each other.
+class ChatSupportUserType(enum.Enum):
+    CUSTOMER = 'CUSTOMER'
+    RESTAURANT = 'RESTAURANT'
+    DRIVER = 'DRIVER'
+
+class Chat(BaseModel):
+    __tablename__ = 'chat'
+    chat_id = db.Column(db.Integer, primary_key=True)
+    from_type = db.Column(db.Enum(ChatSupportUserType), nullable=True)
+    to_type = db.Column(db.Enum(ChatSupportUserType), nullable=True)
+    from_id = db.Column(db.Integer, nullable=True)
+    to_id = db.Column(db.Integer, nullable=True)
+    
+    message = db.Column(db.String(500), nullable=False)
+    time = db.Column(db.DateTime, default=datetime.now)

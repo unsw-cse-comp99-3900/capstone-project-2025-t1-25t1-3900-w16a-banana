@@ -1,6 +1,14 @@
 # perform some simple checks on the phone number, postcode, and state
-from db_model import State, OrderStatus
+from db_model import State, OrderStatus, ChatSupportUserType
 import re
+
+def is_valid_chat_user_type(user_type: str) -> bool:
+    """Returns boolean of whether the user type is supported"""
+    try:
+        ChatSupportUserType(user_type)
+        return True
+    except:
+        return False
 
 def is_valid_order_status(status: str) -> bool:
     try:
