@@ -203,3 +203,37 @@ def test_05_restaurant_accept(client):
     response = restaurant1.orders_get(client, 'active')
     assert response.status_code == 200
     assert response.get_json()['orders'][0]['order_status'] == 'READY_FOR_PICKUP'
+
+def test_06_driver_handling_order(client):
+    response = driver1.get_available_orders(client)
+    assert response.status_code == 200
+
+    data = response.get_json()
+    assert len(data['orders']) == 1
+    assert data['orders'][0]['customer_id'] == customer1.get_id()
+    assert data['orders'][0]['restaurant_id'] == restaurant1.get_id()
+    order = data['orders'][0]
+
+    # Pick up or complete should fail when not accepted by driver
+    response = driver1.pickup_order(client, order['order_id'])
+    assert response.status_code == 404
+    response = driver1.complete_order(client, order['order_id'])
+    assert response.status_code == 404
+
+    # accept the order
+    response = driver1.accept_order(client, order['order_id'])
+    assert response.status_code == 200
+
+    # Accept or complete should fail when not picked up
+    response = driver1.accept_order(client, order['order_id'])
+    assert response.status_code == 404
+    response = driver1.complete_order(client, order['order_id'])
+    assert response.status_code == 400
+
+    # Pick up the order
+    response = driver1.pickup_order(client, order['order_id'])
+    assert response.status_code == 200
+
+    # Complete the order
+    response = driver1.complete_order(client, order['order_id'])
+    assert response.status_code == 200

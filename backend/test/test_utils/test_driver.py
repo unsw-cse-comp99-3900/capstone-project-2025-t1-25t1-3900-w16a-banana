@@ -61,3 +61,32 @@ class DriverTest:
     def get_id(self) -> int:
         """Get customer ID"""
         return self.id
+    
+    def get_available_orders(self, client):
+        """GET /driver-order/orders/available"""
+        return client.get(
+            '/driver-order/orders/available',
+            headers = self.headers
+        )
+    
+    def accept_order(self, client, order_id: int):
+        """POST /driver-order/order/accept/<int:order_id>"""
+        return client.post(
+            f'/driver-order/order/accept/{order_id}',
+            headers = self.headers
+        )
+    
+    def pickup_order(self, client, order_id: int):
+        """POST /driver-order/order/pickup/<int:order_id>"""
+        return client.post(
+            f'/driver-order/order/pickup/{order_id}',
+            headers = self.headers
+        )
+    
+    def complete_order(self, client, order_id: int):
+        """POST /driver-order/order/complete/<int:order_id>"""
+        return client.post(
+            f'/driver-order/order/complete/{order_id}',
+            headers = self.headers
+        )
+    
