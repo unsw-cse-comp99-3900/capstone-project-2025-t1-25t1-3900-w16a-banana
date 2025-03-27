@@ -121,7 +121,7 @@ class SendChatFromCustomer(Resource):
         # Set sender and receiver
         # Set from_user info
         if from_user_type == 'CUSTOMER':
-            new_chat.from_id = from_user.customer_id
+            new_chat.from_id = from_user.id
         elif from_user_type == 'DRIVER':
             new_chat.from_id = from_user.id
         elif from_user_type == 'RESTAURANT':
@@ -129,7 +129,7 @@ class SendChatFromCustomer(Resource):
 
         # Set to_user info (only if not already set)
         if to_user_type == 'CUSTOMER':
-            new_chat.to_id = to_user.customer_id
+            new_chat.to_id = to_user.id
         elif to_user_type == 'DRIVER':
             new_chat.to_id = to_user.id
         elif to_user_type == 'RESTAURANT':

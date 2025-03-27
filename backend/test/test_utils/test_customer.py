@@ -1,8 +1,16 @@
-from ..test_conf import client
 from werkzeug.datastructures import FileStorage
 
-
 class CustomerTest:
+    """
+    Class for testing Customer
+    Features:
+        - login
+        - register
+        - cart update
+        - cart get
+        - order_new
+        - order_get
+    """
     def __init__(
         self,
         username: str,
@@ -26,6 +34,9 @@ class CustomerTest:
         self.profile_image = profile_image
 
         self.cart = []
+        self.token = None
+        self.headers = None
+        self.id = None
 
     def register(self, client):
         """POST /customer/register"""
@@ -55,13 +66,13 @@ class CustomerTest:
             self.headers = {
                 "Authorization": self.token
             }
-            self.id = res.get_json()['customer_id']
+            self.id = res.get_json()['id']
         return res
 
     def get_id(self) -> int:
         """Get customer ID"""
         return self.id
-    
+
 
     def cart_update(
         self,
@@ -79,11 +90,11 @@ class CustomerTest:
             }
         )
         return res
-    
+
     def cart_get(self, client):
         """GET /customer-order/cart"""
         return client.get('/customer-order/cart', headers = self.headers)
-    
+
     def order_new(
         self,
         client,
@@ -110,7 +121,7 @@ class CustomerTest:
             }
         )
         return res
-    
+
     def orders_get(self, client):
         return client.get(
             '/customer-order/orders',

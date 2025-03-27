@@ -89,14 +89,14 @@ class CustomerUpdate(Resource):
         if args['username']:
             # the username must be unique
             user = get_customer_by_username(args['username'])
-            if user and user.customer_id == customer.customer_id:
+            if user and user.id == customer.id:
                 return res_error(400, 'Username already exist')
             customer.username = args['username']
         
         if args['email']:
             # the email must be unique
             user = get_customer_by_email(args['email'])
-            if user and user.customer_id == customer.customer_id:
+            if user and user.id == customer.id:
                 return res_error(400, 'Email already exist')
             customer.email = args['email']
         

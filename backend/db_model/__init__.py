@@ -49,7 +49,7 @@ class Customer(BaseModel):
     suburb, state, postcode, token, url_profile_image, created_at
     """
     __tablename__ = 'customers'
-    customer_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
 
     # Basic Info
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -244,7 +244,7 @@ class CartItem(BaseModel):
     __tablename__ = "cart_items"
 
     # Customer whom the cart belongs
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), primary_key=True)
 
     # Item that is in the cart
     menu_id = db.Column(db.Integer, db.ForeignKey('menu_items.id'), primary_key=True)
@@ -268,7 +268,7 @@ class Order(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
 
     # the order relates to one customer, one driver, and one restaurant
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=True)
     restaurant_id = db.Column(
         db.Integer,

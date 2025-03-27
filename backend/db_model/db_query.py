@@ -55,7 +55,7 @@ def get_restaurant_by_menu(menu_id: int) -> Optional[Restaurant]:
 #--------------------------------------------------------#
 def get_customer_by_id(customer_id: int) -> Optional[Customer]:
     """Get Customer by ID"""
-    return Customer.query.filter_by(customer_id = customer_id).first()
+    return Customer.query.filter_by(id = customer_id).first()
 
 def get_customer_by_email(email: str) -> Optional[Customer]:
     """Find Customer By Email"""

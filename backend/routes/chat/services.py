@@ -25,7 +25,7 @@ def get_user_by_id(user_type: str, id: int):
     
 def extract_id(user_type: str, user_model: Union[Restaurant, Driver, Customer]) -> int:
     if user_type.upper() == 'CUSTOMER':
-        return user_model.customer_id
+        return user_model.id
     if user_type.upper() == 'DRIVER':
         return user_model.id
     if user_type.upper() == 'RESTAURANT':

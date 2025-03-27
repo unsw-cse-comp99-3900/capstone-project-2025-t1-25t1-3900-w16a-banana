@@ -25,7 +25,7 @@ class ShopItems(Resource):
             return res_error(401)
 
         # Get all items in the cart
-        cart_items = get_all_cart_item_from_customer(customer.customer_id)
+        cart_items = get_all_cart_item_from_customer(customer.id)
         items = format_cart_items(cart_items)
 
         return {'items': items}, 200
@@ -54,7 +54,7 @@ class ShopItems(Resource):
 
         # Check if item already exists
         cart_item = get_cart_item_from_customer_by_id(
-            customer_id=customer.customer_id,
+            customer_id=customer.id,
             menu_id=data['menu_id']
         )
 
@@ -62,7 +62,7 @@ class ShopItems(Resource):
         # If there is no same item, add one
         if not cart_item:
             new_cart_item = CartItem(
-                customer_id=customer.customer_id,
+                customer_id=customer.id,
                 menu_id=data['menu_id'],
                 quantity=data['quantity']
             )
@@ -93,7 +93,7 @@ class GetAllOrders(Resource):
         if not customer:
             return res_error(401)
         
-        orders = get_orders_by_customer(customer.customer_id)
+        orders = get_orders_by_customer(customer.id)
         return {'orders': [order.dict() for order in orders]}, 200
 
 @api.route('/order/<int:order_id>')
@@ -109,7 +109,7 @@ class GetOrderItems(Resource):
             return res_error(401)
 
         order = get_order_from_customer_by_id(
-            customer_id=customer.customer_id,
+            customer_id=customer.id,
             order_id=order_id
         )
 
@@ -137,7 +137,7 @@ class OrderItems(Resource):
 
         # Get all cart items that belong to this restaurant
         cart_items = format_cart_items_with_restaurant_filter(
-            cart_items = get_all_cart_item_from_customer(customer.customer_id),
+            cart_items = get_all_cart_item_from_customer(customer.id),
             restaurant_id = data['restaurant_id']
         )
         if not cart_items:
@@ -153,7 +153,7 @@ class OrderItems(Resource):
 
         # Make new  order with wrong info.
         new_order = make_order(
-            customer_id=customer.customer_id,
+            customer_id=customer.id,
             data=data,
         )
 
@@ -173,6 +173,6 @@ class OrderItems(Resource):
         db.session.commit()
 
         # Empty the cart
-        empty_cart_items_from_restaurant(customer.customer_id, data['restaurant_id'])
+        empty_cart_items_from_restaurant(customer.id, data['restaurant_id'])
 
         return new_order.dict(), 200
