@@ -11,7 +11,7 @@ error_res = api.model("Error", {
 
 """Basic Menu Category Structure"""
 menu_category_res = api.model('Category Basic Structure', {
-    'category_id': fields.Integer(description='Category ID'),
+    'id': fields.Integer(description='Category ID'),
     'restaurant_id': fields.Integer(description='Restaurant ID'),
     'name': fields.String(description='The menu category name')
 })

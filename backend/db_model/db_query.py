@@ -29,9 +29,9 @@ def get_restaurant_by_token(token: str) -> Optional[Restaurant]:
 #--------------------------------------------------------#
 #-------------Functions related to Restaurant-------------#
 #--------------------------------------------------------#
-def get_restaurant_by_id(id: int)-> Optional[Restaurant]:
+def get_restaurant_by_id(restaurant_id: int)-> Optional[Restaurant]:
     """Get the Restaurant with Given id"""
-    return Restaurant.query.filter_by(restaurant_id=id).first()
+    return Restaurant.query.filter_by(restaurant_id=restaurant_id).first()
 
 def get_restaurant_by_email(email: str)-> Optional[Restaurant]:
     """Get the Restaurant with Given Email"""
@@ -46,7 +46,7 @@ def get_restaurant_by_menu_id(menu_id: int) -> Optional[Restaurant]:
     if not item:
         return None
     category = get_menu_category_by_id(item.category_id)
-    return Restaurant.query.filter_by(restaurant_id=category.category_id).first()
+    return Restaurant.query.filter_by(restaurant_id=category.id).first()
 
 
 #--------------------------------------------------------#
@@ -159,7 +159,7 @@ def get_menu_item_from_restaurant_by_id(restaurant_id: int, menu_id: int) -> Opt
 #--------------------------------------------------------#
 def get_menu_category_by_id(category_id: int) -> Optional[MenuCategory]:
     """Find Menu Category given ID"""
-    return MenuCategory.query.filter_by(category_id=category_id).first()
+    return MenuCategory.query.filter_by(id=category_id).first()
 
 
 def get_all_menu_categories_from_restaurant(restaurant_id: int) -> List[MenuCategory]:
@@ -183,7 +183,7 @@ def get_menu_category_from_restaurant_by_id(
     """Find Menu Category from given Restaurant with given ID"""
     return MenuCategory.query.filter_by(
         restaurant_id = restaurant_id,
-        category_id = category_id
+        id = category_id
     ).first()
 
 

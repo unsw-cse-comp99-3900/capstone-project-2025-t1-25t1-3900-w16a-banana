@@ -31,7 +31,7 @@ class Menu(Resource):
         # write the results
         result = []
         for c in categories:
-            items = MenuItem.query.filter_by(category_id=c.category_id).all()
+            items = MenuItem.query.filter_by(category_id=c.id).all()
             c_dict = c.dict()
             c_dict['items'] = [item.dict() for item in items]
             result.append(c_dict)

@@ -160,7 +160,7 @@ class GetAllItemsInCategory(Resource):
             return res_error(404, "Category not found")
 
         # Get items in the category
-        items = get_all_menu_items_from_category(category.category_id)
+        items = get_all_menu_items_from_category(category.id)
 
         return {'items': [item.dict() for item in items]}, 200
 

@@ -98,7 +98,7 @@ def test_03_restaurant_menu(client):
     # Update Name
     response = restaurant1.category_update(
         client,
-        cat1_data['category_id'],
+        cat1_data['id'],
         'category_1'
     )
     assert response.status_code == 200
@@ -109,7 +109,7 @@ def test_03_restaurant_menu(client):
     # Update to duplicate name fails
     response = restaurant1.category_update(
         client,
-        response.get_json()['category_id'],
+        response.get_json()['id'],
         'category_1'
     )
     assert response.status_code == 400
@@ -117,7 +117,7 @@ def test_03_restaurant_menu(client):
     # Create new menu item
     response = restaurant1.item_create(
         client, 'menu1', 'description', 10.0, True,
-        (resources / "test.png").open("rb"), cat1_data['category_id']
+        (resources / "test.png").open("rb"), cat1_data['id']
     )
     assert response.status_code == 200
 

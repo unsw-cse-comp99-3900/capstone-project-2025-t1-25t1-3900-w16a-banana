@@ -192,7 +192,7 @@ class MenuCategory(BaseModel):
     """
     __tablename__ = 'menu_categories'
 
-    category_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     restaurant_id = db.Column(
         db.Integer,
         db.ForeignKey('restaurants.restaurant_id'),
@@ -210,7 +210,7 @@ class MenuItem(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(
         db.Integer,
-        db.ForeignKey('menu_categories.category_id'),
+        db.ForeignKey('menu_categories.id'),
         nullable=False
     )
     # Basic information
