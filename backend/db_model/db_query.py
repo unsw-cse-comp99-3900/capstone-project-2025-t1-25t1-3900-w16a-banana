@@ -200,25 +200,35 @@ def filter_menu_items(**kwargs) -> List[MenuItem]:
 
     return MenuItem.query.filter(and_(*filters)).all()
 
-def get_all_menu_items_from_restaurant(restaurant_id: int) -> List[MenuItem]:
-    """Get Every menu items from a given Restaurant"""
-    return MenuItem.query.join(MenuCategory).filter(
-            MenuCategory.restaurant_id == restaurant_id
-    ).all()
+def filter_menu_from_restaurant(
+    restaurant_id: int,
+    name: Optional[str] = None,
+    menu_id: Optional[int] = None,
+    is_available: Optional[bool] = None,
+    first_only: bool = False
+) -> Optional[MenuItem] | List[MenuItem]:
+    """
+    Filter menu items for a given restaurant based on optional conditions.
 
-def get_menu_item_from_restaurant_by_name(restaurant_id: int, name: str) -> Optional[MenuItem]:
-    """Find Menu Item from given Restaurant with Given Name"""
-    return MenuItem.query.join(MenuCategory).filter(
-            MenuCategory.restaurant_id == restaurant_id,
-            MenuItem.name == name
-    ).first()
+    :param restaurant_id: ID of the restaurant (required)
+    :param name: Menu item name to filter (optional)
+    :param menu_id: Menu item ID to filter (optional)
+    :param is_available: Availability filter (optional)
+    :param first_only: Whether to return only the first match
+    :return: List of MenuItems or a single MenuItem if first_only is True
+    """
+    query = MenuItem.query.join(MenuCategory).filter(
+        MenuCategory.restaurant_id == restaurant_id
+    )
 
-def get_menu_item_from_restaurant_by_id(restaurant_id: int, menu_id: int) -> Optional[MenuItem]:
-    """Find Menu Item from given Restaurant with Given ID"""
-    return MenuItem.query.join(MenuCategory).filter(
-            MenuCategory.restaurant_id == restaurant_id,
-            MenuItem.id == menu_id
-    ).first()
+    if name:
+        query = query.filter(MenuItem.name == name)
+    if menu_id:
+        query = query.filter(MenuItem.id == menu_id)
+    if is_available is not None:
+        query = query.filter(MenuItem.is_available == is_available)
+
+    return query.first() if first_only else query.all()
 
 #--------------------------------------------------------#
 #-----------Functions related to Menu Category-----------#

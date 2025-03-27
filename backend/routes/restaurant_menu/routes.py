@@ -141,7 +141,10 @@ class GetAllItemsInRestaurant(Resource):
             return res_error(401)
 
         # Get items in the restaurant
-        items = get_all_menu_items_from_restaurant(restaurant.id)
+        items = filter_menu_from_restaurant(
+            restaurant_id = restaurant.id,
+            first_only = False 
+        )
 
         return {'items': [item.dict() for item in items]}, 200
 
@@ -197,9 +200,10 @@ class NewMenuItem(Resource):
             return res_error(404, "Category not found")
 
         # Check duplicate name
-        if get_menu_item_from_restaurant_by_name(
+        if filter_menu_from_restaurant(
             restaurant_id = restaurant.id,
-            name = args['name']
+            name = args['name'],
+            first_only = True
         ):
             return res_error(400, "Item name already exists")
 
@@ -246,9 +250,10 @@ class ManageMenuItem(Resource):
             return res_error(401)
 
         # Get specific item
-        item = get_menu_item_from_restaurant_by_id(
+        item = filter_menu_from_restaurant(
             restaurant_id = restaurant.id,
-            menu_id = menu_id
+            menu_id = menu_id,
+            first_only = True
         )
         if not item:
             return res_error(404, 'Menu item not found')
@@ -264,10 +269,11 @@ class ManageMenuItem(Resource):
 
         # Update Name. Check if name conflicts
         if args['name']:
-            if get_menu_item_from_restaurant_by_name(
+            if filter_menu_from_restaurant(
                 restaurant_id = restaurant.id,
-                name = args['name']
-            ):
+                name = args['name'],
+                first_only = True
+        )   :
                 return res_error(400, "Duplicate Item Name")
             item.name = args['name']
 
@@ -298,13 +304,14 @@ class ManageMenuItem(Resource):
             return res_error(401)
 
         # Get specific item
-        item = get_menu_item_from_restaurant_by_id(
+        item = filter_menu_from_restaurant(
             restaurant_id = restaurant.id,
-            menu_id = menu_id
+            menu_id = menu_id,
+            first_only = True
         )
         if not item:
             return res_error(404, 'Menu item not found')
-        
+
         # Delete and commit
         db.session.delete(item)
         db.session.commit()
