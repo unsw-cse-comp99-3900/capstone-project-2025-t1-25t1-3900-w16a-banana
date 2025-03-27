@@ -12,6 +12,9 @@ class AdminTest():
         self.password = password
         self.first_name = first_name
         self.last_name = last_name
+        self.token = None
+        self.auth_header = None
+        self.id = None
 
     def login(self, client):
         res = client.post('/auth/login', json={
@@ -25,7 +28,7 @@ class AdminTest():
             self.auth_header = {
                 "Authorization": self.token
             }
-            self.id = res.get_json()['admin_id']
+            self.id = res.get_json()['id']
 
         return res
 

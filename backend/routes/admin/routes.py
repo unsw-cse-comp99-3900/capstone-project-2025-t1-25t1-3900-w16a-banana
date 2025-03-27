@@ -60,7 +60,7 @@ class AdminUpdate(Resource):
 
         if args.get('email'):
             is_email_exist = Admin.query.filter_by(email=args['email']) \
-                .filter(Admin.admin_id != admin.admin_id).first()
+                .filter(Admin.id != admin.id).first()
             if is_email_exist:
                 return res_error(400, 'Email already exists')
             admin.email = args["email"]
