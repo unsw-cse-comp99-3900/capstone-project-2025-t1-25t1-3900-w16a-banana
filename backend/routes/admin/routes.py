@@ -107,7 +107,7 @@ class PendingApplications(Resource):
 
         # check the application type
         if application_type not in ['driver', 'restaurant']:
-            return error_res(400, 'Invalid application type')
+            return res_error(400, 'Invalid application type')
 
         # check the token
         admin = get_admin_by_token(tokenize(request.headers))
