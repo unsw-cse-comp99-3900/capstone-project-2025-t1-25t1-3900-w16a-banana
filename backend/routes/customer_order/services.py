@@ -20,7 +20,7 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
     items = []
     for cart_item in cart_items:
         restaurant = get_restaurant_by_menu(cart_item.menu_id)
-        menus = filter_menu_items(id = cart_item.menu_id)
+        menus = filter_menus(id = cart_item.menu_id)
         menu = menus[0]
         items.append({
             'menu_id': menu.id,
@@ -46,7 +46,7 @@ def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaur
         restaurant = get_restaurant_by_menu(cart_item.menu_id)
         if restaurant.id != restaurant_id:
             continue
-        menus = filter_menu_items(id = cart_item.menu_id)
+        menus = filter_menus(id = cart_item.menu_id)
         menu = menus[0]
         items.append({
             'menu_id': menu.id,

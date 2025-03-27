@@ -42,7 +42,7 @@ class ShopItems(Resource):
 
         data = request.json
 
-        menu_items = filter_menu_items(id = data['menu_id'])
+        menu_items = filter_menus(id = data['menu_id'])
         if not menu_items:
             return res_error(400, 'Wrong Item ID')
         menu_item = menu_items[0]

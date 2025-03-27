@@ -181,7 +181,7 @@ def get_orders_waiting_driver() -> List[Order]:
 #--------------------------------------------------------#
 #------------Functions related to Menu Items------------#
 #--------------------------------------------------------#
-def filter_menu_items(**kwargs) -> List[MenuItem]:
+def filter_menus(**kwargs) -> List[MenuItem]:
     """
     Dynamically filters menu items based on provided fields.
 
