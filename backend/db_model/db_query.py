@@ -1,38 +1,34 @@
 """DB Query functions"""
-from typing import Optional, List
-from db_model import *
-from sqlalchemy import or_, and_
 from collections import defaultdict
+from typing import Optional, List
 
+from sqlalchemy import or_, and_
+from db_model import *
 
-"---------------------------------------------------------"
-"""Functions related to Users"""
-"---------------------------------------------------------"
+#--------------------------------------------------------#
+#---------------Functions related to Users---------------#
+#--------------------------------------------------------#
 def get_admin_by_token(token: str) -> Optional[Admin]:
-    if not token:
-        return None
+    """Find Admin with given token"""
     return Admin.query.filter_by(token=token).first()
 
 
 def get_customer_by_token(token: str) -> Optional[Customer]:
-    if not token:
-        return None
+    """Find Customer with given token"""
     return Customer.query.filter_by(token=token).first()
 
 def get_driver_by_token(token: str) -> Optional[Driver]:
-    if not token:
-        return None
+    """Find Driver with given token"""
     return Driver.query.filter_by(token=token).first()
 
 def get_restaurant_by_token(token: str) -> Optional[Restaurant]:
-    if not token:
-        return None
+    """Find Restaurant with given token"""
     return Restaurant.query.filter_by(token=token).first()
 
 
-"---------------------------------------------------------"
-"""Functions related to Restaurant"""
-"---------------------------------------------------------"
+#--------------------------------------------------------#
+#-------------Functions related to Restaurant-------------#
+#--------------------------------------------------------#
 def get_restaurant_by_id(id: int)-> Optional[Restaurant]:
     """Get the Restaurant with Given id"""
     return Restaurant.query.filter_by(restaurant_id=id).first()
@@ -45,17 +41,17 @@ def get_restaurant_by_abn(abn: str)-> Optional[Restaurant]:
     """Get the Restaurant with Given ABN"""
     return Restaurant.query.filter_by(abn = abn).first()
 
-def get_restaurant_by_menu_item_id(id: int) -> Optional[Restaurant]:
-    item = get_menu_item_by_id(id)
+def get_restaurant_by_menu_id(menu_id: int) -> Optional[Restaurant]:
+    item = get_menu_item_by_id(menu_id)
     if not item:
         return None
     category = get_menu_category_by_id(item.category_id)
     return Restaurant.query.filter_by(restaurant_id=category.category_id).first()
 
 
-"---------------------------------------------------------"
-"""Functions related to Customer"""
-"---------------------------------------------------------"
+#--------------------------------------------------------#
+#-------------Functions related to Customer-------------#
+#--------------------------------------------------------#
 def get_customer_by_id(id: int) -> Optional[Customer]:
     """Get Customer by ID"""
     return Customer.query.filter_by(customer_id = id).first()
@@ -66,67 +62,67 @@ def get_customer_by_email(email: str) -> Optional[Customer]:
 def get_customer_by_username(username: str) -> Optional[Customer]:
     return Customer.query.filter_by(username = username).first()
 
-"---------------------------------------------------------"
-"""Functions related to Customer"""
-"---------------------------------------------------------"
+#--------------------------------------------------------#
+#--------------Functions related to Driver--------------#
+#--------------------------------------------------------#
 def get_driver_by_id(id: int) -> Optional[Driver]:
     """Get Driver by ID"""
     return Driver.query.filter_by(driver_id = id).first()
 
 
-"---------------------------------------------------------"
-"""Functions related to Customer Cart"""
-"---------------------------------------------------------"
+#--------------------------------------------------------#
+#-----------Functions related to Customer Cart------------#
+#--------------------------------------------------------#
 def get_all_cart_item_from_customer(customer_id: int) -> List[CartItem]:
     return CartItem.query.filter_by(customer_id=customer_id).all()
 
-def get_cart_item_from_customer_by_id(customer_id, menu_item_id: int) -> Optional[CartItem]:
+def get_cart_item_from_customer_by_id(customer_id, menu_id: int) -> Optional[CartItem]:
     return CartItem.query.filter_by(
         customer_id = customer_id,
-        item_id = menu_item_id
+        menu_id = menu_id
     ).first()
 
 
-"---------------------------------------------------------"
-"""Functions related to Customer Order"""
-"---------------------------------------------------------"
-def get_customer_order_by_id(order_id: int) -> Optional[CustomerOrder]:
-    """Get Customer Order with given ID"""
-    return CustomerOrder.query.filter_by(order_id = order_id).first()
+#--------------------------------------------------------#
+#---------------Functions related to Order---------------#
+#--------------------------------------------------------#
+def get_order_by_id(order_id: int) -> Optional[Order]:
+    """Get Order with given ID"""
+    return Order.query.filter_by(id = order_id).first()
 
-def get_customer_order_from_customer_by_id(customer_id: int, order_id: int) -> Optional[CustomerOrder]:
-    """Get Customer Order from given Customer with given Order ID"""
-    return CustomerOrder.query.filter_by(
-        order_id = order_id,
+def get_order_from_customer_by_id(customer_id: int, order_id: int) -> Optional[Order]:
+    """Get Order from given Customer with given Order ID"""
+    return Order.query.filter_by(
+        id = order_id,
         customer_id = customer_id
     ).first()
 
-def get_all_customer_order_from_customer(customer_id: int) -> List[CustomerOrder]:
-    """Get All Customer Orders from given Customer"""
-    return CustomerOrder.query.filter_by(
+def get_orders_by_customer(customer_id: int) -> List[Order]:
+    """Get All Orders from given Customer"""
+    return Order.query.filter_by(
         customer_id = customer_id
     ).all()
 
-def get_all_customer_order_from_restaurant(restaurant_id: int) -> List[CustomerOrder]:
-    """Get All Cusomter Orders from given Restaurant"""
-    return CustomerOrder.query.filter_by(
+def get_orders_for_restaurant(restaurant_id: int) -> List[Order]:
+    """Get All Orders from given Restaurant"""
+    return Order.query.filter_by(
         restaurant_id = restaurant_id
     ).all()
 
-def get_all_customer_order_driver_waiting() -> List[CustomerOrder]:
-    """Get All Customer Orders that is waiting for driver"""
-    return CustomerOrder.query.filter(
-        CustomerOrder.driver_id.is_(None),
-        CustomerOrder.order_status != OrderStatus.CANCELLED
+def get_orders_waiting_driver() -> List[Order]:
+    """Get All Orders that is waiting for driver"""
+    return Order.query.filter(
+        Order.driver_id.is_(None),
+        Order.order_status != OrderStatus.CANCELLED
     ).all()
 
 
-"---------------------------------------------------------"
-"""Functions related to Menus Items"""
-"---------------------------------------------------------"
+#--------------------------------------------------------#
+#------------Functions related to Menu Items------------#
+#--------------------------------------------------------#
 def get_menu_item_by_id(id: int) -> Optional[MenuItem]:
     """Find Menu Item by its ID"""
-    return MenuItem.query.filter_by(item_id=id).first()
+    return MenuItem.query.filter_by(id=id).first()
 
 
 def get_all_menu_items_from_category(category_id: int) -> List[MenuItem]:
@@ -151,19 +147,19 @@ def get_menu_item_from_restaurant_by_name(restaurant_id: int, name: str) -> Opti
             MenuItem.name == name
     ).first()
 
-def get_menu_item_from_restaurant_by_id(restaurant_id: int, id: int) -> Optional[MenuItem]:
+def get_menu_item_from_restaurant_by_id(restaurant_id: int, menu_id: int) -> Optional[MenuItem]:
     """Find Menu Item from given Restaurant with Given ID"""
     return MenuItem.query.join(MenuCategory).filter(
             MenuCategory.restaurant_id == restaurant_id,
-            MenuItem.item_id == id
+            MenuItem.id == menu_id
     ).first()
 
-"---------------------------------------------------------"
-"""Functions realted to Menu Categories"""
-"---------------------------------------------------------"
-def get_menu_category_by_id(id: int) -> Optional[MenuCategory]:
+#--------------------------------------------------------#
+#-----------Functions related to Menu Category-----------#
+#--------------------------------------------------------#
+def get_menu_category_by_id(category_id: int) -> Optional[MenuCategory]:
     """Find Menu Category given ID"""
-    return MenuCategory.query.filter_by(category_id=id).first()
+    return MenuCategory.query.filter_by(category_id=category_id).first()
 
 
 def get_all_menu_categories_from_restaurant(restaurant_id: int) -> List[MenuCategory]:
@@ -180,7 +176,10 @@ def get_menu_category_from_restaurant_by_name(restaurant_id: int, category_name:
         name = category_name
     ).first()
 
-def get_menu_category_from_restaurant_by_id(restaurant_id: int, category_id: int) -> Optional[MenuCategory]:
+def get_menu_category_from_restaurant_by_id(
+        restaurant_id: int,
+        category_id: int
+    ) -> Optional[MenuCategory]:
     """Find Menu Category from given Restaurant with given ID"""
     return MenuCategory.query.filter_by(
         restaurant_id = restaurant_id,
@@ -188,9 +187,9 @@ def get_menu_category_from_restaurant_by_id(restaurant_id: int, category_id: int
     ).first()
 
 
-"---------------------------------------------------------"
-"""Functions related to Chat"""
-"---------------------------------------------------------"
+#--------------------------------------------------------#
+#---------------Functions related to Chat---------------#
+#--------------------------------------------------------#
 def get_chats_by_user(user_type: ChatSupportUserType, user_id: int):
     """
     Get all chats involving the user and group them by the other user involved.
@@ -213,12 +212,14 @@ def get_chats_by_user(user_type: ChatSupportUserType, user_id: int):
             other_user = (chat.to_type, chat.to_id)
         else:
             other_user = (chat.from_type, chat.from_id)
-        
         grouped_chats[other_user].append(chat)
 
     return grouped_chats
 
-def get_chats_between_users(user1_type: ChatSupportUserType, user1_id: int, user2_type: ChatSupportUserType, user2_id: int) -> List[Chat]:
+def get_chats_between_users(
+        user1_type: ChatSupportUserType, user1_id: int,
+        user2_type: ChatSupportUserType, user2_id: int
+    ) -> List[Chat]:
     """
     Get all chat logs exchanged between two users (in either direction).
 
@@ -236,8 +237,4 @@ def get_chats_between_users(user1_type: ChatSupportUserType, user1_id: int, user
                  Chat.to_type == user1_type, Chat.to_id == user1_id)
         )
     ).order_by(Chat.time.asc()).all()
-    
     return chats
-
-
-

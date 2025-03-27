@@ -1,21 +1,24 @@
-from typing import Optional, List, TypedDict
+from typing import Optional, TypedDict
 from db_model import *
 from db_model.db_query import *
 
 class FormattedOrder(TypedDict):
-    order_id: int
+    """
+    Class of how the order will be formatted
+    """
+    id: int
     customer_id: int
     driver_id: int
-    restaurant_id: int 
+    restaurant_id: int
     order_status: str
-    customer_address: str 
+    customer_address: str
     customer_suburb: str
     customer_state: str
     customer_postcode: str
     restaurant_address: str
     restaurant_suburb: str
     restaurant_state: str
-    restaurant_postcode: str 
+    restaurant_postcode: str
     order_price: float
     delivery_fee: float
     order_time: str
@@ -24,7 +27,7 @@ class FormattedOrder(TypedDict):
     customer_notes: str
     restaurant_notes: str
 
-def format_order(order: CustomerOrder) -> Optional[FormattedOrder]:
+def format_order(order: Order) -> Optional[FormattedOrder]:
     """With given order format the information that driver might need."""
     order = order.dict()
     restaurant = get_restaurant_by_id(order['restaurant_id'])
@@ -33,7 +36,7 @@ def format_order(order: CustomerOrder) -> Optional[FormattedOrder]:
     restaurant = restaurant.dict()
 
     return {
-        'order_id': order['order_id'],
+        'id': order['id'],
         'customer_id': order['customer_id'],
         'driver_id': order['driver_id'],
         'restaurant_id': order['restaurant_id'],

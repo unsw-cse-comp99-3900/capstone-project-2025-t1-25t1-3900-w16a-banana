@@ -4,14 +4,14 @@ import enum
 from datetime import datetime
 from sqlalchemy import CheckConstraint, UniqueConstraint
 
-from utils.db import db 
+from utils.db import db
 
-# a basic model to extend from
 class BaseModel(db.Model):
+    """Base Class that Every Schema is built upon"""
     __abstract__ = True
 
-    # a dict method
     def dict(self):
+        """Make a dictionary of itself (for JSON serialisability)"""
         result_dict = {}
 
         for col in self.__table__.columns:
@@ -26,14 +26,12 @@ class BaseModel(db.Model):
                 and val:
                 val = val.strftime("%Y-%m-%d %H:%M:%S")
             elif isinstance(val, enum.Enum):
-                val = val.value 
-
+                val = val.value
             result_dict[col.name] = val
-        
         return result_dict
 
-# for the state
 class State(enum.Enum):
+    """Class of Enum with valid Australian States"""
     ACT = "ACT"
     NSW = "NSW"
     NT = "NT"
@@ -45,19 +43,21 @@ class State(enum.Enum):
 
 # customer, driver, restaurant, admin are 4 separate tables
 class Customer(BaseModel):
+    """
+    Class for Customer DB.
+    Contains id, username, email, password, phone, address,
+    suburb, state, postcode, token, url_profile_image, created_at
+    """
     __tablename__ = 'customers'
-
     customer_id = db.Column(db.Integer, primary_key=True)
+
+    # Basic Info
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-
-    # for the delivery
-    # australian phone is 04xx xxx xxx
     phone = db.Column(db.String(10), nullable=False)
 
-    # the address is more detailed
-    # address, suburb, state, postcode
+    # Address: address, suburb, state, postcode
     address = db.Column(db.String(255), nullable=False)
     suburb = db.Column(db.String(50), nullable=False)
     state = db.Column(db.Enum(State), nullable=False, default=State.NSW)
@@ -69,34 +69,33 @@ class Customer(BaseModel):
     # Customer Profile Image URL
     url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/customer.png")
 
-    # some timestamps
+    # User Register Time
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-# the driver and restaurant have the registration status
-# pending, approved, rejected
 class RegistrationStatus(enum.Enum):
+    """Class for Enum of Registration Status of Driver and Restaurant"""
     PENDING = "PENDING"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
 
 # driver table
 class Driver(BaseModel):
+    """
+    Class for Driver DB.
+    """
     __tablename__ = 'drivers'
 
     driver_id = db.Column(db.Integer, primary_key=True)
+    # Basic Info
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(10), nullable=False)
-
-    # driver should upload first name, last name
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
 
-    # the driver should have the driver license number
+    # License Number and Car plate
     license_number = db.Column(db.String(50), nullable=False)
-    
-    # the driver should have the car plate number
-    car_plate = db.Column(db.String(10), nullable=False)
+    car_plate = db.Column(db.String(6), nullable=False)
 
     # the driver should have the driver license image, registration paper
     # these can be pdf or image format
@@ -107,7 +106,11 @@ class Driver(BaseModel):
     url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/driver.png")
 
     # during registration, the driver application has the status
-    registration_status = db.Column(db.Enum(RegistrationStatus), nullable=False, default=RegistrationStatus.PENDING)
+    registration_status = db.Column(
+        db.Enum(RegistrationStatus),
+        nullable=False,
+        default=RegistrationStatus.PENDING
+    )
 
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
@@ -117,6 +120,9 @@ class Driver(BaseModel):
 
 # restaurant table
 class Restaurant(BaseModel):
+    """
+    Class for Restaurant DB.
+    """
     __tablename__ = 'restaurants'
 
     restaurant_id = db.Column(db.Integer, primary_key=True)
@@ -143,7 +149,11 @@ class Restaurant(BaseModel):
     description = db.Column(db.String(255), nullable=False)
 
     # during registration, the restaurant application has the status
-    registration_status = db.Column(db.Enum(RegistrationStatus), nullable=False, default=RegistrationStatus.PENDING)
+    registration_status = db.Column(
+        db.Enum(RegistrationStatus),
+        nullable=False,
+        default=RegistrationStatus.PENDING
+    )
 
     # profile image
     url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/manager.png")
@@ -154,8 +164,10 @@ class Restaurant(BaseModel):
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-# admin table
 class Admin(BaseModel):
+    """
+    Class for Admin DB.
+    """
     __tablename__ = 'admins'
 
     admin_id = db.Column(db.Integer, primary_key=True)
@@ -172,38 +184,51 @@ class Admin(BaseModel):
     # profile page
     url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/admin.png")
 
-# about the menu:
-# each restaurant own one menu
-# this menu is separated into several categories
-# each category contains several items
-# each item: name, description, price, one image, special notes
 class MenuCategory(BaseModel):
+    """
+    Class for Menu Category DB.
+    Every menu items will be contained in a menu category
+    Consists of id, restaurant_id and its name
+    """
     __tablename__ = 'menu_categories'
 
     category_id = db.Column(db.Integer, primary_key=True)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
+    restaurant_id = db.Column(
+        db.Integer,
+        db.ForeignKey('restaurants.restaurant_id'),
+        nullable=False
+    )
     name = db.Column(db.String(50), nullable=False)
 
 class MenuItem(BaseModel):
+    """
+    Class for Menut Item DB.
+    Each Menu Item must belong to certain category.
+    """
     __tablename__ = 'menu_items'
 
-    item_id = db.Column(db.Integer, primary_key=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('menu_categories.category_id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(
+        db.Integer,
+        db.ForeignKey('menu_categories.category_id'),
+        nullable=False
+    )
+    # Basic information
     name = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
-
-    # one item has one image
     url_img = db.Column(db.String(255), nullable=False)
 
     # the item may be available or not
     is_available = db.Column(db.Boolean, nullable=False, default=True)
 
-# for the order
-# one customer can make multiple orders
-# one order can contain multiple items
-# enum for the order status
 class OrderStatus(enum.Enum):
+    """
+    Class for Enum of Order Status.
+    Customer orders item -> PENDING -> Restaurant confirms -> ACCEPTED
+    -> Restaurant notify food ready -> READY_FOR_PICKUP -> Driver pick up order
+    -> PICKED_UP -> Driver completes delivery -> DELIVERED
+    """
     PENDING = 'PENDING'
     ACCEPTED = 'ACCEPTED'
     READY_FOR_PICKUP = 'READY_FOR_PICKUP'
@@ -212,34 +237,48 @@ class OrderStatus(enum.Enum):
     CANCELLED = 'CANCELLED'
 
 class CartItem(BaseModel):
+    """
+    Class for Cart Item DB. Items that customer put into the cart.
+    One (Customer) <-> Many (Cart Items)
+    """
     __tablename__ = "cart_items"
 
     # Customer whom the cart belongs
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), primary_key=True)
 
     # Item that is in the cart
-    item_id = db.Column(db.Integer, db.ForeignKey('menu_items.item_id'), primary_key=True)
+    menu_id = db.Column(db.Integer, db.ForeignKey('menu_items.id'), primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
 
     # Make sure that quantity is greater than 0.
     __table_args__ = (
         CheckConstraint("quantity > 0", name="quantity_positive"),
-        UniqueConstraint("customer_id", "item_id", name="Unique Item In Cart")
+        UniqueConstraint("customer_id", "menu_id", name="Unique Item In Cart")
     )
 
-class CustomerOrder(BaseModel):
-    __tablename__ = 'customer_orders'
+class Order(BaseModel):
+    """
+    Class for Order DB.
+    This contains all the relevant information about order,
+    including: Customer, Restaurant, Driver involved,
+    address, order price, delivery fee, order time and notes.
+    """
+    __tablename__ = 'orders'
 
-    order_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
 
     # the order relates to one customer, one driver, and one restaurant
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
     driver_id = db.Column(db.Integer, db.ForeignKey('drivers.driver_id'), nullable=True)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
-    
+    restaurant_id = db.Column(
+        db.Integer,
+        db.ForeignKey('restaurants.restaurant_id'),
+        nullable=False
+    )
+
     # order stataus
     order_status = db.Column(db.Enum(OrderStatus), nullable=False, default=OrderStatus.PENDING)
-    
+
     # the order should have the delivery address, suburb, state, postcode
     address = db.Column(db.String(255), nullable=False)
     suburb = db.Column(db.String(50), nullable=False)
@@ -265,35 +304,37 @@ class CustomerOrder(BaseModel):
 
 # each order contains many items, here we define one order to be one restaurant
 class OrderItem(BaseModel):
+    """
+    Class for Order Item DB. Refers to Order
+    One (Order) <-> Many (Order Item)
+    """
     __tablename__ = 'order_items'
 
-    order_item_id = db.Column(db.Integer, primary_key=True)
-    
-    order_id = db.Column(db.Integer, db.ForeignKey('customer_orders.order_id'), nullable=False)
-    item_id = db.Column(db.Integer, db.ForeignKey('menu_items.item_id'), nullable=False)
-    
+    id = db.Column(db.Integer, primary_key=True)
+
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    menu_id = db.Column(db.Integer, db.ForeignKey('menu_items.id'), nullable=False)
+
     # the item price may be changed, so here needs to save the price when the order is made
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
+class RestaurantReview(BaseModel):
+    """
+    Class for Restaurant Review DB.
+    After the order, the customer can leave one review for the restaurant.
+    A restaurant can leave one comment under that.
+    A review is allowed to be updated. A review can have 1 image.
+    """
+    __tablename__ = 'restaurant_reviews'
 
-# after the order, the customer can leave one review for the driver,
-# and one review for the restaurant,
-# the driver and restaurant can leave one comment under that
-# and the review is allowed to be updated
-# and the review can attach 1 images.
-# here, one review table for two parties
-class ReviewTarget(enum.Enum):
-    DRIVER = "DRIVER"
-    RESTAURANT = "RESTAURANT"
-
-
-class Review(BaseModel):
-    __tablename__ = 'reviews'
-
-    review_id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('customer_orders.order_id'), nullable=False)
-    target = db.Column(db.Enum(ReviewTarget), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    restaurant_id = db.Column(
+        db.Integer,
+        db.ForeignKey('restaurants.restaurant_id'),
+        nullable=False
+    )
 
     # the review can have rating 1 - 5, some text, and maximum 1 images
     rating = db.Column(db.Integer, nullable=False)
@@ -303,22 +344,61 @@ class Review(BaseModel):
     # created at and updated at
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
+    __table_args__ = (
+        CheckConstraint('rating >= 1 AND rating <= 5', name='check_rating_range'),
+    )
 
-# more works: chat system table (maybe in sprint 2, 3)
+class DriverReview(BaseModel):
+    """
+    Class for Driver Review DB.
+    After the order, the customer can leave one review for the Driver.
+    A Driver can leave one comment under that.
+    A review is allowed to be updated. A review can have 1 image.
+    """
+    __tablename__ = 'driver_reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    driver_id = db.Column(
+        db.Integer,
+        db.ForeignKey('drivers.driver_id'),
+        nullable=False
+    )
+
+    # the review can have rating 1 - 5, some text, and maximum 1 images
+    rating = db.Column(db.Integer, nullable=False)
+    review_text = db.Column(db.String(255), nullable=False)
+    url_img = db.Column(db.String(255), nullable=True)
+
+    # created at and updated at
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    __table_args__ = (
+        CheckConstraint('rating >= 1 AND rating <= 5', name='check_rating_range'),
+    )
 
 # User type that can send chat to each other.
 class ChatSupportUserType(enum.Enum):
+    """
+    Class of Enum for User type that supports chat.
+    """
     CUSTOMER = 'CUSTOMER'
     RESTAURANT = 'RESTAURANT'
     DRIVER = 'DRIVER'
 
 class Chat(BaseModel):
+    """
+    Class of Chat DB.
+    The type of sender, receiver, and their id must be specified.
+    """
     __tablename__ = 'chat'
-    chat_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     from_type = db.Column(db.Enum(ChatSupportUserType), nullable=True)
     to_type = db.Column(db.Enum(ChatSupportUserType), nullable=True)
     from_id = db.Column(db.Integer, nullable=True)
     to_id = db.Column(db.Integer, nullable=True)
-    
+
     message = db.Column(db.String(500), nullable=False)
     time = db.Column(db.DateTime, default=datetime.now)
+
+# TODO: More works to be added

@@ -128,10 +128,10 @@ def test_04_customer_order(client):
     assert len(response.get_json()['items']) == 0
 
     # Get the first item from the restaurant
-    item_id = restaurant1.items_get(client).get_json()['items'][0]['item_id']
+    menu_id = restaurant1.items_get(client).get_json()['items'][0]['id']
 
     # Add to the cart
-    response = customer1.cart_update(client, item_id, 4)
+    response = customer1.cart_update(client, menu_id, 4)
     assert response.status_code == 200
 
     # Check if successfully added
@@ -140,7 +140,7 @@ def test_04_customer_order(client):
     assert len(response.get_json()['items']) == 1
 
     # Update the quantity
-    response = customer1.cart_update(client, item_id, 20)
+    response = customer1.cart_update(client, menu_id, 20)
     assert response.status_code == 200
 
     # Check if the item is still there and updated.
@@ -150,7 +150,7 @@ def test_04_customer_order(client):
     assert response.get_json()['items'][0]['quantity'] == 20
 
     # Delete item
-    response = customer1.cart_update(client, item_id, 0)
+    response = customer1.cart_update(client, menu_id, 0)
     assert response.status_code == 200
 
     # Check if the item is still there and updated.
@@ -159,7 +159,7 @@ def test_04_customer_order(client):
     assert len(response.get_json()['items']) == 0
 
     # Add to the cart again
-    response = customer1.cart_update(client, item_id, 4)
+    response = customer1.cart_update(client, menu_id, 4)
     assert response.status_code == 200
 
     # Order the food
@@ -186,7 +186,7 @@ def test_05_restaurant_accept(client):
     assert response.status_code == 200
     assert response.get_json()['orders'][0]['order_status'] == 'PENDING'
 
-    order_id = response.get_json()['orders'][0]['order_id']
+    order_id = response.get_json()['orders'][0]['id']
 
     # Accept the order
     response = restaurant1.order_action(client, 'accept', order_id)
@@ -215,25 +215,25 @@ def test_06_driver_handling_order(client):
     order = data['orders'][0]
 
     # Pick up or complete should fail when not accepted by driver
-    response = driver1.pickup_order(client, order['order_id'])
+    response = driver1.pickup_order(client, order['id'])
     assert response.status_code == 404
-    response = driver1.complete_order(client, order['order_id'])
+    response = driver1.complete_order(client, order['id'])
     assert response.status_code == 404
 
     # accept the order
-    response = driver1.accept_order(client, order['order_id'])
+    response = driver1.accept_order(client, order['id'])
     assert response.status_code == 200
 
     # Accept or complete should fail when not picked up
-    response = driver1.accept_order(client, order['order_id'])
+    response = driver1.accept_order(client, order['id'])
     assert response.status_code == 404
-    response = driver1.complete_order(client, order['order_id'])
+    response = driver1.complete_order(client, order['id'])
     assert response.status_code == 400
 
     # Pick up the order
-    response = driver1.pickup_order(client, order['order_id'])
+    response = driver1.pickup_order(client, order['id'])
     assert response.status_code == 200
 
     # Complete the order
-    response = driver1.complete_order(client, order['order_id'])
+    response = driver1.complete_order(client, order['id'])
     assert response.status_code == 200

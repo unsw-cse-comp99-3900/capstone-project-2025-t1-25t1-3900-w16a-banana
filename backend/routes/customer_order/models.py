@@ -9,8 +9,8 @@ error_res= api.model("Error", {
 
 """Response for customer cart get"""
 single_cart_item_res = api.model('Single Cart Item Model', {
-    'item_id': fields.Integer(),
-    'item_name': fields.String(),
+    'menu_id': fields.Integer(),
+    'menu_name': fields.String(),
     'restaurant_id': fields.Integer(),
     'restaurant_name': fields.String(),
     'description': fields.String(),
@@ -26,7 +26,7 @@ cart_item_get_res = api.model('Get All Cart Item Model', {
 
 """Response/Request for customer cart update"""
 cart_item_update_req = api.model('Cart Item Update Request Model', {
-    'item_id': fields.Integer(required=True, description='Item ID to Update', default=1),
+    'menu_id': fields.Integer(required=True, description='Item ID to Update', default=1),
     'quantity': fields.Integer(required=True, description='Quantity of item', default=1)
 })
 
@@ -34,9 +34,9 @@ cart_item_update_res = api.model("Cart Item Update Response Model", {
     "message": fields.String(description="Success Message", example="Cart Item Update/Delete Successful")
 })
 
-"""Response/Request for customer viewing customer order"""
+"""Response/Request for customer viewing order"""
 get_order_res = api.model("Get Order Response", {
-    "order_id": fields.Integer(),
+    "id": fields.Integer(),
     "customer_id": fields.Integer(),
     "driver_id": fields.Integer(),
     "restaurant_id": fields.Integer(),
@@ -72,7 +72,7 @@ post_order_req = api.model("Order From Cart Request", {
     'card_number': fields.String(required=True)
 })
 post_order_res = api.model("Order From Cart Response", {
-    "order_id": fields.Integer(),
+    "id": fields.Integer(),
     "customer_id": fields.Integer(),
     "driver_id": fields.Integer(),
     "restaurant_id": fields.Integer(),

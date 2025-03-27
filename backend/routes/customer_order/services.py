@@ -5,8 +5,8 @@ from db_model.db_query import *
 from utils.db import db
 
 class FormatCartItems(TypedDict):
-    item_id: int 
-    item_name: str
+    menu_id: int 
+    menu_name: str
     restaurant_id: int
     restaurant_name: str
     description: str
@@ -19,11 +19,11 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
     """Format raw cart item model into more understandable format"""
     items = []
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu_item_id(cart_item.item_id)
-        menu = get_menu_item_by_id(cart_item.item_id)
+        restaurant = get_restaurant_by_menu_id(cart_item.menu_id)
+        menu = get_menu_item_by_id(cart_item.menu_id)
         items.append({
-            'item_id': menu.item_id,
-            'item_name': menu.name,
+            'menu_id': menu.id,
+            'menu_name': menu.name,
             'restaurant_id': restaurant.restaurant_id,
             'restaurant_name': restaurant.name,
             'description': menu.description,
@@ -42,13 +42,13 @@ def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaur
     """
     items = []
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu_item_id(cart_item.item_id)
+        restaurant = get_restaurant_by_menu_id(cart_item.menu_id)
         if restaurant.restaurant_id != restaurant_id:
             continue
-        menu = get_menu_item_by_id(cart_item.item_id)
+        menu = get_menu_item_by_id(cart_item.menu_id)
         items.append({
-            'item_id': menu.item_id,
-            'item_name': menu.name,
+            'menu_id': menu.id,
+            'menu_name': menu.name,
             'restaurant_id': restaurant.restaurant_id,
             'restaurant_name': restaurant.name,
             'description': menu.description,
@@ -61,16 +61,16 @@ def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaur
     return items
 
 # TODO: Add delivery fee calculation
-def make_customer_order(
+def make_order(
         customer_id: int,
         data: Any #This will be json data
-) -> CustomerOrder:
+) -> Order:
     """
-    Make customer order with limited information.
+    Make Order with limited information.
     Have no order items attached.
     """
     # Make fake order
-    return CustomerOrder(
+    return Order(
         customer_id = customer_id,
         restaurant_id = data['restaurant_id'],
         address = data['address'],
@@ -85,35 +85,38 @@ def make_customer_order(
     )
 
 def attach_order_items(
-        customer_order: CustomerOrder,
+        order: Order,
         formatted_cart_items: List[FormatCartItems]
 ) -> List[OrderItem]:
     """
-    Attach order items to given customer order.
-    Customer order will now have updated information.
+    Attach order items to given Order.
+    Order will now have updated information.
     """
     order_items: List[OrderItem] = []
     total_price = 0
     for formatted_cart_item in formatted_cart_items:
         total_price += formatted_cart_item['total_price']
         order_items.append(OrderItem(
-            order_id = customer_order.order_id,
-            item_id = formatted_cart_item['item_id'],
+            order_id = order.id,
+            menu_id = formatted_cart_item['menu_id'],
             price = formatted_cart_item['price'],
             quantity = formatted_cart_item['quantity'],
         ))
 
     # TODO: Add delivery fee calculation
-    customer_order.order_price = total_price
-    customer_order.delivery_fee = 8
-    customer_order.total_price = customer_order.order_price + customer_order.delivery_fee
-    
+    order.order_price = total_price
+    order.delivery_fee = 8
+    order.total_price = order.order_price + order.delivery_fee
+
     return order_items
 
-def empty_cart_items_from_restaurant(customer_id: int, restaurant_id: int) -> None:
+def empty_cart_items_from_restaurant(
+        customer_id: int,
+        restaurant_id: int
+    ) -> None:
     cart_items = get_all_cart_item_from_customer(customer_id)
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu_item_id(cart_item.item_id)
+        restaurant = get_restaurant_by_menu_id(cart_item.menu_id)
         if restaurant.restaurant_id == restaurant_id:
             db.session.delete(cart_item)
     db.session.commit()

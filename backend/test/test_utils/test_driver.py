@@ -1,6 +1,4 @@
-from ..test_conf import client
 from werkzeug.datastructures import FileStorage
-
 
 class DriverTest:
     def __init__(

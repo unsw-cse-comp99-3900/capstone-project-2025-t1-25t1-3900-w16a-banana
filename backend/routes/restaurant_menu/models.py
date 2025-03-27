@@ -41,7 +41,7 @@ update_menu_category_req = api.model('Update Category', {
 
 """Basic structure of Menu Item"""
 menu_item_res = api.model('Item Basic Structure', {
-    'item_id': fields.Integer(description='Restaurant ID'),
+    'id': fields.Integer(description='Restaurant ID'),
     'category_id': fields.Integer(description='Category ID'),
     'name': fields.String(description='Item name'),
     'description': fields.String(description='Item Description'),

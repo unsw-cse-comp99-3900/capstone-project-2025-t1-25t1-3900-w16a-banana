@@ -223,14 +223,14 @@ class NewMenuItem(Resource):
 
         return new_item.dict(), 200
 
-@api.route('/item/<int:item_id>')
+@api.route('/item/<int:menu_id>')
 class ManageMenuItem(Resource):
     @api.expect(auth_header, update_item_req_parser)
     @api.response(200, 'Updated Item Data')
     @api.response(400, "Bad Request ", error_res)
     @api.response(401, "Unauthorised", error_res)
     @api.response(404, "Not Found", error_res)
-    def put(self, item_id):
+    def put(self, menu_id):
         """Update existing menu item attributes (can update any provided fields)"""
 
         # Authenticate
@@ -241,7 +241,7 @@ class ManageMenuItem(Resource):
         # Get specific item
         item = get_menu_item_from_restaurant_by_id(
             restaurant_id = restaurant.restaurant_id,
-            id = item_id
+            menu_id = menu_id
         )
         if not item:
             return res_error(404, 'Menu item not found')
@@ -283,7 +283,7 @@ class ManageMenuItem(Resource):
     @api.response(400, "Bad Request ", error_res)
     @api.response(401, "Unauthorised", error_res)
     @api.response(404, "Not Found", error_res)
-    def delete(self, item_id):
+    def delete(self, menu_id: int):
         """Delete a menu item permenantly"""
         # Authenticate
         restaurant = get_restaurant_by_token(tokenize(request.headers))
@@ -293,7 +293,7 @@ class ManageMenuItem(Resource):
         # Get specific item
         item = get_menu_item_from_restaurant_by_id(
             restaurant_id = restaurant.restaurant_id,
-            id = item_id
+            menu_id = menu_id
         )
         if not item:
             return res_error(404, 'Menu item not found')

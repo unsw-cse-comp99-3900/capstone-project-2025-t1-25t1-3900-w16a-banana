@@ -66,7 +66,7 @@ class CustomerTest:
     def cart_update(
         self,
         client,
-        item_id: int,
+        menu_id: int,
         quantity: int
     ):
         """PUT /customer-order/cart"""
@@ -74,7 +74,7 @@ class CustomerTest:
             '/customer-order/cart',
             headers = self.headers,
             json = {
-                'item_id': item_id,
+                'menu_id': menu_id,
                 'quantity': quantity
             }
         )

@@ -42,10 +42,10 @@ class ShopItems(Resource):
 
         data = request.json
 
-        menu_item = get_menu_item_by_id(data['item_id'])
+        menu_item = get_menu_item_by_id(data['menu_id'])
         if not menu_item:
             return res_error(400, 'Wrong Item ID')
-        
+
         if not menu_item.is_available:
             return res_error(400, 'Item not available')
 
@@ -55,7 +55,7 @@ class ShopItems(Resource):
         # Check if item already exists
         cart_item = get_cart_item_from_customer_by_id(
             customer_id=customer.customer_id,
-            menu_item_id=data['item_id']
+            menu_id=data['menu_id']
         )
 
         message = ""
@@ -63,7 +63,7 @@ class ShopItems(Resource):
         if not cart_item:
             new_cart_item = CartItem(
                 customer_id=customer.customer_id,
-                item_id=data['item_id'],
+                menu_id=data['menu_id'],
                 quantity=data['quantity']
             )
             db.session.add(new_cart_item)
@@ -93,7 +93,7 @@ class GetAllOrders(Resource):
         if not customer:
             return res_error(401)
         
-        orders = get_all_customer_order_from_customer(customer.customer_id)
+        orders = get_orders_by_customer(customer.customer_id)
         return {'orders': [order.dict() for order in orders]}, 200
 
 @api.route('/order/<int:order_id>')
@@ -108,14 +108,14 @@ class GetOrderItems(Resource):
         if not customer:
             return res_error(401)
 
-        customer_order = get_customer_order_from_customer_by_id(
+        order = get_order_from_customer_by_id(
             customer_id=customer.customer_id,
             order_id=order_id
         )
 
-        if not customer_order:
-            return res_error(400, 'Invalid Customer Order ID')
-        return customer_order.dict(), 200
+        if not order:
+            return res_error(400, 'Invalid Order ID')
+        return order.dict(), 200
 
 
 @api.route('/order')
@@ -132,7 +132,7 @@ class OrderItems(Resource):
         customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401)
-        
+
         data = request.get_json()
 
         # Get all cart items that belong to this restaurant
@@ -142,7 +142,7 @@ class OrderItems(Resource):
         )
         if not cart_items:
             return res_error(400, 'Cart Empty')
-        
+
         # Check the payload for validity
         if not is_valid_state(data['state']):
             return res_error(400, 'Invalid State')
@@ -150,20 +150,20 @@ class OrderItems(Resource):
             return res_error(400, 'Invalid Postcode')
         if not is_valid_card_format(data['card_number']):
             return res_error(400, 'Invalid Card Number')
-        
-        # Make new customer order with wrong info.
-        new_customer_order = make_customer_order(
+
+        # Make new  order with wrong info.
+        new_order = make_order(
             customer_id=customer.customer_id,
             data=data,
         )
 
         # Push it first
-        db.session.add(new_customer_order)
+        db.session.add(new_order)
         db.session.commit()
 
         # Make order items. Update order accordingly.
         new_order_items = attach_order_items(
-            customer_order=new_customer_order,
+            order=new_order,
             formatted_cart_items=cart_items
         )
 
@@ -175,4 +175,4 @@ class OrderItems(Resource):
         # Empty the cart
         empty_cart_items_from_restaurant(customer.customer_id, data['restaurant_id'])
 
-        return new_customer_order.dict(), 200
+        return new_order.dict(), 200
