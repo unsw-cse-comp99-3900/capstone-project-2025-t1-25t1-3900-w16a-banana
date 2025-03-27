@@ -1,6 +1,6 @@
 """DB Query functions"""
 from collections import defaultdict
-from typing import Optional, List
+from typing import Optional, List, Union
 
 from sqlalchemy import or_, and_
 from db_model import *
@@ -206,7 +206,7 @@ def filter_menu_from_restaurant(
     menu_id: Optional[int] = None,
     is_available: Optional[bool] = None,
     first_only: bool = False
-) -> Optional[MenuItem] | List[MenuItem]:
+) -> Union[Optional[MenuItem], List[MenuItem]]:
     """
     Filter menu items for a given restaurant based on optional conditions.
 
