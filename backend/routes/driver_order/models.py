@@ -1,4 +1,4 @@
-from flask_restx import Namespace, fields, reqparse
+from flask_restx import Namespace, fields
 from werkzeug.datastructures import FileStorage
 
 api = Namespace('driver-order', description='APIs for Driver')
@@ -8,7 +8,7 @@ message_res = api.model('Message Response', {
 })
 
 order_info = api.model('Order Information', {
-    'order_id': fields.Integer(),
+    'id': fields.Integer(),
     'customer_id': fields.Integer(),
     'driver_id': fields.Integer(),
     'restaurant_id': fields.Integer(), 

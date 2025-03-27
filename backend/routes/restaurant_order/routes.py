@@ -17,7 +17,7 @@ from routes.restaurant_order.services import *
         'enum': ['accept', 'reject', 'ready'],
         'type': 'string'
     },
-    'order_id': 'Customer order ID'
+    'order_id': 'Order ID'
 })
 class OrderActions(Resource):
     @api.expect(auth_header)
@@ -28,28 +28,30 @@ class OrderActions(Resource):
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
-        # Get the customer order
-        customer_order = get_customer_order_by_id(order_id)
-        if not customer_order:
-            return res_error(400, 'Invalid Customer Order ID')
+        # Get the Order
+        orders = filter_orders(id = order_id)
+        if not orders:
+            return res_error(400, 'Invalid Order ID')
+        order = orders[0]
+
         # Check if the action is valid
         if not is_valid_order_action(action):
-            return res_error(400, 'Invalid Action for Customer Order')
-        
+            return res_error(400, 'Invalid Action for Order')
+
         msg: str = ''
         if action == 'accept':
-            customer_order.order_status = OrderStatus.ACCEPTED
+            order.order_status = OrderStatus.ACCEPTED
             msg = 'Order Accepted'
         elif action == 'reject':
-            customer_order.order_status = OrderStatus.CANCELLED
+            order.order_status = OrderStatus.CANCELLED
             msg = 'Order Cancelled'
         elif action == 'ready':
-            customer_order.order_status = OrderStatus.READY_FOR_PICKUP
+            order.order_status = OrderStatus.READY_FOR_PICKUP
             msg = 'Order Ready for Pickup'
 
         db.session.commit()
         return {'message': msg}, 200
-    
+
 @api.route('/orders/pending')
 class GetPendingOrders(Resource):
     @api.expect(auth_header)
@@ -60,18 +62,17 @@ class GetPendingOrders(Resource):
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
-        
-        customer_orders = get_all_customer_order_from_restaurant(restaurant.restaurant_id)
 
-        pendingOrders: List[CustomerOrder] = []
-        for customer_order in customer_orders:
-            if customer_order.order_status == OrderStatus.PENDING:
-                pendingOrders.append(customer_order)
+        orders = filter_orders(restaurant_id = restaurant.id)
+        pending_orders: List[Order] = []
+        for order in orders:
+            if order.order_status == OrderStatus.PENDING:
+                pending_orders.append(order)
 
         return {
-            'orders': [pendingOrder.dict() for pendingOrder in pendingOrders]
+            'orders': [pending_order.dict() for pending_order in pending_orders]
         }, 200
-    
+
 @api.route('/orders/active')
 class GetActiveOrders(Resource):
     @api.expect(auth_header)
@@ -82,19 +83,19 @@ class GetActiveOrders(Resource):
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
-        
-        customer_orders = get_all_customer_order_from_restaurant(restaurant.restaurant_id)
 
-        activeOrders: List[CustomerOrder] = []
-        for customer_order in customer_orders:
-            status = customer_order.order_status
+        orders = filter_orders(restaurant_id = restaurant.id)
+
+        active_orders: List[Order] = []
+        for order in orders:
+            status = order.order_status
             if status == OrderStatus.ACCEPTED\
                 or status == OrderStatus.READY_FOR_PICKUP\
                 or status == OrderStatus.PICKED_UP:
-                activeOrders.append(customer_order)
+                active_orders.append(order)
 
         return {
-            'orders': [activeOrder.dict() for activeOrder in activeOrders]
+            'orders': [active_order.dict() for active_order in active_orders]
         }, 200
 
 @api.route('/orders/complete')
@@ -108,15 +109,15 @@ class GetCompleteOrders(Resource):
         if not restaurant:
             return res_error(401)
         
-        customer_orders = get_all_customer_order_from_restaurant(restaurant.restaurant_id)
+        orders = filter_orders(restaurant_id = restaurant.id)
 
-        completeOrders: List[CustomerOrder] = []
-        for customer_order in customer_orders:
-            status = customer_order.order_status
+        complete_orders: List[Order] = []
+        for order in orders:
+            status = order.order_status
             if status == OrderStatus.DELIVERED\
                 or status == OrderStatus.CANCELLED:
-                completeOrders.append(customer_order)
+                complete_orders.append(order)
 
         return {
-            'orders': [completeOrder.dict() for completeOrder in completeOrders]
+            'orders': [complete_order.dict() for complete_order in complete_orders]
         }, 200

@@ -1,3 +1,4 @@
+"""Flask restx models for restaurant order"""
 from flask_restx import Namespace, fields
 
 api = Namespace('restaurant-order', description='APIs for Restaurant Order')
@@ -8,8 +9,8 @@ error_res= api.model("Error", {
 })
 
 """Response for get pending orders"""
-get_single_order_res = api.model("Get Single Customer Order Response", {
-    'order_id': fields.Integer(description='Order ID'),
+get_single_order_res = api.model("Get Single Order Response", {
+    'id': fields.Integer(description='Order ID'),
     'customer_id': fields.Integer(description='Customer ID'),
     'driver_id': fields.Integer(description='Driver ID'),
     'restaurant_id': fields.Integer(description='Restaurant ID'),
@@ -35,6 +36,6 @@ get_single_order_res = api.model("Get Single Customer Order Response", {
     'card_number': fields.String(description='Card number used for payment (masked/fake)')
 })
 
-get_all_orders_res = api.model("Get All Customer Orders Response", {
+get_all_orders_res = api.model("Get All Orders Response", {
     'orders': fields.List(fields.Nested(get_single_order_res))
 })

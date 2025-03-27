@@ -60,7 +60,7 @@ class AdminUpdate(Resource):
 
         if args.get('email'):
             is_email_exist = Admin.query.filter_by(email=args['email']) \
-                .filter(Admin.admin_id != admin.admin_id).first()
+                .filter(Admin.id != admin.id).first()
             if is_email_exist:
                 return res_error(400, 'Email already exists')
             admin.email = args["email"]
@@ -107,7 +107,7 @@ class PendingApplications(Resource):
 
         # check the application type
         if application_type not in ['driver', 'restaurant']:
-            return error_res(400, 'Invalid application type')
+            return res_error(400, 'Invalid application type')
 
         # check the token
         admin = get_admin_by_token(tokenize(request.headers))
@@ -154,12 +154,12 @@ class ApproveApplication(Resource):
         # get the application
         if application_type == 'driver':
             application = Driver.query.filter_by(
-                driver_id=user_id,
+                id=user_id,
                 registration_status=RegistrationStatus.PENDING
             ).first()
         else:
             application = Restaurant.query.filter_by(
-                restaurant_id=user_id,
+                id=user_id,
                 registration_status=RegistrationStatus.PENDING
             ).first()
 

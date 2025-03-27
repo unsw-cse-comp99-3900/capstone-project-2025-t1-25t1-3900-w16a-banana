@@ -46,7 +46,7 @@ class RestaurantTest():
             self.headers = {
                 "Authorization": self.token
             }
-            self.id = res.get_json()['restaurant_id']
+            self.id = res.get_json()['id']
         return res
 
 
@@ -91,14 +91,14 @@ class RestaurantTest():
 
         if res.status_code == 200:
             self.menu_categories.append({
-                'category_id': res.get_json()['category_id'],
+                'id': res.get_json()['id'],
                 'restaurant_id': self.id,
                 'name': name
             })
         return res
 
     def category_update(self, client, id: int, new_name: str):
-        """PUT /restaurant-menu/category/{category_id}"""
+        """PUT /restaurant-menu/category/{id}"""
         res = client.put(
             f'/restaurant-menu/category/{id}',
             json={'name': new_name},
@@ -107,7 +107,7 @@ class RestaurantTest():
 
         if res.status_code == 200:
             for cat in self.menu_categories:
-                if cat['category_id'] == id:
+                if cat['id'] == id:
                     cat['name'] = new_name
         return res
     
@@ -120,7 +120,7 @@ class RestaurantTest():
 
         if res.status_code == 200:
             for cat in self.menu_categories:
-                if cat['category_id'] == id:
+                if cat['id'] == id:
                     self.menu_categories.remove(cat)
         return res
     

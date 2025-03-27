@@ -1,6 +1,4 @@
-from ..test_conf import client
 from werkzeug.datastructures import FileStorage
-
 
 class DriverTest:
     def __init__(
@@ -24,6 +22,10 @@ class DriverTest:
         self.car_plate = car_plate
         self.license_image = license_image
         self.registration_paper = registration_paper
+
+        self.token = None
+        self.headers = None
+        self.id = None
 
     def register(self, client):
         """POST /driver/register"""
@@ -55,38 +57,37 @@ class DriverTest:
             self.headers = {
                 "Authorization": self.token
             }
-            self.id = res.get_json()['driver_id']
+            self.id = res.get_json()['id']
         return res
 
     def get_id(self) -> int:
         """Get customer ID"""
         return self.id
-    
+
     def get_available_orders(self, client):
         """GET /driver-order/orders/available"""
         return client.get(
             '/driver-order/orders/available',
             headers = self.headers
         )
-    
+
     def accept_order(self, client, order_id: int):
         """POST /driver-order/order/accept/<int:order_id>"""
         return client.post(
             f'/driver-order/order/accept/{order_id}',
             headers = self.headers
         )
-    
+
     def pickup_order(self, client, order_id: int):
         """POST /driver-order/order/pickup/<int:order_id>"""
         return client.post(
             f'/driver-order/order/pickup/{order_id}',
             headers = self.headers
         )
-    
+
     def complete_order(self, client, order_id: int):
         """POST /driver-order/order/complete/<int:order_id>"""
         return client.post(
             f'/driver-order/order/complete/{order_id}',
             headers = self.headers
         )
-    

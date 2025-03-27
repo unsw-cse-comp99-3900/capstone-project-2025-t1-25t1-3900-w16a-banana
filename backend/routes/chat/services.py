@@ -6,7 +6,6 @@ def get_user_by_token(token: str) -> Optional[Union[Customer, Restaurant, Driver
     restuarant = get_restaurant_by_token(token)
     driver = get_driver_by_token(token)
     customer = get_customer_by_token(token)
-    
     if restuarant:
         return restuarant
     if driver:
@@ -14,19 +13,15 @@ def get_user_by_token(token: str) -> Optional[Union[Customer, Restaurant, Driver
     if customer:
         return customer
     return None
-    
-def get_user_by_id(user_type: str, id: int):
+
+def get_user_by_id(user_type: str, user_id: int):
+    """Find user of given type and id"""
     if user_type.upper() == 'RESTAURANT':
-        return get_restaurant_by_id(id)
+        restaurants = filter_restaurants(id = user_id)
+        return restaurants[0] if restaurants else None
     elif user_type.upper() == 'DRIVER':
-        return get_driver_by_id(id)
+        drivers = filter_drivers(id = user_id)
+        return drivers[0] if drivers else None
     elif user_type.upper() == 'CUSTOMER':
-        return get_customer_by_id(id)
-    
-def extract_id(user_type: str, user_model: Union[Restaurant, Driver, Customer]) -> int:
-    if user_type.upper() == 'CUSTOMER':
-        return user_model.customer_id
-    if user_type.upper() == 'DRIVER':
-        return user_model.driver_id
-    if user_type.upper() == 'RESTAURANT':
-        return user_model.restaurant_id
+        customers = filter_customers(id = user_id)
+        return customers[0] if customers else None
