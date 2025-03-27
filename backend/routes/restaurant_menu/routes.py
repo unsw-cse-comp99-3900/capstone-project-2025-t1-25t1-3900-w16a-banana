@@ -30,7 +30,7 @@ class MenuCategories(Resource):
             return res_error(401)
 
         # Get every categories
-        categories = get_all_menu_categories_from_restaurant(restaurant.id)
+        categories = filter_menu_categories(restaurant_id = restaurant.id)
 
         return {"categories": [category.dict() for category in categories]}, 200
 
@@ -51,9 +51,12 @@ class NewMenuCategory(Resource):
         name = request.json['name']
 
         # Check for duplicate name
-        if get_menu_category_from_restaurant_by_name(restaurant.id, name):
+        if filter_menu_categories(
+            restaurant_id = restaurant.id,
+            name = name
+        ):
             return res_error(400, 'Category already exists')
-        
+
         # Make and commit new category
         category = MenuCategory(
             restaurant_id=restaurant.id,
@@ -80,17 +83,20 @@ class MenuCategoryUpdate(Resource):
             return res_error(401)
 
         # Check Category
-        category = get_menu_category_from_restaurant_by_id(
+        categories = filter_menu_categories(
             restaurant_id = restaurant.id,
             category_id = category_id
         )
-        if not category:
+        if not categories:
             return res_error(404, "Category not found")
-
+        category = categories[0]
         new_name = request.json['name']
 
         # Check for duplicate name
-        if get_menu_category_from_restaurant_by_name(restaurant.id, new_name):
+        if filter_menu_categories(
+            restaurant_id = restaurant.id,
+            name = new_name
+        ):
             return res_error(400, 'Category name already exists')
 
         # Update and commit
@@ -98,7 +104,7 @@ class MenuCategoryUpdate(Resource):
         db.session.commit()
 
         return category.dict(), 200
-    
+
     @api.expect(auth_header)
     def delete(self, category_id):
         """Restaurant deletes an existing menu category"""
@@ -109,15 +115,15 @@ class MenuCategoryUpdate(Resource):
             return res_error(401)
 
         # Check Category
-        category = get_menu_category_from_restaurant_by_id(
+        categories = filter_menu_categories(
             restaurant_id = restaurant.id,
-            category_id = category_id
+            id = category_id
         )
-        if not category:
+        if not categories:
             return res_error(404, "Category not found")
 
         # Update and commit
-        db.session.delete(category)
+        db.session.delete(categories[0])
         db.session.commit()
 
         return {'message': 'Category deleted successfully'}, 200
@@ -142,6 +148,7 @@ class GetAllItemsInRestaurant(Resource):
 
 @api.route('/items/<int:category_id>')
 class GetAllItemsInCategory(Resource):
+    """Route: /items/<int:category_id>"""
     @api.expect(auth_header)
     @api.response(200, 'list of items', get_all_items_res)
     def get(self, category_id):
@@ -150,17 +157,17 @@ class GetAllItemsInCategory(Resource):
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
-        
+
         # Check Category
-        category = get_menu_category_from_restaurant_by_id(
+        categories = filter_menu_categories(
             restaurant_id = restaurant.id,
-            category_id = category_id
+            id = category_id
         )
-        if not category:
+        if not categories:
             return res_error(404, "Category not found")
 
         # Get items in the category
-        items = get_all_menu_items_from_category(category.id)
+        items = filter_menu_items(category_id = categories[0].id)
 
         return {'items': [item.dict() for item in items]}, 200
 
@@ -182,11 +189,11 @@ class NewMenuItem(Resource):
         args = post_item_req_parser.parse_args()
 
         # Check category
-        category = get_menu_category_from_restaurant_by_id(
+        categories = filter_menu_categories(
             restaurant_id = restaurant.id,
-            category_id = category_id
+            id = category_id
         )
-        if not category:
+        if not categories:
             return res_error(404, "Category not found")
 
         # Check duplicate name
@@ -195,7 +202,7 @@ class NewMenuItem(Resource):
             name = args['name']
         ):
             return res_error(400, "Item name already exists")
-        
+
         # Check for right string for availability
         if args['is_available'] != 'true' and\
             args['is_available'] != 'false':
@@ -237,7 +244,7 @@ class ManageMenuItem(Resource):
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
-        
+
         # Get specific item
         item = get_menu_item_from_restaurant_by_id(
             restaurant_id = restaurant.id,
@@ -245,7 +252,7 @@ class ManageMenuItem(Resource):
         )
         if not item:
             return res_error(404, 'Menu item not found')
-        
+
         args = update_item_req_parser.parse_args()
 
         # Update Image. Check If files saved

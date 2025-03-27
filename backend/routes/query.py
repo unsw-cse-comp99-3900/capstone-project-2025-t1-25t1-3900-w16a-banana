@@ -8,7 +8,7 @@ from utils.file import save_image
 from utils.check import *
 from utils.header import auth_header
 from db_model import *
-from db_model.db_query import get_all_menu_categories_from_restaurant, get_restaurant_by_id
+from db_model.db_query import filter_menu_categories, filter_restaurants
 
 
 api = Namespace('query', description='APIs for querying DB for General Info')
@@ -23,12 +23,13 @@ class Menu(Resource):
     def get(self, restaurant_id):
         """Get the full menu of a restaurant"""
 
-        restaurant = get_restaurant_by_id(restaurant_id)
+        restaurant = filter_restaurants(id = restaurant_id)
         if not restaurant:
             abort(404, 'Restaurant not found')
+        restaurant = restaurant[0]
 
-        categories = get_all_menu_categories_from_restaurant(restaurant.id)
-        
+        categories = filter_menu_categories(restaurant_id = restaurant.id)
+
         # write the results
         result = []
         for c in categories:
@@ -36,5 +37,5 @@ class Menu(Resource):
             c_dict = c.dict()
             c_dict['items'] = [item.dict() for item in items]
             result.append(c_dict)
-        
+
         return result

@@ -12,7 +12,6 @@ def get_admin_by_token(token: str) -> Optional[Admin]:
     """Find Admin with given token"""
     return Admin.query.filter_by(token=token).first()
 
-
 def get_customer_by_token(token: str) -> Optional[Customer]:
     """Find Customer with given token"""
     return Customer.query.filter_by(token=token).first()
@@ -25,92 +24,151 @@ def get_restaurant_by_token(token: str) -> Optional[Restaurant]:
     """Find Restaurant with given token"""
     return Restaurant.query.filter_by(token=token).first()
 
-
 #--------------------------------------------------------#
 #-------------Functions related to Restaurant-------------#
 #--------------------------------------------------------#
-def get_restaurant_by_id(restaurant_id: int)-> Optional[Restaurant]:
-    """Get the Restaurant with Given id"""
-    return Restaurant.query.filter_by(id=restaurant_id).first()
+def filter_restaurants(**kwargs) -> List[Restaurant]:
+    """
+    Dynamically filters restaurants based on provided fields.
 
-def get_restaurant_by_email(email: str)-> Optional[Restaurant]:
-    """Get the Restaurant with Given Email"""
-    return Restaurant.query.filter_by(email=email).first()
+    Supported fields:
+        - id
+        - email
+        - phone
+        - name
+        - abn
+        - suburb
+        - state
+        - postcode
+        - registration_status
+    """
+    filters = []
+    for field in [
+        'id', 'email', 'phone', 'name', 'abn',
+        'suburb', 'state', 'postcode', 'registration_status'
+    ]:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(Restaurant, field) == value)
 
-def get_restaurant_by_abn(abn: str)-> Optional[Restaurant]:
-    """Get the Restaurant with Given ABN"""
-    return Restaurant.query.filter_by(abn = abn).first()
+    return Restaurant.query.filter(and_(*filters)).all()
 
 def get_restaurant_by_menu(menu_id: int) -> Optional[Restaurant]:
-    """Get Restaurant that owns given menu"""
-    menu = get_menu_item_by_id(menu_id)
-    if not menu:
-        return None
-    category = get_menu_category_by_id(menu.category_id)
-    return Restaurant.query.filter_by(id=category.restaurant_id).first()
-
+    """Get the restaurant that owns given menu"""
+    return (
+        Restaurant.query
+        .join(MenuCategory, Restaurant.id == MenuCategory.restaurant_id)
+        .join(MenuItem, MenuCategory.id == MenuItem.category_id)
+        .filter(MenuItem.id == menu_id)
+        .first()
+    )
 
 #--------------------------------------------------------#
 #-------------Functions related to Customer-------------#
 #--------------------------------------------------------#
-def get_customer_by_id(customer_id: int) -> Optional[Customer]:
-    """Get Customer by ID"""
-    return Customer.query.filter_by(id = customer_id).first()
+def filter_customers(**kwargs) -> List[Customer]:
+    """
+    Dynamically filters customers based on provided fields.
+    
+    Usage:
+        filter_customers(session, email="abc@example.com")
+        filter_customers(session, phone="0412345678", suburb="Sydney")
 
-def get_customer_by_email(email: str) -> Optional[Customer]:
-    """Find Customer By Email"""
-    return Customer.query.filter_by(email = email).first()
+    Supported fields:
+        - email
+        - username
+        - phone
+        - suburb
+        - state
+        - postcode
+        - id
+    """
+    filters = []
+    for field in ['id', 'email', 'username', 'phone', 'suburb', 'state', 'postcode']:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(Customer, field) == value)
 
-def get_customer_by_username(username: str) -> Optional[Customer]:
-    """Find Customer By UserName"""
-    return Customer.query.filter_by(username = username).first()
+    return Customer.query.filter(and_(*filters)).all()
 
 #--------------------------------------------------------#
 #--------------Functions related to Driver--------------#
 #--------------------------------------------------------#
-def get_driver_by_id(driver_id: int) -> Optional[Driver]:
-    """Get Driver by ID"""
-    return Driver.query.filter_by(id = driver_id).first()
+def filter_drivers(**kwargs) -> List[Driver]:
+    """
+    Dynamically filters drivers based on provided fields.
 
+    Supported fields:
+        - id
+        - email
+        - phone
+        - first_name
+        - last_name
+        - license_number
+        - car_plate
+        - registration_status
+    """
+    filters = []
+    for field in [
+        'id', 'email', 'phone', 'first_name', 'last_name',
+        'license_number', 'car_plate', 'registration_status'
+    ]:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(Driver, field) == value)
+
+    return Driver.query.filter(and_(*filters)).all()
 
 #--------------------------------------------------------#
 #-----------Functions related to Customer Cart------------#
 #--------------------------------------------------------#
-def get_all_cart_item_from_customer(customer_id: int) -> List[CartItem]:
-    return CartItem.query.filter_by(customer_id=customer_id).all()
+def filter_cart_items( **kwargs) -> List[CartItem]:
+    """
+    Dynamically filters cart items based on provided fields.
 
-def get_cart_item_from_customer_by_id(customer_id, menu_id: int) -> Optional[CartItem]:
-    return CartItem.query.filter_by(
-        customer_id = customer_id,
-        menu_id = menu_id
-    ).first()
+    Supported fields:
+        - customer_id
+        - menu_id
+        - quantity
+    """
+    filters = []
+    for field in ['customer_id', 'menu_id', 'quantity']:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(CartItem, field) == value)
 
+    return CartItem.query.filter(and_(*filters)).all()
 
 #--------------------------------------------------------#
 #---------------Functions related to Order---------------#
 #--------------------------------------------------------#
-def get_order_by_id(order_id: int) -> Optional[Order]:
-    """Get Order with given ID"""
-    return Order.query.filter_by(id = order_id).first()
+def filter_orders(**kwargs) -> List[Order]:
+    """
+    Dynamically filters orders based on provided fields.
 
-def get_order_from_customer_by_id(customer_id: int, order_id: int) -> Optional[Order]:
-    """Get Order from given Customer with given Order ID"""
-    return Order.query.filter_by(
-        id = order_id,
-        customer_id = customer_id
-    ).first()
+    Supported fields:
+        - id
+        - customer_id
+        - driver_id
+        - restaurant_id
+        - order_status
+        - suburb
+        - state
+        - postcode
+        - order_time
+        - pickup_time
+        - delivery_time
+    """
+    filters = []
+    for field in [
+        'id', 'customer_id', 'driver_id', 'restaurant_id', 'order_status',
+        'suburb', 'state', 'postcode', 'order_time', 'pickup_time', 'delivery_time'
+    ]:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(Order, field) == value)
 
-def get_orders_by_customer(customer_id: int) -> List[Order]:
-    """Get All Orders from given Customer"""
-    return Order.query.filter_by(
-        customer_id = customer_id
-    ).all()
-
-def get_orders_for_restaurant(restaurant_id: int) -> List[Order]:
-    """Get All Orders from given Restaurant"""
-    return Order.query.filter_by(
-        restaurant_id = restaurant_id
-    ).all()
+    return Order.query.filter(and_(*filters)).all()
 
 def get_orders_waiting_driver() -> List[Order]:
     """Get All Orders that is waiting for driver"""
@@ -123,25 +181,30 @@ def get_orders_waiting_driver() -> List[Order]:
 #--------------------------------------------------------#
 #------------Functions related to Menu Items------------#
 #--------------------------------------------------------#
-def get_menu_item_by_id(id: int) -> Optional[MenuItem]:
-    """Find Menu Item by its ID"""
-    return MenuItem.query.filter_by(id=id).first()
+def filter_menu_items(**kwargs) -> List[MenuItem]:
+    """
+    Dynamically filters menu items based on provided fields.
 
+    Supported fields:
+        - id
+        - category_id
+        - name
+        - price
+        - is_available
+    """
+    filters = []
+    for field in ['id', 'category_id', 'name', 'price', 'is_available']:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(MenuItem, field) == value)
 
-def get_all_menu_items_from_category(category_id: int) -> List[MenuItem]:
-    """Get all menus in the given category"""
-    return MenuItem.query.filter_by(category_id=category_id).all()
+    return MenuItem.query.filter(and_(*filters)).all()
 
 def get_all_menu_items_from_restaurant(restaurant_id: int) -> List[MenuItem]:
+    """Get Every menu items from a given Restaurant"""
     return MenuItem.query.join(MenuCategory).filter(
             MenuCategory.restaurant_id == restaurant_id
     ).all()
-
-def get_menu_item_from_category_by_name(category_id: int, name: str) -> Optional[MenuItem]:
-    return MenuItem.query.filter_by(
-        category_id = category_id,
-        name = name
-    ).first()
 
 def get_menu_item_from_restaurant_by_name(restaurant_id: int, name: str) -> Optional[MenuItem]:
     """Find Menu Item from given Restaurant with Given Name"""
@@ -160,35 +223,22 @@ def get_menu_item_from_restaurant_by_id(restaurant_id: int, menu_id: int) -> Opt
 #--------------------------------------------------------#
 #-----------Functions related to Menu Category-----------#
 #--------------------------------------------------------#
-def get_menu_category_by_id(category_id: int) -> Optional[MenuCategory]:
-    """Find Menu Category given ID"""
-    return MenuCategory.query.filter_by(id=category_id).first()
+def filter_menu_categories(**kwargs) -> List[MenuCategory]:
+    """
+    Dynamically filters menu categories based on provided fields.
 
+    Supported fields:
+        - id
+        - restaurant_id
+        - name
+    """
+    filters = []
+    for field in ['id', 'restaurant_id', 'name']:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(MenuCategory, field) == value)
 
-def get_all_menu_categories_from_restaurant(restaurant_id: int) -> List[MenuCategory]:
-    """Find All Menu Category from given Restaurant"""
-    return MenuCategory.query.filter_by(
-        restaurant_id=restaurant_id
-    ).all()
-
-
-def get_menu_category_from_restaurant_by_name(restaurant_id: int, category_name: str) -> Optional[MenuCategory]:
-    """Find Menu Category from given Restaurant with given Name"""
-    return MenuCategory.query.filter_by(
-        restaurant_id = restaurant_id,
-        name = category_name
-    ).first()
-
-def get_menu_category_from_restaurant_by_id(
-        restaurant_id: int,
-        category_id: int
-    ) -> Optional[MenuCategory]:
-    """Find Menu Category from given Restaurant with given ID"""
-    return MenuCategory.query.filter_by(
-        restaurant_id = restaurant_id,
-        id = category_id
-    ).first()
-
+    return MenuCategory.query.filter(and_(*filters)).all()
 
 #--------------------------------------------------------#
 #---------------Functions related to Chat---------------#

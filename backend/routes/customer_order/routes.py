@@ -25,7 +25,7 @@ class ShopItems(Resource):
             return res_error(401)
 
         # Get all items in the cart
-        cart_items = get_all_cart_item_from_customer(customer.id)
+        cart_items = filter_cart_items(customer_id = customer.id)
         items = format_cart_items(cart_items)
 
         return {'items': items}, 200
@@ -42,9 +42,10 @@ class ShopItems(Resource):
 
         data = request.json
 
-        menu_item = get_menu_item_by_id(data['menu_id'])
-        if not menu_item:
+        menu_items = filter_menu_items(id = data['menu_id'])
+        if not menu_items:
             return res_error(400, 'Wrong Item ID')
+        menu_item = menu_items[0]
 
         if not menu_item.is_available:
             return res_error(400, 'Item not available')
@@ -53,14 +54,14 @@ class ShopItems(Resource):
             return res_error(400, 'Wrong Item Quantity')
 
         # Check if item already exists
-        cart_item = get_cart_item_from_customer_by_id(
-            customer_id=customer.id,
-            menu_id=data['menu_id']
+        cart_items = filter_cart_items(
+            customer_id = customer.id,
+            menu_id = data['menu_id']
         )
 
         message = ""
         # If there is no same item, add one
-        if not cart_item:
+        if not cart_items:
             new_cart_item = CartItem(
                 customer_id=customer.id,
                 menu_id=data['menu_id'],
@@ -70,11 +71,11 @@ class ShopItems(Resource):
             message = "Item Added"
         # If the quantity is 0, delete the item
         elif data['quantity'] == 0:
-            db.session.delete(cart_item)
+            db.session.delete(cart_items[0])
             message = "Item Deleted"
         # Otherwise, update the item
         else:
-            cart_item.quantity = data['quantity']
+            cart_items[0].quantity = data['quantity']
             message = "Item Updated"
         db.session.commit()
 
@@ -92,8 +93,8 @@ class GetAllOrders(Resource):
         customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401)
-        
-        orders = get_orders_by_customer(customer.id)
+
+        orders = filter_orders(customer_id = customer.id)
         return {'orders': [order.dict() for order in orders]}, 200
 
 @api.route('/order/<int:order_id>')
@@ -108,14 +109,14 @@ class GetOrderItems(Resource):
         if not customer:
             return res_error(401)
 
-        order = get_order_from_customer_by_id(
+        orders = filter_orders(
             customer_id=customer.id,
-            order_id=order_id
+            id=order_id
         )
 
-        if not order:
+        if not orders:
             return res_error(400, 'Invalid Order ID')
-        return order.dict(), 200
+        return orders[0].dict(), 200
 
 
 @api.route('/order')
@@ -137,7 +138,7 @@ class OrderItems(Resource):
 
         # Get all cart items that belong to this restaurant
         cart_items = format_cart_items_with_restaurant_filter(
-            cart_items = get_all_cart_item_from_customer(customer.id),
+            cart_items = filter_cart_items(customer_id = customer.id),
             restaurant_id = data['restaurant_id']
         )
         if not cart_items:

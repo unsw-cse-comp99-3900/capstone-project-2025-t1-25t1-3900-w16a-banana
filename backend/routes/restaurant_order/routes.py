@@ -29,13 +29,15 @@ class OrderActions(Resource):
         if not restaurant:
             return res_error(401)
         # Get the Order
-        order = get_order_by_id(order_id)
-        if not order:
+        orders = filter_orders(id = order_id)
+        if not orders:
             return res_error(400, 'Invalid Order ID')
+        order = orders[0]
+
         # Check if the action is valid
         if not is_valid_order_action(action):
             return res_error(400, 'Invalid Action for Order')
-        
+
         msg: str = ''
         if action == 'accept':
             order.order_status = OrderStatus.ACCEPTED
@@ -49,7 +51,7 @@ class OrderActions(Resource):
 
         db.session.commit()
         return {'message': msg}, 200
-    
+
 @api.route('/orders/pending')
 class GetPendingOrders(Resource):
     @api.expect(auth_header)
@@ -61,7 +63,7 @@ class GetPendingOrders(Resource):
         if not restaurant:
             return res_error(401)
 
-        orders = get_orders_for_restaurant(restaurant.id)
+        orders = filter_orders(restaurant_id = restaurant.id)
         pending_orders: List[Order] = []
         for order in orders:
             if order.order_status == OrderStatus.PENDING:
@@ -82,7 +84,7 @@ class GetActiveOrders(Resource):
         if not restaurant:
             return res_error(401)
 
-        orders = get_orders_for_restaurant(restaurant.id)
+        orders = filter_orders(restaurant_id = restaurant.id)
 
         active_orders: List[Order] = []
         for order in orders:
@@ -107,7 +109,7 @@ class GetCompleteOrders(Resource):
         if not restaurant:
             return res_error(401)
         
-        orders = get_orders_for_restaurant(restaurant.id)
+        orders = filter_orders(restaurant_id = restaurant.id)
 
         complete_orders: List[Order] = []
         for order in orders:

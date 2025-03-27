@@ -1,5 +1,5 @@
 """Common functions for customer order goes here."""
-from typing import List, TypedDict, Tuple, Any
+from typing import List, TypedDict, Any
 from db_model import *
 from db_model.db_query import *
 from utils.db import db
@@ -20,7 +20,8 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
     items = []
     for cart_item in cart_items:
         restaurant = get_restaurant_by_menu(cart_item.menu_id)
-        menu = get_menu_item_by_id(cart_item.menu_id)
+        menus = filter_menu_items(id = cart_item.menu_id)
+        menu = menus[0]
         items.append({
             'menu_id': menu.id,
             'menu_name': menu.name,
@@ -45,7 +46,8 @@ def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaur
         restaurant = get_restaurant_by_menu(cart_item.menu_id)
         if restaurant.id != restaurant_id:
             continue
-        menu = get_menu_item_by_id(cart_item.menu_id)
+        menus = filter_menu_items(id = cart_item.menu_id)
+        menu = menus[0]
         items.append({
             'menu_id': menu.id,
             'menu_name': menu.name,
@@ -60,7 +62,6 @@ def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaur
 
     return items
 
-# TODO: Add delivery fee calculation
 def make_order(
         customer_id: int,
         data: Any #This will be json data
@@ -114,7 +115,8 @@ def empty_cart_items_from_restaurant(
         customer_id: int,
         restaurant_id: int
     ) -> None:
-    cart_items = get_all_cart_item_from_customer(customer_id)
+    """Remove all cart items from customer from given restaurant"""
+    cart_items = filter_cart_items(customer_id = customer_id)
     for cart_item in cart_items:
         restaurant = get_restaurant_by_menu(cart_item.menu_id)
         if restaurant.id == restaurant_id:

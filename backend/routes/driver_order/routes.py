@@ -46,9 +46,13 @@ class AcceptOrder(Resource):
             return res_error(401)
 
         # Get the Order
-        order = get_order_by_id(order_id)
-        if not order or order.driver_id:
+        orders = filter_orders(id = order_id)
+        if not orders:
             return res_error(404, 'Order Not Found')
+        order = orders[0]
+
+        if order.driver_id:
+            return res_error(404, 'Order Accepted By Other Driver')
 
         if order.order_status != OrderStatus.ACCEPTED\
             and order.order_status != OrderStatus.READY_FOR_PICKUP:
@@ -76,9 +80,13 @@ class PickupOrder(Resource):
             return res_error(401)
 
         # Get the Order
-        order = get_order_by_id(order_id)
-        if not order or order.driver_id != driver.id:
+        orders = filter_orders(id = order_id)
+        if not orders:
             return res_error(404, 'Order Not Found')
+        order = orders[0]
+
+        if order.driver_id != driver.id:
+            return res_error(404, 'Order Unaccessible')
 
         if order.order_status != OrderStatus.READY_FOR_PICKUP:
             return res_error(400, 'Order Not Ready')
@@ -102,9 +110,13 @@ class CompleteOrder(Resource):
             return res_error(401)
 
         # Get the Order
-        order = get_order_by_id(order_id)
-        if not order or order.driver_id != driver.id:
+        orders = filter_orders(id = order_id)
+        if not orders:
             return res_error(404, 'Order Not Found')
+
+        order = orders[0]
+        if order.driver_id != driver.id:
+            return res_error(404, 'Order Unaccessible')
 
         if order.order_status != OrderStatus.PICKED_UP:
             return res_error(400, 'Order Not Picked Up')

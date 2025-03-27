@@ -30,10 +30,10 @@ class FormattedOrder(TypedDict):
 def format_order(order: Order) -> Optional[FormattedOrder]:
     """With given order format the information that driver might need."""
     order = order.dict()
-    restaurant = get_restaurant_by_id(order['restaurant_id'])
+    restaurant = filter_restaurants(id = order['restaurant_id'])
     if not restaurant:
         return None
-    restaurant = restaurant.dict()
+    restaurant = restaurant[0].dict()
 
     return {
         'id': order['id'],

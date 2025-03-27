@@ -13,8 +13,10 @@ from routes.chat.services import *
 
 @api.route('/get/all')
 class GetAllChat(Resource):
+    """Route: /get/all"""
     @api.expect(auth_header)
     def get(self):
+        """Get all user's chat log"""
         me = get_user_by_token(tokenize(request.headers))
         if not me:
             return res_error(401)
@@ -22,15 +24,14 @@ class GetAllChat(Resource):
 
         chat_groups = get_chats_by_user(
             user_type = ChatSupportUserType(me_type),
-            user_id = extract_id(me_type, me)
+            user_id = me.id
         )
 
         chat_logs = {}
         for (other_type, other_id), chats in chat_groups.items():
             chat_logs[f'{other_type.name}_{other_id}'] = [chat.dict() for chat in chats]
-        
         return chat_logs, 200
-    
+
 @api.route('/get/<string:other_type>/<int:other_id>')
 @api.doc(params={
     'other_type': {
@@ -41,6 +42,7 @@ class GetAllChat(Resource):
     'other_id': {'type': 'int' }
 })
 class GetChatWith(Resource):
+    """Route: /get/<string:other_type>/<int:other_id>"""
     @api.expect(auth_header)
     def get(self, other_type: str, other_id: int):
         """Get the chat of myself with the given user"""
@@ -55,15 +57,15 @@ class GetChatWith(Resource):
         other_user = get_user_by_id(other_type, other_id)
         if not other_user:
             return res_error(400, 'Sender Not Found')
-        
+
         # Get all chat messages between two
         chats = get_chats_between_users(
             user1_type = ChatSupportUserType(other_type),
-            user1_id = extract_id(other_type, other_user),
+            user1_id = other_user.id,
             user2_type = ChatSupportUserType(me_type),
-            user2_id = extract_id(me_type, me)
+            user2_id = me.id
         )
-        
+
         return {
             'chats': [chat.dict() for chat in chats]
         }, 200
@@ -79,6 +81,7 @@ class GetChatWith(Resource):
     'to_user_id': {'type': 'int' }
 })
 class SendChatFromCustomer(Resource):
+    """Route: /send/<string:to_user_type>/<int:to_user_id>"""
     @api.expect(auth_header, send_message_req)
     @api.response(200, "Success")
     @api.response(400, "Bad Request", message_res)
@@ -97,13 +100,12 @@ class SendChatFromCustomer(Resource):
         if not from_user:
             return res_error(401)
         from_user_type = type(from_user).__name__.upper()
-        
-        
+
         # Check the receiver type.
         to_user_type = to_user_type.upper()
         if not is_valid_chat_user_type(to_user_type):
             return res_error(400, 'Invalid User Type')
-        
+
         # Cannot send to same user type
         if from_user_type == to_user_type:
             return res_error(400, f'Cannot Send From {from_user_type} to {to_user_type}')
@@ -120,21 +122,9 @@ class SendChatFromCustomer(Resource):
 
         # Set sender and receiver
         # Set from_user info
-        if from_user_type == 'CUSTOMER':
-            new_chat.from_id = from_user.id
-        elif from_user_type == 'DRIVER':
-            new_chat.from_id = from_user.id
-        elif from_user_type == 'RESTAURANT':
-            new_chat.from_id = from_user.id
+        new_chat.from_id = from_user.id
+        new_chat.to_id = to_user.id
 
-        # Set to_user info (only if not already set)
-        if to_user_type == 'CUSTOMER':
-            new_chat.to_id = to_user.id
-        elif to_user_type == 'DRIVER':
-            new_chat.to_id = to_user.id
-        elif to_user_type == 'RESTAURANT':
-            new_chat.to_id = to_user.id
-        
         new_chat.from_type = ChatSupportUserType(from_user_type)
         new_chat.to_type = ChatSupportUserType(to_user_type)
 
