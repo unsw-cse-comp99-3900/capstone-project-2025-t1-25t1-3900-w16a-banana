@@ -54,7 +54,7 @@ class AcceptOrder(Resource):
             and order.order_status != OrderStatus.READY_FOR_PICKUP:
             return res_error(400, 'Order Cannot Be Accepted')
 
-        order.driver_id = driver.driver_id
+        order.driver_id = driver.id
         db.session.commit()
 
         return { 'message': 'Order Accepted' }, 200
@@ -77,7 +77,7 @@ class PickupOrder(Resource):
 
         # Get the Order
         order = get_order_by_id(order_id)
-        if not order or order.driver_id != driver.driver_id:
+        if not order or order.driver_id != driver.id:
             return res_error(404, 'Order Not Found')
 
         if order.order_status != OrderStatus.READY_FOR_PICKUP:
@@ -103,7 +103,7 @@ class CompleteOrder(Resource):
 
         # Get the Order
         order = get_order_by_id(order_id)
-        if not order or order.driver_id != driver.driver_id:
+        if not order or order.driver_id != driver.id:
             return res_error(404, 'Order Not Found')
 
         if order.order_status != OrderStatus.PICKED_UP:

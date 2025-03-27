@@ -19,12 +19,12 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
     """Format raw cart item model into more understandable format"""
     items = []
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu_id(cart_item.menu_id)
+        restaurant = get_restaurant_by_menu(cart_item.menu_id)
         menu = get_menu_item_by_id(cart_item.menu_id)
         items.append({
             'menu_id': menu.id,
             'menu_name': menu.name,
-            'restaurant_id': restaurant.restaurant_id,
+            'restaurant_id': restaurant.id,
             'restaurant_name': restaurant.name,
             'description': menu.description,
             'price': menu.price,
@@ -42,14 +42,14 @@ def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaur
     """
     items = []
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu_id(cart_item.menu_id)
-        if restaurant.restaurant_id != restaurant_id:
+        restaurant = get_restaurant_by_menu(cart_item.menu_id)
+        if restaurant.id != restaurant_id:
             continue
         menu = get_menu_item_by_id(cart_item.menu_id)
         items.append({
             'menu_id': menu.id,
             'menu_name': menu.name,
-            'restaurant_id': restaurant.restaurant_id,
+            'restaurant_id': restaurant.id,
             'restaurant_name': restaurant.name,
             'description': menu.description,
             'price': menu.price,
@@ -116,7 +116,7 @@ def empty_cart_items_from_restaurant(
     ) -> None:
     cart_items = get_all_cart_item_from_customer(customer_id)
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu_id(cart_item.menu_id)
-        if restaurant.restaurant_id == restaurant_id:
+        restaurant = get_restaurant_by_menu(cart_item.menu_id)
+        if restaurant.id == restaurant_id:
             db.session.delete(cart_item)
     db.session.commit()

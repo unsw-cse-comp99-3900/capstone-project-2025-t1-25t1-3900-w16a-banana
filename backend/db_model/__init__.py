@@ -85,7 +85,7 @@ class Driver(BaseModel):
     """
     __tablename__ = 'drivers'
 
-    driver_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     # Basic Info
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
@@ -125,7 +125,7 @@ class Restaurant(BaseModel):
     """
     __tablename__ = 'restaurants'
 
-    restaurant_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(10), nullable=False)
@@ -188,14 +188,14 @@ class MenuCategory(BaseModel):
     """
     Class for Menu Category DB.
     Every menu items will be contained in a menu category
-    Consists of id, restaurant_id and its name
+    Consists of id, restaurant id and its name
     """
     __tablename__ = 'menu_categories'
 
     id = db.Column(db.Integer, primary_key=True)
     restaurant_id = db.Column(
         db.Integer,
-        db.ForeignKey('restaurants.restaurant_id'),
+        db.ForeignKey('restaurants.id'),
         nullable=False
     )
     name = db.Column(db.String(50), nullable=False)
@@ -269,10 +269,10 @@ class Order(BaseModel):
 
     # the order relates to one customer, one driver, and one restaurant
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
-    driver_id = db.Column(db.Integer, db.ForeignKey('drivers.driver_id'), nullable=True)
+    driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=True)
     restaurant_id = db.Column(
         db.Integer,
-        db.ForeignKey('restaurants.restaurant_id'),
+        db.ForeignKey('restaurants.id'),
         nullable=False
     )
 
@@ -332,7 +332,7 @@ class RestaurantReview(BaseModel):
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
     restaurant_id = db.Column(
         db.Integer,
-        db.ForeignKey('restaurants.restaurant_id'),
+        db.ForeignKey('restaurants.id'),
         nullable=False
     )
 
@@ -361,7 +361,7 @@ class DriverReview(BaseModel):
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
     driver_id = db.Column(
         db.Integer,
-        db.ForeignKey('drivers.driver_id'),
+        db.ForeignKey('drivers.id'),
         nullable=False
     )
 

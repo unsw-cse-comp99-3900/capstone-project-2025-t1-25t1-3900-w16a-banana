@@ -27,6 +27,6 @@ def extract_id(user_type: str, user_model: Union[Restaurant, Driver, Customer]) 
     if user_type.upper() == 'CUSTOMER':
         return user_model.customer_id
     if user_type.upper() == 'DRIVER':
-        return user_model.driver_id
+        return user_model.id
     if user_type.upper() == 'RESTAURANT':
-        return user_model.restaurant_id
+        return user_model.id

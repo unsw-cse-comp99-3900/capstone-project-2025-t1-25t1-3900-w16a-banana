@@ -31,7 +31,7 @@ def get_restaurant_by_token(token: str) -> Optional[Restaurant]:
 #--------------------------------------------------------#
 def get_restaurant_by_id(restaurant_id: int)-> Optional[Restaurant]:
     """Get the Restaurant with Given id"""
-    return Restaurant.query.filter_by(restaurant_id=restaurant_id).first()
+    return Restaurant.query.filter_by(id=restaurant_id).first()
 
 def get_restaurant_by_email(email: str)-> Optional[Restaurant]:
     """Get the Restaurant with Given Email"""
@@ -41,33 +41,36 @@ def get_restaurant_by_abn(abn: str)-> Optional[Restaurant]:
     """Get the Restaurant with Given ABN"""
     return Restaurant.query.filter_by(abn = abn).first()
 
-def get_restaurant_by_menu_id(menu_id: int) -> Optional[Restaurant]:
-    item = get_menu_item_by_id(menu_id)
-    if not item:
+def get_restaurant_by_menu(menu_id: int) -> Optional[Restaurant]:
+    """Get Restaurant that owns given menu"""
+    menu = get_menu_item_by_id(menu_id)
+    if not menu:
         return None
-    category = get_menu_category_by_id(item.category_id)
-    return Restaurant.query.filter_by(restaurant_id=category.id).first()
+    category = get_menu_category_by_id(menu.category_id)
+    return Restaurant.query.filter_by(id=category.restaurant_id).first()
 
 
 #--------------------------------------------------------#
 #-------------Functions related to Customer-------------#
 #--------------------------------------------------------#
-def get_customer_by_id(id: int) -> Optional[Customer]:
+def get_customer_by_id(customer_id: int) -> Optional[Customer]:
     """Get Customer by ID"""
-    return Customer.query.filter_by(customer_id = id).first()
+    return Customer.query.filter_by(customer_id = customer_id).first()
 
 def get_customer_by_email(email: str) -> Optional[Customer]:
+    """Find Customer By Email"""
     return Customer.query.filter_by(email = email).first()
 
 def get_customer_by_username(username: str) -> Optional[Customer]:
+    """Find Customer By UserName"""
     return Customer.query.filter_by(username = username).first()
 
 #--------------------------------------------------------#
 #--------------Functions related to Driver--------------#
 #--------------------------------------------------------#
-def get_driver_by_id(id: int) -> Optional[Driver]:
+def get_driver_by_id(driver_id: int) -> Optional[Driver]:
     """Get Driver by ID"""
-    return Driver.query.filter_by(driver_id = id).first()
+    return Driver.query.filter_by(id = driver_id).first()
 
 
 #--------------------------------------------------------#

@@ -30,7 +30,7 @@ class MenuCategories(Resource):
             return res_error(401)
 
         # Get every categories
-        categories = get_all_menu_categories_from_restaurant(restaurant.restaurant_id)
+        categories = get_all_menu_categories_from_restaurant(restaurant.id)
 
         return {"categories": [category.dict() for category in categories]}, 200
 
@@ -51,12 +51,12 @@ class NewMenuCategory(Resource):
         name = request.json['name']
 
         # Check for duplicate name
-        if get_menu_category_from_restaurant_by_name(restaurant.restaurant_id, name):
+        if get_menu_category_from_restaurant_by_name(restaurant.id, name):
             return res_error(400, 'Category already exists')
         
         # Make and commit new category
         category = MenuCategory(
-            restaurant_id=restaurant.restaurant_id,
+            restaurant_id=restaurant.id,
             name=name
         )
         db.session.add(category)
@@ -81,7 +81,7 @@ class MenuCategoryUpdate(Resource):
 
         # Check Category
         category = get_menu_category_from_restaurant_by_id(
-            restaurant_id = restaurant.restaurant_id,
+            restaurant_id = restaurant.id,
             category_id = category_id
         )
         if not category:
@@ -90,7 +90,7 @@ class MenuCategoryUpdate(Resource):
         new_name = request.json['name']
 
         # Check for duplicate name
-        if get_menu_category_from_restaurant_by_name(restaurant.restaurant_id, new_name):
+        if get_menu_category_from_restaurant_by_name(restaurant.id, new_name):
             return res_error(400, 'Category name already exists')
 
         # Update and commit
@@ -110,7 +110,7 @@ class MenuCategoryUpdate(Resource):
 
         # Check Category
         category = get_menu_category_from_restaurant_by_id(
-            restaurant_id = restaurant.restaurant_id,
+            restaurant_id = restaurant.id,
             category_id = category_id
         )
         if not category:
@@ -135,7 +135,7 @@ class GetAllItemsInRestaurant(Resource):
             return res_error(401)
 
         # Get items in the restaurant
-        items = get_all_menu_items_from_restaurant(restaurant.restaurant_id)
+        items = get_all_menu_items_from_restaurant(restaurant.id)
 
         return {'items': [item.dict() for item in items]}, 200
 
@@ -153,7 +153,7 @@ class GetAllItemsInCategory(Resource):
         
         # Check Category
         category = get_menu_category_from_restaurant_by_id(
-            restaurant_id = restaurant.restaurant_id,
+            restaurant_id = restaurant.id,
             category_id = category_id
         )
         if not category:
@@ -183,7 +183,7 @@ class NewMenuItem(Resource):
 
         # Check category
         category = get_menu_category_from_restaurant_by_id(
-            restaurant_id = restaurant.restaurant_id,
+            restaurant_id = restaurant.id,
             category_id = category_id
         )
         if not category:
@@ -191,7 +191,7 @@ class NewMenuItem(Resource):
 
         # Check duplicate name
         if get_menu_item_from_restaurant_by_name(
-            restaurant_id = restaurant.restaurant_id,
+            restaurant_id = restaurant.id,
             name = args['name']
         ):
             return res_error(400, "Item name already exists")
@@ -240,7 +240,7 @@ class ManageMenuItem(Resource):
         
         # Get specific item
         item = get_menu_item_from_restaurant_by_id(
-            restaurant_id = restaurant.restaurant_id,
+            restaurant_id = restaurant.id,
             menu_id = menu_id
         )
         if not item:
@@ -258,7 +258,7 @@ class ManageMenuItem(Resource):
         # Update Name. Check if name conflicts
         if args['name']:
             if get_menu_item_from_restaurant_by_name(
-                restaurant_id = restaurant.restaurant_id,
+                restaurant_id = restaurant.id,
                 name = args['name']
             ):
                 return res_error(400, "Duplicate Item Name")
@@ -292,7 +292,7 @@ class ManageMenuItem(Resource):
 
         # Get specific item
         item = get_menu_item_from_restaurant_by_id(
-            restaurant_id = restaurant.restaurant_id,
+            restaurant_id = restaurant.id,
             menu_id = menu_id
         )
         if not item:

@@ -46,7 +46,7 @@ class RestaurantTest():
             self.headers = {
                 "Authorization": self.token
             }
-            self.id = res.get_json()['restaurant_id']
+            self.id = res.get_json()['id']
         return res
 
 

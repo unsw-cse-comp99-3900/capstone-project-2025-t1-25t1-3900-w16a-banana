@@ -154,12 +154,12 @@ class ApproveApplication(Resource):
         # get the application
         if application_type == 'driver':
             application = Driver.query.filter_by(
-                driver_id=user_id,
+                id=user_id,
                 registration_status=RegistrationStatus.PENDING
             ).first()
         else:
             application = Restaurant.query.filter_by(
-                restaurant_id=user_id,
+                id=user_id,
                 registration_status=RegistrationStatus.PENDING
             ).first()
 

@@ -8,6 +8,7 @@ from utils.file import save_image
 from utils.check import *
 from utils.header import auth_header
 from db_model import *
+from db_model.db_query import get_all_menu_categories_from_restaurant, get_restaurant_by_id
 
 
 api = Namespace('query', description='APIs for querying DB for General Info')
@@ -22,11 +23,11 @@ class Menu(Resource):
     def get(self, restaurant_id):
         """Get the full menu of a restaurant"""
 
-        restaurant = Restaurant.query.get(restaurant_id)
+        restaurant = get_restaurant_by_id(restaurant_id)
         if not restaurant:
             abort(404, 'Restaurant not found')
 
-        categories = MenuCategory.query.filter_by(restaurant_id=restaurant_id).all()
+        categories = get_all_menu_categories_from_restaurant(restaurant.id)
         
         # write the results
         result = []

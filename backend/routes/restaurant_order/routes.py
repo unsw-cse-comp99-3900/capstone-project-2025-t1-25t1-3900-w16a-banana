@@ -61,7 +61,7 @@ class GetPendingOrders(Resource):
         if not restaurant:
             return res_error(401)
 
-        orders = get_orders_for_restaurant(restaurant.restaurant_id)
+        orders = get_orders_for_restaurant(restaurant.id)
         pending_orders: List[Order] = []
         for order in orders:
             if order.order_status == OrderStatus.PENDING:
@@ -82,7 +82,7 @@ class GetActiveOrders(Resource):
         if not restaurant:
             return res_error(401)
 
-        orders = get_orders_for_restaurant(restaurant.restaurant_id)
+        orders = get_orders_for_restaurant(restaurant.id)
 
         active_orders: List[Order] = []
         for order in orders:
@@ -107,7 +107,7 @@ class GetCompleteOrders(Resource):
         if not restaurant:
             return res_error(401)
         
-        orders = get_orders_for_restaurant(restaurant.restaurant_id)
+        orders = get_orders_for_restaurant(restaurant.id)
 
         complete_orders: List[Order] = []
         for order in orders:

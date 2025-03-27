@@ -103,7 +103,7 @@ class UpdateProfile(Resource):
         # not "if email in args"
         if args.get("email"):
             is_email_exist = Driver.query.filter_by(email=args['email']) \
-                .filter(Driver.driver_id != driver.driver_id).first()
+                .filter(Driver.id != driver.id).first()
             if is_email_exist:
                 return res_error(400, 'Email already exists')
 
