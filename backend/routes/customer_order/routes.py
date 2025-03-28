@@ -1,18 +1,42 @@
+"""APIs for Customer Order Feature"""
 from flask_restx import Resource
 from flask import request
 
 from utils.db import db
 from utils.header import auth_header, tokenize
 from utils.response import res_error
-from utils.check import *
-from db_model import *
-from db_model.db_query import *
-from routes.customer_order.models import *
-from routes.customer_order.services import *
-
+from utils.check import (
+    is_valid_card_format,
+    is_valid_postcode,
+    is_valid_state
+)
+from db_model import CartItem
+from db_model.db_query import (
+    get_customer_by_token,
+    filter_cart_items,
+    filter_orders,
+    filter_menus
+)
+from routes.customer_order.models import (
+    api,
+    error_res,
+    cart_item_get_res,
+    cart_item_update_req, cart_item_update_res,
+    get_all_orders_res,
+    get_order_res,
+    post_order_req, post_order_res,
+)
+from routes.customer_order.services import (
+    attach_order_items,
+    empty_cart_items_from_restaurant,
+    make_order,
+    format_cart_items,
+    format_cart_items_with_restaurant_filter
+)
 
 @api.route('/cart')
 class ShopItems(Resource):
+    """Route: /cart"""
     @api.expect(auth_header)
     @api.response(200, "Success", cart_item_get_res)
     @api.response(400, "Bad Request", error_res)
@@ -27,9 +51,8 @@ class ShopItems(Resource):
         # Get all items in the cart
         cart_items = filter_cart_items(customer_id = customer.id)
         items = format_cart_items(cart_items)
-
         return {'items': items}, 200
-    
+
     @api.expect(auth_header, cart_item_update_req)
     @api.response(200, "Success", cart_item_update_res)
     @api.response(400, "Bad Request", error_res)
@@ -81,9 +104,9 @@ class ShopItems(Resource):
 
         return {'message': message}, 200
 
-
 @api.route('/orders')
 class GetAllOrders(Resource):
+    """Route: /orders"""
     @api.expect(auth_header)
     @api.response(200, 'Success', get_all_orders_res)
     @api.response(400, 'Bad Request', error_res)
@@ -99,6 +122,7 @@ class GetAllOrders(Resource):
 
 @api.route('/order/<int:order_id>')
 class GetOrderItems(Resource):
+    """Route: /order/<int:order_id>"""
     @api.expect(auth_header)
     @api.response(200, 'Success', get_order_res)
     @api.response(400, 'Bad Request', error_res)
@@ -118,9 +142,9 @@ class GetOrderItems(Resource):
             return res_error(400, 'Invalid Order ID')
         return orders[0].dict(), 200
 
-
 @api.route('/order')
 class OrderItems(Resource):
+    """Route: /order"""
     @api.expect(auth_header, post_order_req)
     @api.response(200, 'Success', post_order_res)
     @api.response(400, 'Bad Request', error_res)

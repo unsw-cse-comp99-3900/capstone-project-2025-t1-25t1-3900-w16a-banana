@@ -1,14 +1,24 @@
+"""APIs for Restaurnt Order feature"""
+from typing import List
 from flask_restx import Resource
 from flask import request
 
 from utils.db import db
-from utils.check import *
 from utils.header import auth_header, tokenize
 from utils.response import res_error
-from db_model import *
-from db_model.db_query import *
-from routes.restaurant_order.models import *
-from routes.restaurant_order.services import *
+
+from db_model import Order
+from db_model.db_query import (
+    filter_orders,
+    get_restaurant_by_token
+)
+from db_model.db_enum import OrderStatus
+from routes.restaurant_order.models import (
+    api,
+    error_res,
+    get_all_orders_res,
+)
+from routes.restaurant_order.services import is_valid_order_action
 
 @api.route('/orders/<string:action>/<int:order_id>')
 @api.doc(params={
@@ -20,11 +30,15 @@ from routes.restaurant_order.services import *
     'order_id': 'Order ID'
 })
 class OrderActions(Resource):
+    """Route: /orders/<string:action>/<int:order_id>"""
     @api.expect(auth_header)
     @api.response(200, 'Success', error_res)
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def post(self, action: str, order_id: int):
+        """
+        Take action for Pending Order
+        """
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
@@ -54,11 +68,13 @@ class OrderActions(Resource):
 
 @api.route('/orders/pending')
 class GetPendingOrders(Resource):
+    """Route: /orders/pending"""
     @api.expect(auth_header)
     @api.response(200, 'Success', get_all_orders_res)
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def get(self):
+        """Get All Pending Orders"""
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
@@ -75,11 +91,13 @@ class GetPendingOrders(Resource):
 
 @api.route('/orders/active')
 class GetActiveOrders(Resource):
+    """Route: /orders/active"""
     @api.expect(auth_header)
     @api.response(200, 'Success', get_all_orders_res)
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def get(self):
+        """Get All Active Orders"""
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
@@ -100,15 +118,17 @@ class GetActiveOrders(Resource):
 
 @api.route('/orders/complete')
 class GetCompleteOrders(Resource):
+    """Route: /orders/complete"""
     @api.expect(auth_header)
     @api.response(200, 'Success', get_all_orders_res)
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def get(self):
+        """Get All Complete Orders"""
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
-        
+
         orders = filter_orders(restaurant_id = restaurant.id)
 
         complete_orders: List[Order] = []

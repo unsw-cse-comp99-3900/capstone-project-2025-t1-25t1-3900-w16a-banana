@@ -4,13 +4,21 @@ from flask import request
 
 from utils.db import db
 from utils.file import save_image
-from utils.check import *
 from utils.header import auth_header, tokenize
 from utils.response import res_error
-from db_model import *
-from db_model.db_query import *
-from routes.restaurant.models import *
-from routes.restaurant.services import *
+from db_model import Restaurant
+from db_model.db_query import filter_restaurants, get_restaurant_by_token
+from db_model.db_enum import State, RegistrationStatus
+from routes.restaurant.models import (
+    api,
+    error_res,
+    register_res,
+    register_req_parser,
+    update_req_parser
+)
+from routes.restaurant.services import (
+    is_valid_restaurant_info
+)
 
 
 # Login routes are in separate api

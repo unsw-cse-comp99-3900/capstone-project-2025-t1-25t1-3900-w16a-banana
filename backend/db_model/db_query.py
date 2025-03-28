@@ -3,11 +3,45 @@ from collections import defaultdict
 from typing import Optional, List, Union
 
 from sqlalchemy import or_, and_
-from db_model import *
+from db_model import (
+    Admin,
+    Customer,
+    Restaurant,
+    Driver,
+    MenuCategory,
+    MenuItem,
+    CartItem,
+    Chat,
+    Order,
+)
+from .db_enum import ChatSupportUserType, OrderStatus
 
 #--------------------------------------------------------#
 #---------------Functions related to Users---------------#
 #--------------------------------------------------------#
+def get_user_by_token(token: str) -> Optional[Union[Admin, Customer, Driver, Restaurant]]:
+    """Find Any User with matching token."""
+    for user_db in [Admin, Customer, Driver, Restaurant]:
+        user = user_db.query.filter_by(token=token).first()
+        if user:
+            return user
+    return None
+
+def get_user_by_type_and_id(
+        user_type: str, user_id: int
+) -> Optional[Union[Admin, Customer, Driver, Restaurant]]:
+    """Find User of given type and id"""
+    if user_type.upper() == 'ADMIN':
+        return Admin.query.filter_by(id = user_id).first()
+    elif user_type.upper() == 'CUSTOMER':
+        return Customer.query.filter_by(id = user_id).first()
+    elif user_type.upper() == 'DRIVER':
+        return Driver.query.filter_by(id = user_id).first()
+    elif user_type.upper() == 'RESTAURANT':
+        return Restaurant.query.filter_by(id = user_id).first()
+    else:
+        return None
+
 def get_admin_by_token(token: str) -> Optional[Admin]:
     """Find Admin with given token"""
     return Admin.query.filter_by(token=token).first()
@@ -23,6 +57,28 @@ def get_driver_by_token(token: str) -> Optional[Driver]:
 def get_restaurant_by_token(token: str) -> Optional[Restaurant]:
     """Find Restaurant with given token"""
     return Restaurant.query.filter_by(token=token).first()
+
+#--------------------------------------------------------#
+#---------------Functions related to Admin---------------#
+#--------------------------------------------------------#
+def filter_admins(**kwargs) -> List[Admin]:
+    """
+    Dynamically filters admin users based on provided fields.
+
+    Supported fields:
+        - id
+        - email
+        - first_name
+        - last_name
+        - token
+    """
+    filters = []
+    for field in ['id', 'email', 'first_name', 'last_name', 'token']:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(Admin, field) == value)
+
+    return Admin.query.filter(and_(*filters)).all()
 
 #--------------------------------------------------------#
 #-------------Functions related to Restaurant-------------#
@@ -41,11 +97,12 @@ def filter_restaurants(**kwargs) -> List[Restaurant]:
         - state
         - postcode
         - registration_status
+        - token
     """
     filters = []
     for field in [
-        'id', 'email', 'phone', 'name', 'abn',
-        'suburb', 'state', 'postcode', 'registration_status'
+        'id', 'email', 'phone', 'name', 'abn', 'suburb',
+        'state', 'postcode', 'registration_status', 'token'
     ]:
         value = kwargs.get(field)
         if value is not None:
@@ -82,9 +139,10 @@ def filter_customers(**kwargs) -> List[Customer]:
         - state
         - postcode
         - id
+        - token
     """
     filters = []
-    for field in ['id', 'email', 'username', 'phone', 'suburb', 'state', 'postcode']:
+    for field in ['id', 'email', 'username', 'phone', 'suburb', 'state', 'postcode', 'token']:
         value = kwargs.get(field)
         if value is not None:
             filters.append(getattr(Customer, field) == value)
@@ -107,11 +165,12 @@ def filter_drivers(**kwargs) -> List[Driver]:
         - license_number
         - car_plate
         - registration_status
+        - token
     """
     filters = []
     for field in [
-        'id', 'email', 'phone', 'first_name', 'last_name',
-        'license_number', 'car_plate', 'registration_status'
+        'id', 'email', 'phone', 'first_name', 'last_name', 'license_number',
+        'car_plate', 'registration_status', 'token'
     ]:
         value = kwargs.get(field)
         if value is not None:

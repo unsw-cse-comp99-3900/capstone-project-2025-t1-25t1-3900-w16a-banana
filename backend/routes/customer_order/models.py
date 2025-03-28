@@ -1,4 +1,5 @@
-from flask_restx import Namespace, fields, reqparse
+"""Flask-restx model for Customer-Order APIs"""
+from flask_restx import Namespace, fields
 
 api = Namespace('customer-order', description='APIs for Customer')
 
@@ -31,7 +32,9 @@ cart_item_update_req = api.model('Cart Item Update Request Model', {
 })
 
 cart_item_update_res = api.model("Cart Item Update Response Model", {
-    "message": fields.String(description="Success Message", example="Cart Item Update/Delete Successful")
+    "message": fields.String(
+        description="Success Message", example="Cart Item Update/Delete Successful"
+    )
 })
 
 """Response/Request for customer viewing order"""
