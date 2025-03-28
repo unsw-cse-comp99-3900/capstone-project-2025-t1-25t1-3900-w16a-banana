@@ -10,6 +10,7 @@ from utils.header import auth_header, tokenize
 from utils.response import res_error
 from db_model import *
 from db_model.db_query import *
+from db_model.db_enum import State
 from routes.customer.models import *
 from routes.customer.services import *
 

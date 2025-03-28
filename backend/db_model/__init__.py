@@ -1,10 +1,10 @@
 """This is a module that contains DB Schema Model"""
-
-import enum
+from enum import Enum
 from datetime import datetime
 from sqlalchemy import CheckConstraint, UniqueConstraint
 
 from utils.db import db
+from .db_enum import State, RegistrationStatus, OrderStatus, ChatSupportUserType
 
 class BaseModel(db.Model):
     """Base Class that Every Schema is built upon"""
@@ -25,23 +25,32 @@ class BaseModel(db.Model):
                 or 'time' in col.name)\
                 and val:
                 val = val.strftime("%Y-%m-%d %H:%M:%S")
-            elif isinstance(val, enum.Enum):
+            elif isinstance(val, Enum):
                 val = val.value
             result_dict[col.name] = val
         return result_dict
 
-class State(enum.Enum):
-    """Class of Enum with valid Australian States"""
-    ACT = "ACT"
-    NSW = "NSW"
-    NT = "NT"
-    QLD = "QLD"
-    SA = "SA"
-    TAS = "TAS"
-    VIC = "VIC"
-    WA = "WA"
-
 # customer, driver, restaurant, admin are 4 separate tables
+class Admin(BaseModel):
+    """
+    Class for Admin DB.
+    """
+    __tablename__ = 'admins'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+
+    # token for the admin
+    token = db.Column(db.String(255), nullable=True, default=None)
+
+    # admin should have the first name, last name
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+
+    # profile page
+    url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/admin.png")
+
 class Customer(BaseModel):
     """
     Class for Customer DB.
@@ -71,12 +80,6 @@ class Customer(BaseModel):
 
     # User Register Time
     created_at = db.Column(db.DateTime, default=datetime.now)
-
-class RegistrationStatus(enum.Enum):
-    """Class for Enum of Registration Status of Driver and Restaurant"""
-    PENDING = "PENDING"
-    APPROVED = "APPROVED"
-    REJECTED = "REJECTED"
 
 # driver table
 class Driver(BaseModel):
@@ -164,26 +167,6 @@ class Restaurant(BaseModel):
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-class Admin(BaseModel):
-    """
-    Class for Admin DB.
-    """
-    __tablename__ = 'admins'
-
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-
-    # token for the admin
-    token = db.Column(db.String(255), nullable=True, default=None)
-
-    # admin should have the first name, last name
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-
-    # profile page
-    url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/admin.png")
-
 class MenuCategory(BaseModel):
     """
     Class for Menu Category DB.
@@ -221,20 +204,6 @@ class MenuItem(BaseModel):
 
     # the item may be available or not
     is_available = db.Column(db.Boolean, nullable=False, default=True)
-
-class OrderStatus(enum.Enum):
-    """
-    Class for Enum of Order Status.
-    Customer orders item -> PENDING -> Restaurant confirms -> ACCEPTED
-    -> Restaurant notify food ready -> READY_FOR_PICKUP -> Driver pick up order
-    -> PICKED_UP -> Driver completes delivery -> DELIVERED
-    """
-    PENDING = 'PENDING'
-    ACCEPTED = 'ACCEPTED'
-    READY_FOR_PICKUP = 'READY_FOR_PICKUP'
-    PICKED_UP = 'PICKED_UP'
-    DELIVERED = 'DELIVERED'
-    CANCELLED = 'CANCELLED'
 
 class CartItem(BaseModel):
     """
@@ -376,15 +345,6 @@ class DriverReview(BaseModel):
     __table_args__ = (
         CheckConstraint('rating >= 1 AND rating <= 5', name='check_rating_range'),
     )
-
-# User type that can send chat to each other.
-class ChatSupportUserType(enum.Enum):
-    """
-    Class of Enum for User type that supports chat.
-    """
-    CUSTOMER = 'CUSTOMER'
-    RESTAURANT = 'RESTAURANT'
-    DRIVER = 'DRIVER'
 
 class Chat(BaseModel):
     """

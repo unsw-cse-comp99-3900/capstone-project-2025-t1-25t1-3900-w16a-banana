@@ -4,16 +4,26 @@ from flask_restx import Resource
 from flask import request
 
 from utils.db import db
-from utils.check import *
 from utils.header import auth_header, tokenize
 from utils.response import res_error
-from db_model import *
-from db_model.db_query import *
-from routes.driver_order.models import *
-from routes.driver_order.services import *
+from db_model.db_query import (
+    filter_orders,
+    get_driver_by_token,
+    get_orders_waiting_driver
+)
+from db_model.db_enum import OrderStatus
+from routes.driver_order.models import (
+    api,
+    message_res,
+    get_available_orders_res,
+)
+from routes.driver_order.services import (
+    format_order
+)
 
 @api.route('/orders/available')
 class AvailableOrders(Resource):
+    """Route: /orders/available"""
     @api.expect(auth_header)
     @api.response(200, 'Success', get_available_orders_res)
     @api.response(400, 'Bad Request', message_res)
@@ -35,6 +45,7 @@ class AvailableOrders(Resource):
     'order_id': 'Order ID'
 })
 class AcceptOrder(Resource):
+    """Route /order/accept/<int:order_id>"""
     @api.expect(auth_header)
     @api.response(200, 'Success', message_res)
     @api.response(400, 'Bad Request', message_res)
@@ -69,6 +80,7 @@ class AcceptOrder(Resource):
     'order_id': 'Order ID'
 })
 class PickupOrder(Resource):
+    """Route /order/pickup/<int:order_id>"""
     @api.expect(auth_header)
     @api.response(200, 'Success', message_res)
     @api.response(400, 'Bad Request', message_res)
@@ -102,6 +114,7 @@ class PickupOrder(Resource):
     'order_id': 'Order ID'
 })
 class CompleteOrder(Resource):
+    """Route: /order/complete/<int:order_id>"""
     @api.expect(auth_header)
     def post(self, order_id: int):
         """Complete delivery for already accepted orders"""

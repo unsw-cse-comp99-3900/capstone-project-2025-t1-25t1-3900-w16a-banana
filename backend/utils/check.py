@@ -1,20 +1,13 @@
-# perform some simple checks on the phone number, postcode, and state
-from db_model import State, OrderStatus, ChatSupportUserType
+"""Perform some simple checks on the phone number, postcode, and state""" 
 import re
-
-def is_valid_chat_user_type(user_type: str) -> bool:
-    """Returns boolean of whether the user type is supported"""
-    try:
-        ChatSupportUserType(user_type)
-        return True
-    except:
-        return False
+from db_model.db_enum import State, OrderStatus
 
 def is_valid_order_status(status: str) -> bool:
+    """Returns boolean of whether the status is valid or not"""
     try:
         OrderStatus(status)
         return True
-    except:
+    except ValueError:
         return False
 
 def is_valid_card_format(s: str) -> bool:
@@ -64,17 +57,12 @@ def is_password_safe(password: str) -> tuple[bool, str]:
         return False, "Password must have at least 8 characters."
     if not re.search(r"[A-Z]", password):
         return False, "Password must contain at least one uppercase letter."
-    
     if not re.search(r"[a-z]", password):
         return False, "Password must contain at least one lowercase letter."
-    
     if not re.search(r"\d", password):
         return False, "Password must contain at least one number."
-    
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
         return False, "Password must contain at least one special character."
-
     if password.lower() in ["password", "12345678", "qwerty", "admin", "letmein"]:
         return False, "Password is too common."
-
     return True, "Password is safe"
