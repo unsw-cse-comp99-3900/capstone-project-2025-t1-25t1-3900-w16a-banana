@@ -1,14 +1,18 @@
-from flask_restx import Resource 
-from flask import request 
-
-from utils.db import db 
-from db_model import *
-from routes.profile.models import *
+"""APIs related to profile"""
+from flask_restx import Resource
 from utils.response import res_error
 
+from db_model import (
+    Admin, Customer, Driver, Restaurant
+)
+from routes.profile.models import (
+    api,
+    profile_req_parser
+)
 
 @api.route("/")
 class ProfileResource(Resource):
+    """Route /"""
     @api.expect(profile_req_parser)
     def get(self):
         """Obtain a profile, enter user_type (customer, restaurant, driver, admin) and user_id"""
@@ -25,19 +29,21 @@ class ProfileResource(Resource):
         elif user_type == 'admin':
             user = Admin.query.get(user_id)
         else:
-            return res_error(400, 'Invalid user type')    
-    
+            return res_error(400, 'Invalid user type')
+
         if not user:
             return res_error(400, 'User not found')
         else:
             return user.dict()
 
-
 @api.route("/all/<string:user_type>")
 class AllProfileResource(Resource):
+    """Route /all/<string:user_type>"""
     def get(self, user_type):
-        """Obtain all profiles of a certain user type, user_type in (customer, restaurant, driver, admin)"""
-
+        """
+        Obtain all profiles of a certain user type, user_type in 
+        (customer, restaurant, driver, admin)
+        """
         if user_type == 'customer':
             users = Customer.query.all()
         elif user_type == 'restaurant':

@@ -5,14 +5,27 @@ from flask import request
 
 from utils.db import db
 from utils.file import save_file
-from utils.check import *
+from utils.check import (
+    is_password_safe,
+    is_valid_phone,
+    is_valid_postcode,
+    is_valid_state,
+)
 from utils.header import auth_header, tokenize
 from utils.response import res_error
-from db_model import *
-from db_model.db_query import *
+from db_model import Customer
+from db_model.db_query import (
+    filter_customers,
+    get_customer_by_token
+)
 from db_model.db_enum import State
-from routes.customer.models import *
-from routes.customer.services import *
+from routes.customer.models import (
+    api,
+    register_req,
+    register_res,
+    error_res,
+    update_profile_req_parser
+)
 
 @api.route('/register')
 class RegisterCustomer(Resource):
@@ -142,6 +155,7 @@ class CustomerUpdate(Resource):
 
 @api.route('/favourites')
 class GetFavourites(Resource):
+    """Route: /favourites"""
     @api.expect(auth_header)
     @api.response(200, "Success")
     @api.response(400, "Bad Request", error_res)

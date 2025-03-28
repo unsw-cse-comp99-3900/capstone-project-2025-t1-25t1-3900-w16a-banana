@@ -1,4 +1,5 @@
-from flask_restx import Namespace, fields, reqparse 
+"""Flask-restx models for Profile APIs"""
+from flask_restx import Namespace, reqparse 
 
 api = Namespace('profile', description='APIs for Profile')
 

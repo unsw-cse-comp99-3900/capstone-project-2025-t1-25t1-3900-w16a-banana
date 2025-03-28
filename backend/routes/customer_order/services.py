@@ -1,12 +1,17 @@
 """Common functions for customer order goes here."""
 from typing import List, TypedDict, Any
-from db_model import *
-from db_model.db_query import *
 from utils.db import db
+from db_model import CartItem, Order, OrderItem
 from db_model.db_enum import State
+from db_model.db_query import (
+    get_restaurant_by_menu,
+    filter_menus,
+    filter_cart_items
+)
 
 class FormatCartItems(TypedDict):
-    menu_id: int 
+    """Type for formatted cart item. For API result type annotation."""
+    menu_id: int
     menu_name: str
     restaurant_id: int
     restaurant_name: str
@@ -37,7 +42,9 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
 
     return items
 
-def format_cart_items_with_restaurant_filter(cart_items: List[CartItem], restaurant_id: int) -> List[FormatCartItems]:
+def format_cart_items_with_restaurant_filter(
+        cart_items: List[CartItem], restaurant_id: int
+) -> List[FormatCartItems]:
     """
     Format raw cart item model into more understandable format.
     Filter cart items from given restaurant id

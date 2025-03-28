@@ -1,5 +1,5 @@
+"""Flask-restx models for Driver Order APIs"""
 from flask_restx import Namespace, fields
-from werkzeug.datastructures import FileStorage
 
 api = Namespace('driver-order', description='APIs for Driver')
 
