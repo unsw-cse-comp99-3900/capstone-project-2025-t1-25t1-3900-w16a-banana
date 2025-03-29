@@ -8,7 +8,7 @@ from routes.driver_order.routes import api as driver_order_api
 from routes.restaurant.routes import api as restaurant_api
 from routes.restaurant_menu.routes import api as restaurant_menu_api
 from routes.restaurant_order.routes import api as restaurant_order_api
-from routes.query import api as query_api
+from routes.search.routes import api as search_api
 from routes.test import api as test_api
 from routes.profile.routes import api as profile_api
 from routes.chat.routes import api as chat_api
@@ -29,7 +29,7 @@ api.add_namespace(driver_order_api)
 api.add_namespace(restaurant_api)
 api.add_namespace(restaurant_menu_api)
 api.add_namespace(restaurant_order_api)
-api.add_namespace(query_api)
+api.add_namespace(search_api)
 api.add_namespace(test_api)
 api.add_namespace(profile_api)
 api.add_namespace(chat_api)
