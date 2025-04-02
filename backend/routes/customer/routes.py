@@ -210,7 +210,7 @@ class AddFavourite(Resource):
         return new_favourites.dict(), 200
 
 @api.route('/favourite/<int:favourite_id>')
-class AddFavourite(Resource):
+class DeleteFavourite(Resource):
     @api.expect(auth_header)
     @api.response(200, "Success", message_res)
     @api.response(400, "Bad Request", message_res)
