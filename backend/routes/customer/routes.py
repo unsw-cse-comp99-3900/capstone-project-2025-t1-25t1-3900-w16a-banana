@@ -174,7 +174,7 @@ class GetFavourites(Resource):
         favourites = filter_favourites(customer_id = customer.id)
         print(favourites)
         return [favourite for favourite in favourites], 200
-    
+
 @api.route('/favourite')
 class AddFavourite(Resource):
     """Route: /favourite"""
@@ -211,6 +211,7 @@ class AddFavourite(Resource):
 
 @api.route('/favourite/<int:favourite_id>')
 class DeleteFavourite(Resource):
+    """Route: /favourite/{favourite_id}"""
     @api.expect(auth_header)
     @api.response(200, "Success", message_res)
     @api.response(400, "Bad Request", message_res)
@@ -238,4 +239,3 @@ class DeleteFavourite(Resource):
         db.session.delete(favourites[0])
         db.session.commit()
         return {'message': 'Deleted Successfully'}, 200
-
