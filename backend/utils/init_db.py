@@ -72,6 +72,7 @@ def insert_customers():
                 car_plate=car_plate,
                 url_license_image="uploads/license_image.png",
                 url_registration_paper="uploads/registration_paper.jpg",
+                registration_status=RegistrationStatus.APPROVED,
             )
 
             db.session.add(driver)
@@ -92,6 +93,7 @@ def insert_customers():
                 url_img2="uploads/restaurant_img2.jpg",
                 url_img3="uploads/restaurant_img3.jpg",
                 description=description,
+                registration_status=RegistrationStatus.APPROVED,
             )
 
             db.session.add(restaurant)
