@@ -13,18 +13,22 @@ from utils.check import (
 )
 from utils.header import auth_header, tokenize
 from utils.response import res_error
-from db_model import Customer
+from db_model import Customer, Favourites
 from db_model.db_query import (
     filter_customers,
-    get_customer_by_token
+    get_customer_by_token,
+    filter_favourites,
+    filter_restaurants
 )
 from db_model.db_enum import State
 from routes.customer.models import (
     api,
     register_req,
     register_res,
-    error_res,
-    update_profile_req_parser
+    message_res,
+    update_profile_req_parser,
+    update_favourites_req,
+    favourite_model
 )
 
 @api.route('/register')
@@ -32,8 +36,8 @@ class RegisterCustomer(Resource):
     """Route: /register"""
     @api.expect(register_req)
     @api.response(200, "Success", register_res)
-    @api.response(400, "Bad Request", error_res)
-    @api.response(401, "Unauthorised", error_res)
+    @api.response(400, "Bad Request", message_res)
+    @api.response(401, "Unauthorised", message_res)
     def post(self):
         """Register a new customer account"""
         data = request.json
@@ -85,8 +89,8 @@ class CustomerUpdate(Resource):
     """Route: /update"""
     @api.expect(auth_header, update_profile_req_parser)
     @api.response(200, "Success")
-    @api.response(400, "Bad Request", error_res)
-    @api.response(401, "Unauthorised", error_res)
+    @api.response(400, "Bad Request", message_res)
+    @api.response(401, "Unauthorised", message_res)
     def put(self):
         """Customer updates his profile, no admin approval needed"""
 
@@ -153,13 +157,80 @@ class CustomerUpdate(Resource):
         return customer.dict(), 200
 
 
-@api.route('/favourites')
+@api.route('/favourite')
 class GetFavourites(Resource):
     """Route: /favourites"""
     @api.expect(auth_header)
-    @api.response(200, "Success")
-    @api.response(400, "Bad Request", error_res)
-    @api.response(401, "Unauthorised", error_res)
+    @api.marshal_list_with(favourite_model)
+    @api.response(200, "Success", favourite_model)
+    @api.response(400, "Bad Request", message_res)
+    @api.response(401, "Unauthorised", message_res)
     def get(self):
-        """TODO: ADD CODE HERE"""
-        return
+        """Get full list of Favourite restaurant"""
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        favourites = filter_favourites(customer_id = customer.id)
+        print(favourites)
+        return [favourite for favourite in favourites], 200
+
+    @api.expect(auth_header, update_favourites_req)
+    @api.response(200, "Success", message_res)
+    @api.response(400, "Bad Request", message_res)
+    @api.response(401, "Unauthorised", message_res)
+    def post(self):
+        """Add a given restaurant to the favourite"""
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        # Check if the restaurant exist
+        restaurant_id = request.get_json()['restaurant_id']
+        if not filter_restaurants(id = restaurant_id):
+            return res_error(400, 'Invalid Restaurant ID')
+
+        # Check if the favourite exist
+        if filter_favourites(
+            customer_id = customer.id,
+            restaurant_id = restaurant_id
+        ):
+            return res_error(400, 'Restaurant Already In Favourites')
+
+        new_favourites = Favourites(
+            customer_id = customer.id,
+            restaurant_id = restaurant_id
+        )
+
+        db.session.add(new_favourites)
+        db.session.commit()
+        return new_favourites.dict(), 200
+
+    @api.expect(auth_header, update_favourites_req)
+    @api.response(200, "Success", message_res)
+    @api.response(400, "Bad Request", message_res)
+    @api.response(401, "Unauthorised", message_res)
+    def delete(self):
+        """Delete given restuarnt from Favourites"""
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        # Check if the restaurant exist
+        restaurant_id = request.get_json()['restaurant_id']
+        if not filter_restaurants(id = restaurant_id):
+            return res_error(400, 'Invalid Restaurant ID')
+        
+        # Check if the favourite exist
+        favourites = filter_favourites(
+            customer_id = customer.id,
+            restaurant_id = restaurant_id
+        )
+        if not favourites:
+            return res_error(400, 'Restaurant Not In Favourites')
+        
+        # Delete from DB
+        db.session.delete(favourites[0])
+        db.session.commit()
+        return {'message': 'Deleted Successfully'}, 200
+
