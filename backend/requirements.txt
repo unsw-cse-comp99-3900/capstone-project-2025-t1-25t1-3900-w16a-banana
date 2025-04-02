@@ -4,4 +4,3 @@ flask_restx
 flask_sqlalchemy
 werkzeug
 pytest
-pytest-flask

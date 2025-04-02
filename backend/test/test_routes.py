@@ -1,35 +1,60 @@
-from .test_conf import client
-from .test_utils.test_admin import *
-from .test_utils.test_restaurant import *
-from .test_utils.test_customer import *
-from .test_utils.test_driver import *
+"""Test for APIs"""
+from pathlib import Path
 
-from .test_data.admin import *
-from .test_data.restaurant import *
-from .test_data.customer import *
-from .test_data.driver import *
+from .test_data.admin import (
+    admin1, admin_same_email, admin_weak_password
+)
+from .test_data.restaurant import (
+    restaurant1, restaurant2, restaurant_fail_same_email
+)
+from .test_data.customer import  (
+    customer1, customer2, customer_same_email, customer_weak_password
+)
+from .test_data.driver import (
+    driver1, driver2, driver_same_email, driver_weak_password
+)
 
-# Test for admin register
+resources = Path(__file__).parent/ "resources"
+
+
 def test_01_admin_register_login(client):
-
+    """Test for Admin Register and Login"""
+    # Normal signup
     response = admin1.register(client)
     assert response.status_code == 200
-
     # Sign up using same email fails
     response = admin_same_email.register(client)
     assert response.status_code == 400
-    
     # Sign up with weak password fails
     response = admin_weak_password.register(client)
     assert response.status_code == 400
-
-    # Get the toekn by loggin in with admin account
+    # Login with admin
     response = admin1.login(client)
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
+def test_01_customer_register_login(client):
+    """Test for Customer Register and Login"""
+    # Check if the register was successful
+    response = customer1.register(client)
+    assert response.status_code == 200
+    response = customer2.register(client)
+    assert response.status_code == 200
+    # Same email register fails
+    response = customer_same_email.register(client)
+    assert response.status_code == 400
+    # Weak password customer register should fail
+    response = customer_weak_password.register(client)
+    assert response.status_code == 400
+    # Login should be successful. Get the token
+    response = customer1.login(client)
+    assert response.status_code == 200
+    assert 'token' in response.get_json()
+
+
 #Test for restaurant register
 def test_01_restaurant_register_login(client):
+    """Test for Restaurant Register and Login"""
     # Check if the register was successful
     response = restaurant1.register(client)
     assert response.status_code == 200
@@ -45,37 +70,28 @@ def test_01_restaurant_register_login(client):
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
-#Test for restaurant register
-def test_01_customer_register_login(client):
-    # Check if the register was successful
-    response = customer1.register(client)
-    assert response.status_code == 200
-    response = customer2.register(client)
-    assert response.status_code == 200
-
-    # Same email register fails
-    response = customer_fail_same_email.register(client)
-    assert response.status_code == 400
-
-    # Login should be successful. Get the token
-    response = customer1.login(client)
-    assert response.status_code == 200
-    assert 'token' in response.get_json()
-
-
+# Test for driver register and login
 def test_01_driver_register_login(client):
+    """Test for Driver Register and Login"""
+    # Ordinary Register
     response = driver1.register(client)
     assert response.status_code == 200
     response = driver2.register(client)
     assert response.status_code == 200
-
+    # Duplicate email should fail
+    response = driver_same_email.register(client)
+    assert response.status_code == 400
+    # Weak passowrd should fail to register
+    response = driver_weak_password.register(client)
+    assert response.status_code == 400
+    # Login with driver
     response = driver1.login(client)
     assert response.status_code == 200
+    assert 'token' in response.get_json()
 
-
-    
 # Test to see pending restaurants
 def test_02_check_pending_restaurant(client):
+    """Test for Admin Cheking Pending Application and Approve it"""
     # Get all pending applications of the restaurant
     response = admin1.get_pending_application(client, 'restaurant')
 
@@ -85,10 +101,13 @@ def test_02_check_pending_restaurant(client):
     assert response.get_json()[0]['registration_status'] == 'PENDING'
 
     # Approve 
-    response = admin1.pending_application_action(client, 'restaurant', restaurant1.get_id(), 'approve')
+    response = admin1.pending_application_action(
+        client, 'restaurant', restaurant1.get_id(), 'approve'
+    )
     assert response.status_code == 200
 
 def test_03_restaurant_menu(client):
+    """Test for Restaurant Category and Menu Creation"""
     # Create new menu category
     response = restaurant1.category_create(client, 'category1')
     assert response.status_code == 200
@@ -122,6 +141,7 @@ def test_03_restaurant_menu(client):
     assert response.status_code == 200
 
 def test_04_customer_order(client):
+    """Test for Customer Adding Item to Cart and Placing Order"""
     # Check for the empty cart
     response = customer1.cart_get(client)
     assert response.status_code == 200
@@ -181,6 +201,7 @@ def test_04_customer_order(client):
     assert len(response.get_json()) == 0
 
 def test_05_restaurant_accept(client):
+    """Test for Restaurant Accept Order"""
     # Get all the pending orders
     response = restaurant1.orders_get(client, 'pending')
     assert response.status_code == 200
@@ -205,6 +226,7 @@ def test_05_restaurant_accept(client):
     assert response.get_json()['orders'][0]['order_status'] == 'READY_FOR_PICKUP'
 
 def test_06_driver_handling_order(client):
+    """Test for Driver Accept, Pickup and Complete Order"""
     response = driver1.get_available_orders(client)
     assert response.status_code == 200
 

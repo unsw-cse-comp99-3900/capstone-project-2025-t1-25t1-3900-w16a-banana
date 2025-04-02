@@ -1,5 +1,6 @@
-from ..test_utils.test_restaurant import *
+"""Test objects for Restaurant Test"""
 from pathlib import Path
+from ..test_utils.test_restaurant import RestaurantTest
 
 resources = Path(__file__).parent.parent / "resources"
 

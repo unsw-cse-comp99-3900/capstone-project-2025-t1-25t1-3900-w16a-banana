@@ -1,6 +1,18 @@
+"""Test Object for Driver"""
 from werkzeug.datastructures import FileStorage
 
 class DriverTest:
+    """
+    Class for testing Driver
+    Features:
+        - login
+        - register
+        - get_id
+        - get_available_orders
+        - pickup_order
+        - accept_order
+        - complete_order
+    """
     def __init__(
         self,
         email: str,

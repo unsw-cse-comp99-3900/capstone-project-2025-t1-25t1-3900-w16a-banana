@@ -1,5 +1,6 @@
-from ..test_utils.test_customer import *
+"""Test data for Customer Related APIs"""
 from pathlib import Path
+from ..test_utils.test_customer import CustomerTest
 
 resources = Path(__file__).parent.parent / "resources"
 
@@ -27,10 +28,22 @@ customer2 = CustomerTest(
     profile_image = (resources / "profile_image_woman.png").open("rb")
 )
 
-customer_fail_same_email = CustomerTest(
+customer_same_email = CustomerTest(
     username = 'Janey Smith',
     email = 'jane@example.com',
     password = 'Abcd1234!',
+    phone = '0412345673',
+    address = '10 Street',
+    suburb = 'Sydney',
+    state = 'NSW',
+    postcode = '2000',
+    profile_image = (resources / "profile_image_woman.png").open("rb")
+)
+
+customer_weak_password = CustomerTest(
+    username = 'Edward Smith',
+    email = 'edward@example.com',
+    password = 'Abcd1234',
     phone = '0412345673',
     address = '10 Street',
     suburb = 'Sydney',

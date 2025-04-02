@@ -1,6 +1,6 @@
-from ..test_conf import client
-
+"""Test Restaurant Object"""
 class RestaurantTest():
+    """Test Restaurant Object"""
     def __init__(
         self,
         email: str,
@@ -33,6 +33,9 @@ class RestaurantTest():
 
         self.menu_categories = []
         self.menu_items = []
+        self.token = None
+        self.headers = None
+        self.id = None
 
     def login(self, client):
         """POST /auth/login"""
@@ -49,8 +52,8 @@ class RestaurantTest():
             self.id = res.get_json()['id']
         return res
 
-
     def register(self, client):
+        """POST /restaurant/register"""
         return client.post(
             '/restaurant/register',
             content_type='multipart/form-data',
@@ -70,17 +73,18 @@ class RestaurantTest():
                 'image3': self.image3
             }
         )
-    
+
     def get_id(self) -> int:
+        """Returns ID"""
         return self.id
-    
+
     def categories_get(self, client):
         """GET /restaurant-menu/categories"""
         return client.post(
             '/restaurant-menu/categoriesw',
             headers = self.headers
         )
-    
+
     def category_create(self, client, name: str):
         """POST /restaurant-menu/categories"""
         res = client.post(
@@ -97,33 +101,33 @@ class RestaurantTest():
             })
         return res
 
-    def category_update(self, client, id: int, new_name: str):
+    def category_update(self, client, category_id: int, new_name: str):
         """PUT /restaurant-menu/category/{id}"""
         res = client.put(
-            f'/restaurant-menu/category/{id}',
+            f'/restaurant-menu/category/{category_id}',
             json={'name': new_name},
             headers = self.headers
         )
 
         if res.status_code == 200:
             for cat in self.menu_categories:
-                if cat['id'] == id:
+                if cat['id'] == category_id:
                     cat['name'] = new_name
         return res
-    
-    def category_delete(self, client, id: int):
+
+    def category_delete(self, client, category_id: int):
         """DELETE /restaurant-menu/category/{category_id}"""
         res = client.delete(
-            f'/restaurant-menu/category/{id}',
+            f'/restaurant-menu/category/{category_id}',
             headers = self.headers
         )
 
         if res.status_code == 200:
             for cat in self.menu_categories:
-                if cat['id'] == id:
+                if cat['id'] == category_id:
                     self.menu_categories.remove(cat)
         return res
-    
+
     def item_create(
         self,
         client,
@@ -150,26 +154,24 @@ class RestaurantTest():
         if res.status_code == 200:
             self.menu_items.append(res.get_json())
         return res
-    
+
     # TODO: Function for item update
-    # TODO: Function for itmm delete
-    
-    
     def items_get(self, client):
         """GET /restaurant-menu/items"""
         return client.get(
-            f'/restaurant-menu/items',
+            '/restaurant-menu/items',
             headers = self.headers,
         )
-    
+
     def orders_get(self, client, type: str):
         """GET /restaurant-order/orders/{type}"""
         return client.get(
             f'/restaurant-order/orders/{type}',
             headers = self.headers
         )
-    
+
     def order_action(self, client, action: str, order_id):
+        """POST /restaurant-order/orders/{action}/{order_id}"""
         return client.post(
             f'/restaurant-order/orders/{action}/{order_id}',
             headers = self.headers

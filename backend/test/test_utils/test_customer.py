@@ -1,3 +1,4 @@
+"""Test Object For Customer"""
 from werkzeug.datastructures import FileStorage
 
 class CustomerTest:
@@ -123,6 +124,7 @@ class CustomerTest:
         return res
 
     def orders_get(self, client):
+        """GET /customer-order/orders"""
         return client.get(
             '/customer-order/orders',
             headers = self.headers
