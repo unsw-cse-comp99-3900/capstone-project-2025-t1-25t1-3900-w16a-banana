@@ -1,5 +1,7 @@
 """Test Restaurant Object"""
-class RestaurantTest():
+from .test_user import UserTest
+
+class RestaurantTest(UserTest):
     """Test Restaurant Object"""
     def __init__(
         self,
@@ -17,8 +19,9 @@ class RestaurantTest():
         image2: bytes,
         image3: bytes
     ):
-        self.email = email
-        self.password = password
+        super().__init__(
+            email=email, password=password
+        )
         self.phone = phone
         self.name = name
         self.address = address
@@ -33,24 +36,6 @@ class RestaurantTest():
 
         self.menu_categories = []
         self.menu_items = []
-        self.token = None
-        self.headers = None
-        self.id = None
-
-    def login(self, client):
-        """POST /auth/login"""
-        res = client.post('/auth/login', json={
-            'email': self.email,
-            'password': self.password,
-            'user_type': 'restaurant'
-        })
-        if res.status_code == 200:
-            self.token = res.get_json()['token']
-            self.headers = {
-                "Authorization": self.token
-            }
-            self.id = res.get_json()['id']
-        return res
 
     def register(self, client):
         """POST /restaurant/register"""
@@ -73,10 +58,6 @@ class RestaurantTest():
                 'image3': self.image3
             }
         )
-
-    def get_id(self) -> int:
-        """Returns ID"""
-        return self.id
 
     def categories_get(self, client):
         """GET /restaurant-menu/categories"""
@@ -163,10 +144,10 @@ class RestaurantTest():
             headers = self.headers,
         )
 
-    def orders_get(self, client, type: str):
+    def orders_get(self, client, order_type: str):
         """GET /restaurant-order/orders/{type}"""
         return client.get(
-            f'/restaurant-order/orders/{type}',
+            f'/restaurant-order/orders/{order_type}',
             headers = self.headers
         )
 

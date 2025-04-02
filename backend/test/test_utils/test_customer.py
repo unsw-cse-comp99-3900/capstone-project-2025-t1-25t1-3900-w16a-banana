@@ -1,7 +1,9 @@
 """Test Object For Customer"""
 from werkzeug.datastructures import FileStorage
 
-class CustomerTest:
+from .test_user import UserTest
+
+class CustomerTest(UserTest):
     """
     Class for testing Customer
     Features:
@@ -24,9 +26,10 @@ class CustomerTest:
         postcode: str,
         profile_image: FileStorage = None
     ):
+        super().__init__(
+            email=email, password=password
+        )
         self.username = username
-        self.email = email
-        self.password = password
         self.phone = phone
         self.address = address
         self.suburb = suburb
@@ -35,9 +38,6 @@ class CustomerTest:
         self.profile_image = profile_image
 
         self.cart = []
-        self.token = None
-        self.headers = None
-        self.id = None
 
     def register(self, client):
         """POST /customer/register"""
@@ -55,25 +55,9 @@ class CustomerTest:
             }
         )
 
-    def login(self, client):
-        """POST /customer/register"""
-        res = client.post('/auth/login', json={
-            'email': self.email,
-            'password': self.password,
-            'user_type': 'customer'
-        })
-        if res.status_code == 200:
-            self.token = res.get_json()['token']
-            self.headers = {
-                "Authorization": self.token
-            }
-            self.id = res.get_json()['id']
-        return res
-
     def get_id(self) -> int:
         """Get customer ID"""
         return self.id
-
 
     def cart_update(
         self,

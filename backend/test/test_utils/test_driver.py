@@ -1,7 +1,8 @@
 """Test Object for Driver"""
 from werkzeug.datastructures import FileStorage
+from .test_user import UserTest
 
-class DriverTest:
+class DriverTest(UserTest):
     """
     Class for testing Driver
     Features:
@@ -25,8 +26,9 @@ class DriverTest:
         license_image: FileStorage,
         registration_paper: FileStorage,
     ):
-        self.email = email
-        self.password = password
+        super().__init__(
+            email=email, password=password
+        )
         self.phone = phone
         self.first_name = first_name
         self.last_name = last_name
@@ -34,10 +36,6 @@ class DriverTest:
         self.car_plate = car_plate
         self.license_image = license_image
         self.registration_paper = registration_paper
-
-        self.token = None
-        self.headers = None
-        self.id = None
 
     def register(self, client):
         """POST /driver/register"""
@@ -56,25 +54,6 @@ class DriverTest:
                 'registration_paper': self.registration_paper,
             }
         )
-
-    def login(self, client):
-        """POST /auth/login for driver"""
-        res = client.post('/auth/login', json={
-            'email': self.email,
-            'password': self.password,
-            'user_type': 'driver'
-        })
-        if res.status_code == 200:
-            self.token = res.get_json()['token']
-            self.headers = {
-                "Authorization": self.token
-            }
-            self.id = res.get_json()['id']
-        return res
-
-    def get_id(self) -> int:
-        """Get customer ID"""
-        return self.id
 
     def get_available_orders(self, client):
         """GET /driver-order/orders/available"""
