@@ -1,14 +1,15 @@
+"""Flask-restx model for Customer API"""
 from flask_restx import Namespace, fields, reqparse
 from werkzeug.datastructures import FileStorage
 
 api = Namespace('customer', description='APIs for Customer')
 
-"""Error Response"""
-error_res= api.model("Error", {
-    "message": fields.String(description="Error message", example="Error Description")
+# Error Response
+message_res= api.model("Simple Message Response", {
+    "message": fields.String(description="Some message (could be error)", example="Description")
 })
 
-"""Response/Request for customer register"""
+# Response/Request for customer register
 register_req = api.model('CustomerRegister', {
     'username': fields.String(required=True, description="Username", default="customer1"),
     'email': fields.String(required=True, description="Email", default="customer@gmail.com"),
@@ -24,7 +25,7 @@ register_res = api.model("Admin Register Reponse", {
     "message": fields.String(description="Success Message", example="Success")
 })
 
-"""Response/Request parser for customer update profile"""
+# Request parser for customer update profile
 update_profile_req_parser = reqparse.RequestParser()
 update_profile_req_parser.add_argument('username', type=str, required=False)
 update_profile_req_parser.add_argument('email', type=str, required=False)
@@ -34,4 +35,18 @@ update_profile_req_parser.add_argument('address', type=str, required=False)
 update_profile_req_parser.add_argument('suburb', type=str, required=False)
 update_profile_req_parser.add_argument('state', type=str, required=False)
 update_profile_req_parser.add_argument('postcode', type=str, required=False)
-update_profile_req_parser.add_argument("profile_image", type=FileStorage, location="files", required=False, help="Profile Image")
+update_profile_req_parser.add_argument(
+    "profile_image", type=FileStorage, location="files", required=False, help="Profile Image"
+)
+
+# Response for get list of favourites
+favourite_model = api.model('Single favourite model', {
+    'id': fields.Integer(description="Favourite ID", default="1"),
+    'customer_id': fields.Integer(description="Customer ID", default="1"),
+    'restaurant_id': fields.Integer(description="Restaurant ID", default="1"),
+})
+
+# Request for updating (addition/deletion) favourites
+update_favourites_req = api.model('Customer Updating Favourites', {
+    'restaurant_id': fields.Integer(required=True, description="Restaurant ID", default="1"),
+})

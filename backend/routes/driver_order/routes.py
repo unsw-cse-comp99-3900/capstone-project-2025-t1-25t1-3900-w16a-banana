@@ -15,7 +15,7 @@ from db_model.db_enum import OrderStatus
 from routes.driver_order.models import (
     api,
     message_res,
-    get_available_orders_res,
+    order_info,
 )
 from routes.driver_order.services import (
     format_order
@@ -25,7 +25,8 @@ from routes.driver_order.services import (
 class AvailableOrders(Resource):
     """Route: /orders/available"""
     @api.expect(auth_header)
-    @api.response(200, 'Success', get_available_orders_res)
+    @api.marshal_list_with(order_info)
+    @api.response(200, 'Success')
     @api.response(400, 'Bad Request', message_res)
     @api.response(401, 'Unauthorised', message_res)
     def get(self):
@@ -36,9 +37,7 @@ class AvailableOrders(Resource):
 
         orders = get_orders_waiting_driver()
 
-        return {
-            'orders': [format_order(order) for order in orders]
-        }, 200
+        return [format_order(order) for order in orders], 200
 
 @api.route('/order/accept/<int:order_id>')
 @api.doc(params={

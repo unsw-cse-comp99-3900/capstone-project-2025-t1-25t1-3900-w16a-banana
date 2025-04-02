@@ -13,6 +13,7 @@ from db_model import (
     CartItem,
     Chat,
     Order,
+    Favourites
 )
 from .db_enum import ChatSupportUserType, OrderStatus
 
@@ -360,3 +361,26 @@ def get_chats_between_users(
         )
     ).order_by(Chat.time.asc()).all()
     return chats
+
+#--------------------------------------------------------#
+#-------------Functions related to Favourites-------------#
+#--------------------------------------------------------#
+def filter_favourites(**kwargs) -> List[Favourites]:
+    """
+    Dynamically filters favourite restaurants.
+
+    Supported fields:
+        - id
+        - customer_id
+        - restaurant_id
+
+    Returns:
+        List[Favourites]: List of favourite entries matching the filter
+    """
+    filters = []
+    for field in ['id', 'customer_id', 'restaurant_id']:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(Favourites, field) == value)
+
+    return Favourites.query.filter(and_(*filters)).all()

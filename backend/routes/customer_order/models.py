@@ -9,7 +9,7 @@ error_res= api.model("Error", {
 })
 
 """Response for customer cart get"""
-single_cart_item_res = api.model('Single Cart Item Model', {
+cart_item_model = api.model('Single Cart Item Model', {
     'menu_id': fields.Integer(),
     'menu_name': fields.String(),
     'restaurant_id': fields.Integer(),
@@ -19,10 +19,6 @@ single_cart_item_res = api.model('Single Cart Item Model', {
     'quantity': fields.Integer(),
     'total_price': fields.Float(),
     'url_img': fields.String()
-})
-
-cart_item_get_res = api.model('Get All Cart Item Model', {
-    'items': fields.List(fields.Nested(single_cart_item_res))
 })
 
 """Response/Request for customer cart update"""
@@ -57,10 +53,6 @@ get_order_res = api.model("Get Order Response", {
     "customer_notes": fields.String(),
     "restaurant_notes": fields.String(),
     "card_number": fields.String()
-})
-
-get_all_orders_res = api.model("Get All Orders Response", {
-    "orders": fields.List(fields.Nested(get_order_res))
 })
 
 

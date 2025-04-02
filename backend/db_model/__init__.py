@@ -362,3 +362,12 @@ class Chat(BaseModel):
     time = db.Column(db.DateTime, default=datetime.now)
 
 # TODO: More works to be added
+class Favourites(BaseModel):
+    """
+    Class of Favourites restaurant DB
+    Customer <-> Favourites (Many)
+    """
+    __tablename__ = 'favourites'
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'), nullable=False)
