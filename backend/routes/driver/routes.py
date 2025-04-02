@@ -3,7 +3,7 @@ from flask_restx import Resource
 from flask import request
 
 from utils.db import db
-from utils.file import save_file, save_image
+from utils.file import save_document
 from utils.check import (
     is_password_safe,
     is_valid_phone,
@@ -46,8 +46,8 @@ class RegisterDriver(Resource):
             return res_error(400, 'Email already exist')
 
         # save the files
-        url_license_image = save_file(args['license_image'])
-        url_registration_paper = save_file(args['registration_paper'])
+        url_license_image = save_document(args['license_image'])
+        url_registration_paper = save_document(args['registration_paper'])
 
         # create the new driver
         new_driver = Driver(
@@ -147,16 +147,16 @@ class UpdateProfile(Resource):
             require_approval = True
 
         if args.get("license_image"):
-            url = save_image(args['license_image'])
+            url = save_document(args['license_image'])
             if not url:
-                return res_error(400, 'Unsupported Image File')
+                return res_error(400, 'Unsupported Document File')
             driver.url_license_image = url
             require_approval = True
 
         if args.get("registration_paper"):
-            url = save_file(args['registration_paper'])
+            url = save_document(args['registration_paper'])
             if not url:
-                return res_error(400, 'Unsupported Image File')
+                return res_error(400, 'Unsupported Document File')
             driver.url_registration_paper = url
             require_approval = True
 

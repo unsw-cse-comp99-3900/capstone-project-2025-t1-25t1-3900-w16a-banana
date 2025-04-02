@@ -2,6 +2,8 @@
 import re
 from db_model.db_enum import State, OrderStatus
 
+# TODO: May have to check the email format
+
 def is_valid_order_status(status: str) -> bool:
     """Returns boolean of whether the status is valid or not"""
     try:

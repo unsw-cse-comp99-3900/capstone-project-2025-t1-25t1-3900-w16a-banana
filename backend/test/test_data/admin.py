@@ -1,4 +1,5 @@
-from ..test_utils.test_admin import *
+"""Test data for Admin related APIs"""
+from ..test_utils.test_admin import AdminTest
 
 admin1 = AdminTest(
     email = 'admin@example.com',

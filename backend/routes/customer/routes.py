@@ -157,12 +157,12 @@ class CustomerUpdate(Resource):
         return customer.dict(), 200
 
 
-@api.route('/favourite')
+@api.route('/favourites')
 class GetFavourites(Resource):
     """Route: /favourites"""
     @api.expect(auth_header)
     @api.marshal_list_with(favourite_model)
-    @api.response(200, "Success", favourite_model)
+    @api.response(200, "Success")
     @api.response(400, "Bad Request", message_res)
     @api.response(401, "Unauthorised", message_res)
     def get(self):
@@ -175,6 +175,9 @@ class GetFavourites(Resource):
         print(favourites)
         return [favourite for favourite in favourites], 200
 
+@api.route('/favourite')
+class AddFavourite(Resource):
+    """Route: /favourite"""
     @api.expect(auth_header, update_favourites_req)
     @api.response(200, "Success", message_res)
     @api.response(400, "Bad Request", message_res)
@@ -206,11 +209,14 @@ class GetFavourites(Resource):
         db.session.commit()
         return new_favourites.dict(), 200
 
-    @api.expect(auth_header, update_favourites_req)
+@api.route('/favourite/<int:favourite_id>')
+class DeleteFavourite(Resource):
+    """Route: /favourite/{favourite_id}"""
+    @api.expect(auth_header)
     @api.response(200, "Success", message_res)
     @api.response(400, "Bad Request", message_res)
     @api.response(401, "Unauthorised", message_res)
-    def delete(self):
+    def delete(self, favourite_id: int):
         """Delete given restuarnt from Favourites"""
         customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
@@ -220,17 +226,16 @@ class GetFavourites(Resource):
         restaurant_id = request.get_json()['restaurant_id']
         if not filter_restaurants(id = restaurant_id):
             return res_error(400, 'Invalid Restaurant ID')
-        
+
         # Check if the favourite exist
         favourites = filter_favourites(
-            customer_id = customer.id,
-            restaurant_id = restaurant_id
+            id = favourite_id,
+            customer_id = customer.id
         )
         if not favourites:
             return res_error(400, 'Restaurant Not In Favourites')
-        
+
         # Delete from DB
         db.session.delete(favourites[0])
         db.session.commit()
         return {'message': 'Deleted Successfully'}, 200
-
