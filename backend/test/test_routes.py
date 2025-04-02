@@ -125,10 +125,10 @@ def test_04_customer_order(client):
     # Check for the empty cart
     response = customer1.cart_get(client)
     assert response.status_code == 200
-    assert len(response.get_json()['items']) == 0
+    assert len(response.get_json()) == 0
 
     # Get the first item from the restaurant
-    menu_id = restaurant1.items_get(client).get_json()['items'][0]['id']
+    menu_id = restaurant1.items_get(client).get_json()[0]['id']
 
     # Add to the cart
     response = customer1.cart_update(client, menu_id, 4)
@@ -137,7 +137,7 @@ def test_04_customer_order(client):
     # Check if successfully added
     response = customer1.cart_get(client)
     assert response.status_code == 200
-    assert len(response.get_json()['items']) == 1
+    assert len(response.get_json()) == 1
 
     # Update the quantity
     response = customer1.cart_update(client, menu_id, 20)
@@ -146,8 +146,8 @@ def test_04_customer_order(client):
     # Check if the item is still there and updated.
     response = customer1.cart_get(client)
     assert response.status_code == 200
-    assert len(response.get_json()['items']) == 1
-    assert response.get_json()['items'][0]['quantity'] == 20
+    assert len(response.get_json()) == 1
+    assert response.get_json()[0]['quantity'] == 20
 
     # Delete item
     response = customer1.cart_update(client, menu_id, 0)
@@ -156,7 +156,7 @@ def test_04_customer_order(client):
     # Check if the item is still there and updated.
     response = customer1.cart_get(client)
     assert response.status_code == 200
-    assert len(response.get_json()['items']) == 0
+    assert len(response.get_json()) == 0
 
     # Add to the cart again
     response = customer1.cart_update(client, menu_id, 4)
@@ -178,7 +178,7 @@ def test_04_customer_order(client):
     # Cart should be empty now
     response = customer1.cart_get(client)
     assert response.status_code == 200
-    assert len(response.get_json()['items']) == 0
+    assert len(response.get_json()) == 0
 
 def test_05_restaurant_accept(client):
     # Get all the pending orders
@@ -209,10 +209,11 @@ def test_06_driver_handling_order(client):
     assert response.status_code == 200
 
     data = response.get_json()
-    assert len(data['orders']) == 1
-    assert data['orders'][0]['customer_id'] == customer1.get_id()
-    assert data['orders'][0]['restaurant_id'] == restaurant1.get_id()
-    order = data['orders'][0]
+    assert len(data) == 1
+    order = data[0]
+    assert order['customer_id'] == customer1.get_id()
+    assert order['restaurant_id'] == restaurant1.get_id()
+
 
     # Pick up or complete should fail when not accepted by driver
     response = driver1.pickup_order(client, order['id'])

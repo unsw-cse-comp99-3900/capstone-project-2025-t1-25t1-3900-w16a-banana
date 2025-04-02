@@ -1,16 +1,28 @@
+"""APIs for Restaurant Menu Related"""
 from flask_restx import Resource
 from flask import request
-import secrets
 
 from utils.db import db
 from utils.file import save_image
-from utils.check import *
 from utils.header import auth_header, tokenize
 from utils.response import res_error
-from db_model import *
-from db_model.db_query import *
-from routes.restaurant_menu.models import *
-from routes.restaurant_menu.services import *
+from db_model import MenuCategory, MenuItem
+from db_model.db_query import (
+    get_restaurant_by_token,
+    filter_menu_categories,
+    filter_menus,
+    filter_menu_from_restaurant
+)
+from routes.restaurant_menu.models import (
+    api,
+    message_res,
+    post_item_req_parser,
+    post_menu_category_req,
+    update_item_req_parser,
+    update_menu_category_req,
+    menu_category_model,
+    menu_item_model
+)
 
 # A restaurant can create a new menu category,
 # or update the existing menu category name
@@ -19,9 +31,11 @@ from routes.restaurant_menu.services import *
 
 @api.route('/categories')
 class MenuCategories(Resource):
+    """Route: /categories"""
     @api.expect(auth_header)
-    @api.response(200, "Success", get_menu_categories_res)
-    @api.response(400, "Unauthorised", error_res)
+    @api.marshal_list_with(menu_category_model)
+    @api.response(200, "Success")
+    @api.response(400, "Unauthorised", message_res)
     def get(self):
         """Get all menu categories"""
         # Authenticate
@@ -32,15 +46,16 @@ class MenuCategories(Resource):
         # Get every categories
         categories = filter_menu_categories(restaurant_id = restaurant.id)
 
-        return {"categories": [category.dict() for category in categories]}, 200
+        return [category.dict() for category in categories], 200
 
 
 @api.route('/category/new')
 class NewMenuCategory(Resource):
+    """Route: /categories/new"""
     @api.expect(auth_header, post_menu_category_req)
-    @api.response(200, "Success", menu_category_res)
-    @api.response(400, "Bad Request ", error_res)
-    @api.response(401, "Unauthorised", error_res)
+    @api.response(200, "Success", menu_category_model)
+    @api.response(400, "Bad Request ", message_res)
+    @api.response(401, "Unauthorised", message_res)
     def post(self):
         """Restaurant creates a new menu category"""
         # Authenticate
@@ -64,16 +79,17 @@ class NewMenuCategory(Resource):
         )
         db.session.add(category)
         db.session.commit()
-        
+
         return category.dict(), 200
 
 @api.route('/category/<int:category_id>')
 class MenuCategoryUpdate(Resource):
+    """Route: /categories/category_id"""
     @api.expect(auth_header, update_menu_category_req)
-    @api.response(200, "Success", menu_category_res)
-    @api.response(400, "Bad Request ", error_res)
-    @api.response(401, "Unauthorised", error_res)
-    @api.response(404, "Not Found", error_res)
+    @api.response(200, "Success", menu_category_model)
+    @api.response(400, "Bad Request ", message_res)
+    @api.response(401, "Unauthorised", message_res)
+    @api.response(404, "Not Found", message_res)
     def put(self, category_id):
         """Restaurant updates an existing menu category name"""
 
@@ -131,8 +147,10 @@ class MenuCategoryUpdate(Resource):
 
 @api.route('/items')
 class GetAllItemsInRestaurant(Resource):
+    """Route: /items"""
     @api.expect(auth_header)
-    @api.response(200, 'list of items', get_all_items_res)
+    @api.marshal_list_with(menu_item_model)
+    @api.response(200, 'list of items')
     def get(self):
         """Get all items in category"""
         # Check restaurant
@@ -143,17 +161,18 @@ class GetAllItemsInRestaurant(Resource):
         # Get items in the restaurant
         items = filter_menu_from_restaurant(
             restaurant_id = restaurant.id,
-            first_only = False 
+            first_only = False
         )
 
-        return {'items': [item.dict() for item in items]}, 200
+        return [item.dict() for item in items], 200
 
 
 @api.route('/items/<int:category_id>')
 class GetAllItemsInCategory(Resource):
     """Route: /items/<int:category_id>"""
     @api.expect(auth_header)
-    @api.response(200, 'list of items', get_all_items_res)
+    @api.marshal_list_with(menu_item_model)
+    @api.response(200, 'list of items')
     def get(self, category_id):
         """Get all items in category"""
         # Check restaurant
@@ -172,15 +191,16 @@ class GetAllItemsInCategory(Resource):
         # Get items in the category
         items = filter_menus(category_id = categories[0].id)
 
-        return {'items': [item.dict() for item in items]}, 200
+        return [item.dict() for item in items], 200
 
 @api.route('/item/new/<int:category_id>')
 class NewMenuItem(Resource):
+    """Route: /item/new/category_id"""
     @api.expect(auth_header, post_item_req_parser)
     @api.response(200, 'New Item Data')
-    @api.response(400, "Bad Request ", error_res)
-    @api.response(401, "Unauthorised", error_res)
-    @api.response(404, "Not Found", error_res)
+    @api.response(400, "Bad Request ", message_res)
+    @api.response(401, "Unauthorised", message_res)
+    @api.response(404, "Not Found", message_res)
     def post(self, category_id):
         """Restaurant creates a new menu item under a category"""
 
@@ -236,11 +256,12 @@ class NewMenuItem(Resource):
 
 @api.route('/item/<int:menu_id>')
 class ManageMenuItem(Resource):
+    """Route: /item/menu_id"""
     @api.expect(auth_header, update_item_req_parser)
     @api.response(200, 'Updated Item Data')
-    @api.response(400, "Bad Request ", error_res)
-    @api.response(401, "Unauthorised", error_res)
-    @api.response(404, "Not Found", error_res)
+    @api.response(400, "Bad Request ", message_res)
+    @api.response(401, "Unauthorised", message_res)
+    @api.response(404, "Not Found", message_res)
     def put(self, menu_id):
         """Update existing menu item attributes (can update any provided fields)"""
 
@@ -293,9 +314,9 @@ class ManageMenuItem(Resource):
 
     @api.expect(auth_header)
     @api.response(200, 'Simple message JSON for success')
-    @api.response(400, "Bad Request ", error_res)
-    @api.response(401, "Unauthorised", error_res)
-    @api.response(404, "Not Found", error_res)
+    @api.response(400, "Bad Request ", message_res)
+    @api.response(401, "Unauthorised", message_res)
+    @api.response(404, "Not Found", message_res)
     def delete(self, menu_id: int):
         """Delete a menu item permenantly"""
         # Authenticate

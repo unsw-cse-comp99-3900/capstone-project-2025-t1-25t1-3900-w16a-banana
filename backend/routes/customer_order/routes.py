@@ -20,9 +20,8 @@ from db_model.db_query import (
 from routes.customer_order.models import (
     api,
     error_res,
-    cart_item_get_res,
+    cart_item_model,
     cart_item_update_req, cart_item_update_res,
-    get_all_orders_res,
     get_order_res,
     post_order_req, post_order_res,
 )
@@ -38,7 +37,8 @@ from routes.customer_order.services import (
 class ShopItems(Resource):
     """Route: /cart"""
     @api.expect(auth_header)
-    @api.response(200, "Success", cart_item_get_res)
+    @api.marshal_list_with(cart_item_model)
+    @api.response(200, "Success")
     @api.response(400, "Bad Request", error_res)
     @api.response(401, "Unauthorised", error_res)
     def get(self):
@@ -51,7 +51,7 @@ class ShopItems(Resource):
         # Get all items in the cart
         cart_items = filter_cart_items(customer_id = customer.id)
         items = format_cart_items(cart_items)
-        return {'items': items}, 200
+        return items, 200
 
     @api.expect(auth_header, cart_item_update_req)
     @api.response(200, "Success", cart_item_update_res)
@@ -108,7 +108,8 @@ class ShopItems(Resource):
 class GetAllOrders(Resource):
     """Route: /orders"""
     @api.expect(auth_header)
-    @api.response(200, 'Success', get_all_orders_res)
+    @api.marshal_list_with(get_order_res)
+    @api.response(200, 'Success')
     @api.response(400, 'Bad Request', error_res)
     @api.response(401, 'Unauthorised', error_res)
     def get(self):
@@ -118,7 +119,7 @@ class GetAllOrders(Resource):
             return res_error(401)
 
         orders = filter_orders(customer_id = customer.id)
-        return {'orders': [order.dict() for order in orders]}, 200
+        return [order.dict() for order in orders], 200
 
 @api.route('/order/<int:order_id>')
 class GetOrderItems(Resource):

@@ -29,7 +29,3 @@ order_info = api.model('Order Information', {
     'customer_notes': fields.String(),
     'restaurant_notes': fields.String()
 })
-
-get_available_orders_res = api.model('Get Available Orders Response', {
-    'orders': fields.List(fields.Nested(order_info))
-})
