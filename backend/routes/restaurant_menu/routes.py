@@ -286,7 +286,7 @@ class ManageMenuItem(Resource):
             url_img = save_image(args['img'])
             if not url_img:
                 return res_error(400, "Unsupported Image File")
-            item.url_img = save_image(args['img'])
+            item.url_img = url_img
 
         # Update Name. Check if name conflicts
         if args['name']:
