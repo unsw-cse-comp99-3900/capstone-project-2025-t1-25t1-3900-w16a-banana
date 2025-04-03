@@ -1,0 +1,137 @@
+import React, { useEffect, useState } from "react";
+import { View, ScrollView, Image } from "react-native";
+import {
+  Text,
+  TextInput,
+  Button,
+  ActivityIndicator,
+} from "react-native-paper";
+import axios from "axios";
+import { useRouter } from "expo-router";
+import { BACKEND } from "../constants/backend";
+import useAuth from "../hooks/useAuth";
+import useToast from "../hooks/useToast";
+import MenuItemEdit from "./MenuItemEdit";
+import useDialog from "../hooks/useDialog";
+
+export default function MenuCategoryEdit({ category, restaurantId, onRefresh, displayIndex }) {
+  const { showToast } = useToast();
+  const { showDialog } = useDialog();
+  const { contextProfile } = useAuth();
+
+  // keep the original name
+  const [categoryName, setCategoryName] = useState(category.name);
+  const [originalName, setOriginalName] = useState(category.name);
+
+  // checks if user changed the category name
+  const isCatChanged = categoryName.trim() !== originalName.trim();
+
+  console.log(categoryName, originalName, isCatChanged);
+
+
+  // update the category name
+  const saveCategoryName = async () => {
+    const url = `${BACKEND}/restaurant-menu/category/${category.id}`;
+    const payload = { name: categoryName };
+    const config = { headers: { Authorizaton: contextProfile.token } }; 
+
+    try {
+      const response = await axios.put(url, payload, config);
+      showToast("Category name updated.", "success")
+
+      // refresh the whole screen
+      onRefresh();
+    } catch (error) {
+      console.error("Failed to save category:", error);
+      showToast("Failed to save category.", "error");
+    }
+  };
+
+  // Reset the input category name to original name
+  const resetCategoryName = () => {
+    setCategoryName(originalName);
+  };
+
+  // Remove entire category
+  const removeCategory = async () => {
+    // write the message for check
+    // count how many items in this category
+    const itemCount = category.items.length;
+
+    const message = itemCount > 0
+      ? `This will remove the category and all ${itemCount} items in it.`
+      : "This will remove the category.";
+
+    showDialog({
+      title: "Remove Category",
+      message: message,
+      onConfirm: async () => removeCategoryCallAPI(),
+      confirmText: "Yes, remove it",
+      cancelText: "Cancel",
+    });
+  };
+
+  const removeCategoryCallAPI = async () => {
+    const url = `${BACKEND}/restaurant-menu/category/${category.id}`;
+    const config = { headers: { Authorization: contextProfile.token } };
+
+    try {
+      const response = await axios.delete(url, config);
+      showToast("Category removed.", "success");
+      onRefresh();
+    } catch (error) {
+      console.error("Failed to remove category:", error);
+      showToast("Failed to remove category.", "error");
+    }
+  }
+
+  // Add Item
+  const addItem = async () => {
+    alert("TODO");
+  };
+
+  return (
+    <View style={{ marginBottom: 30 }}>
+      {/* Category Name Row */}
+      <Text variant="titleMedium" style={{ marginBottom: 4 }}>
+        {`Category #${displayIndex}`}
+      </Text>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", gap: 2, marginBottom: 8 }}>
+        <TextInput
+          label="Category Name"
+          dense
+          mode="outlined"
+          style={{ width: "70%", }}
+          value={categoryName}
+          onChangeText={setCategoryName}
+        />
+        {/* if the category name input is changed, show the redo + check, if not, show the trash bin */}
+        {isCatChanged ? (
+          <>
+            <Button mode="text" onPress={resetCategoryName} icon="redo"/>
+            <Button mode="text" onPress={saveCategoryName} icon="check-bold"/>
+          </>
+        ) : (
+          <Button mode="text" icon="trash-can" onPress={removeCategory} />
+        )}
+      </View>
+      {/* Display all the items */}
+      <View style={{ marginLeft: 1 }}>
+        {category.items?.map((item, index) => (
+          <MenuItemEdit
+            key={item.id}
+            displayIndex={index + 1}
+            item={item}
+            categoryId={category.id}
+            onRefresh={onRefresh}
+          />
+        ))}
+      </View>
+
+      {/* Add Item */}
+      <Button mode="text" onPress={addItem}>
+        Add Item
+      </Button>
+    </View>
+  );
+}
