@@ -38,6 +38,11 @@ restaurant_data = [
     ("bondibites@example.com", "0433444555", "Bondi Bites", "789 Campbell Parade", "Bondi Beach", "NSW", "2026", "33333333333", "Casual dining spot near Bondi Beach."),
     ("newtownnoodles@example.com", "0444555666", "Newtown Noodles", "321 King St", "Newtown", "NSW", "2042", "44444444444", "Authentic Asian noodle house in Newtown."),
     ("parrapizza@example.com", "0455666777", "Parramatta Pizza", "654 Church St", "Parramatta", "NSW", "2150", "55555555555", "Family-friendly pizza restaurant in Parramatta."),
+    ("glebegrill@example.com", "0466778899", "Glebe Grill", "789 Glebe Point Rd", "Glebe", "NSW", "2037", "66666666666", "Neighborhood favorite for grilled meats and cozy vibes."),
+    ("manlymeals@example.com", "0477889900", "Manly Meals", "123 Beach Rd", "Manly", "NSW", "2095", "77777777777", "Beachside spot known for fresh seafood and healthy bowls."),
+    ("redfernramen@example.com", "0488990011", "Redfern Ramen", "456 Redfern St", "Redfern", "NSW", "2016", "88888888888", "Tiny noodle bar with big flavor."),
+    ("strathfieldspice@example.com", "0499001122", "Strathfield Spice", "321 Albert Rd", "Strathfield", "NSW", "2135", "99999999999", "Modern Indian eatery with a twist on the classics."),
+    ("greenwichgarden@example.com", "0400111222", "Greenwich Garden", "654 Pacific Hwy", "Greenwich", "NSW", "2065", "10101010101", "Vegetarian café with garden seating and seasonal menus."),
 ]
 
 def initialize_database():
@@ -79,7 +84,12 @@ def initialize_database():
             db.session.add(driver)
             db.session.commit()
 
-        for email, phone, name, address, suburb, state, postcode, abn, description in restaurant_data:
+        # load the uploads/restaurant_menu.json file
+        file = open("uploads/restaurant_menu.json", "r")
+        menus = json.load(file)
+        file.close()
+
+        for index, (email, phone, name, address, suburb, state, postcode, abn, description) in enumerate(restaurant_data):
             restaurant = Restaurant(
                 email=email,
                 password="Abcd1234!",
@@ -90,9 +100,9 @@ def initialize_database():
                 state=state,
                 postcode=postcode,
                 abn=abn,
-                url_img1="uploads/restaurant_img1.jpg",
-                url_img2="uploads/restaurant_img2.jpg",
-                url_img3="uploads/restaurant_img3.jpg",
+                url_img1=f"uploads/restaurant/Image_{index+1}.jpg",
+                url_img2="uploads/restaurant/general_1.jpg",
+                url_img3="uploads/restaurant/general_2.jpg",
                 description=description,
                 registration_status=RegistrationStatus.APPROVED,
             )
@@ -100,16 +110,9 @@ def initialize_database():
             db.session.add(restaurant)
             db.session.commit()
 
-            # for each restaurant, use the uploads/restaurant_1_menu.json to create the category and items
-            menu_file = f"uploads/restaurant_{restaurant.id}_menu.json"
-            assert os.path.exists(menu_file), f"Menu file {menu_file} does not exist."
+            # insert the menus
+            categories = menus[index]["categories"]
 
-            file = open(menu_file, "r")
-            menu = json.load(file)
-            file.close()
-
-            # extract the list of categories
-            categories = menu["categories"]
             for cate in categories:
                 name = cate["name"]
                 new_category = MenuCategory(
