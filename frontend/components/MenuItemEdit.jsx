@@ -7,129 +7,192 @@ import {
   HelperText
 } from "react-native-paper";
 import axios from "axios";
+import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 import useToast from "../hooks/useToast";
-import { BACKEND } from "../constants/backend";
 import useDialog from "../hooks/useDialog";
 import ImageUploadComponent from "./ImageUploadForm";
 import { isDecimal } from "validator";
 
-export default function MenuItemEdit({ item, categoryId, onRefresh, displayIndex }) {
+// this component works for both new and existing item
+export default function MenuItemEdit({item, categoryId, onRefresh, displayIndex, }) {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
   const { showDialog } = useDialog();
 
-  // form saves the input values, originalData saves the original values
+  // Determine if this is a new item (no item object or no item.id)
+  const isNew = !(item && item.id);
+
+  // set up initial form
   const initialForm = {
-    name: item.name,
-    description: item.description,
-    price: String(item.price),
-    itemImage: item.url_img ? `${BACKEND}/${item.url_img}` : null,
-  }
-  
+    name: isNew ? "" : item.name,
+    description: isNew ? "" : item.description,
+    price: isNew ? "" : String(item.price),
+    itemImage: (isNew && !item?.url_img ) ? null : `${BACKEND}/${item?.url_img || ""}`.trim(),
+  };
+
+  // set up the form state
   const [form, setForm] = useState(initialForm);
-  const [originalData, setOriginalData] = useState(initialForm);
 
-  // Check if anything changed
-  const isFormChanged = 
-    form.name.trim() !== originalData.name.trim() ||
-    form.description.trim() !== originalData.description.trim() ||
-    form.price.trim() !== originalData.price.trim() ||
-    form.itemImage !== originalData.itemImage;
+  // check if the form has changed
+  const formChanged = 
+    form.name.trim() !== initialForm.name.trim() ||
+    form.description.trim() !== initialForm.description.trim() ||
+    form.price.trim() !== initialForm.price.trim() ||
+    form.itemImage !== initialForm.itemImage;
 
-  // check the price format
+  // Basic decimal check for price. Up to 2 decimals, must be > 0
   const priceFormat = { decimal_digits: "0,2", force_decimal: false };
-  const isPriceValid = isDecimal(form.price, priceFormat) && Number(form.price) > 0;
+  const isPriceValid = isDecimal(form.price || "", priceFormat) && Number(form.price) > 0;
 
-  // Save changes
-  const saveChanges = async () => {
-    // if no changes, showToast
-    if (!isFormChanged) {
-      showToast("No changes to save.", "info");
-      return;
-    }
-    
-    // validate the price: a number and > 0, two decimal places maximum
-    if (!isPriceValid(form.price)) {
-      showToast("Price must be a positive number with up to 2 decimal places.", "error");
-      return;
-    }
-
-    // add the changed fields
-    const formData = new FormData();
-    if (form.name !== originalData.name) formData.append("name", form.name);
-    if (form.description !== originalData.description) formData.append("description", form.description);
-    if (form.price !== originalData.price) formData.append("price", form.price);
-
-    // If the user replaced the image, then upload
-    if (form.itemImage && !form.itemImage.startsWith(BACKEND)) {
-      const imgResp = await fetch(form.itemImage);
-      const imgBlob = await imgResp.blob();
-      formData.append("img", imgBlob, "itemImage.jpg");
-    }
-
-    // prepare
+  // update an existing item
+  const updateItemCallAPI = async (formData) => {
     const url = `${BACKEND}/restaurant-menu/item/${item.id}`;
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {
-      const response = await axios.put(url, formData, config);
-      showToast("Item updated.", "success");
-      onRefresh();
+      await axios.put(url, formData, config);
+      showToast("Item updated!", "success");
+      if (onRefresh) onRefresh();
     } catch (error) {
-      console.error("Failed to save item:", error);
-      showToast("Failed to save item.", "error");
+      console.error("Failed to update item:", error);
+      showToast("Failed to update item.", "error");
+    }
+  }
+
+  // post a new item
+  const createItemCallAPI = async (formData) => {
+    const url = `${BACKEND}/restaurant-menu/item/new/${categoryId}`;
+    const config = { headers: { Authorization: contextProfile.token } };
+
+    try {
+      await axios.post(url, formData, config);
+      showToast("New item created!", "success");
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      console.error("Failed to create item:", error);
+      showToast("Failed to create item.", "error");
     }
   };
 
-  // Reset changes
-  const resetChanges = () => {
-    setForm({
-      name: originalData.name,
-      description: originalData.description,
-      price: originalData.price,
-      itemImage: originalData.itemImage,
-    });
+  const handleSave = async () => {
+    // Validate fields
+    if (!form.name.trim()) {
+      showToast("Please enter a name.", "error");
+      return;
+    }
+    if (!isPriceValid) {
+      showToast("Price must be a positive number, up to 2 decimals.", "error");
+      return;
+    }
+
+    // Build form data
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("description", form.description);
+    formData.append("price", form.price);
+    formData.append("is_available", true); // always true
+
+    // If user replaced the image with a new URI, do the upload
+    if (form.itemImage && !form.itemImage.startsWith(BACKEND)) {
+      try {
+        const imgResp = await fetch(form.itemImage);
+        const imgBlob = await imgResp.blob();
+        formData.append("img", imgBlob, "itemImage.jpg");
+      } catch (err) {
+        console.error("Failed to fetch image:", err);
+        showToast("Failed to attach image.", "error");
+        return;
+      }
+    }
+
+    // Decide if we do POST or PUT
+    if (isNew) {
+      showDialog({
+        title: "Create New Item",
+        message: `Are you sure you want to create "${form.name}"?`,
+        onConfirm: () => createItemCallAPI(formData),
+        confirmText: "Yes, create it",
+        cancelText: "Cancel",
+      });
+    } else {
+      showDialog({
+        title: "Update Item",
+        message: `Are you sure you want to update "${form.name}"?`,
+        onConfirm: () => updateItemCallAPI(formData),
+        confirmText: "Yes, update it",
+        cancelText: "Cancel",
+      });
+    }
   };
 
-  // Remove item
-  const removeItem = async () => {
+  const handleRemove = async () => {
+    // Only relevant if we have an existing item
+    if (isNew) return;
+    
     showDialog({
-      title: "Remove Item Confirm",
+      title: "Remove Item",
       message: `Are you sure you want to remove "${form.name}"?`,
       onConfirm: async () => {
         try {
           const url = `${BACKEND}/restaurant-menu/item/${item.id}`;
           const config = { headers: { Authorization: contextProfile.token } };
+          await axios.delete(url, config);
 
-          const response = await axios.delete(url, config);
-          showToast("Item has been removed.", "success");
-          onRefresh();
+          showToast("Item removed.", "success");
+          if (onRefresh) onRefresh();
         } catch (err) {
           console.error(err);
           showToast("Failed to remove item.", "error");
         }
-      },
+      }
     });
   };
 
+  const handleReset = () => {
+    setForm(initialForm);
+  };
+
   return (
-    <View style={{ marginBottom: 16, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: "#ddd" }}>
-      {/* horizontal view: category label + buttons */}
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginBottom: 4, gap: 4}} >
+    <View style={{ marginBottom: 12, paddingLeft: 8, borderLeftWidth: 2, borderLeftColor: "#ddd" }}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
         <Text variant="titleSmall">
-          {`Food Item #${displayIndex}`}
+          {isNew 
+            ? "New Menu Item" 
+            : `Food Item #${displayIndex || ""}`
+          }
         </Text>
-        {/* if the item is not changed, show the rubbish bin, otherwise, shows check + reset */}
-        {isFormChanged ? (
-          <View style={{ flexDirection: "row", gap: 2 }}>
-            <Button mode="text" onPress={resetChanges} icon="redo">Redo</Button>
-            <Button mode="text" onPress={saveChanges} icon="check-bold">Save</Button>
-          </View>
-        ) : (
-          <Button mode="text" onPress={removeItem} icon="trash-can-outline">Remove</Button>
-        )}
+        
+        {/* Buttons on the right */}
+        <View style={{ marginLeft: 8, flexDirection: "row", gap: 8 }}>
+          {isNew ? (
+            // For new items, let's have a "Save" & maybe "Cancel" or "Reset"?
+            <>
+              <Button mode="text" icon="redo" onPress={handleReset}>
+                Reset
+              </Button>
+              <Button mode="text" icon="check-bold" onPress={handleSave}>
+                Submit
+              </Button>
+            </>
+          ) : formChanged ? (
+            <>
+              <Button mode="text" icon="redo" onPress={handleReset}>
+                Reset
+              </Button>
+              <Button mode="text" icon="check-bold" onPress={handleSave}>
+                Save
+              </Button>
+            </>
+          ) : (
+            // If not changed, show remove
+            <Button mode="text" icon="trash-can-outline" onPress={handleRemove}>
+              Remove
+            </Button>
+          )}
+        </View>
       </View>
+
       {/* Name */}
       <TextInput
         dense
@@ -139,6 +202,7 @@ export default function MenuItemEdit({ item, categoryId, onRefresh, displayIndex
         onChangeText={(val) => setForm({ ...form, name: val })}
         style={{ marginBottom: 8 }}
       />
+
       {/* Price */}
       <TextInput
         dense
@@ -147,29 +211,30 @@ export default function MenuItemEdit({ item, categoryId, onRefresh, displayIndex
         value={form.price}
         onChangeText={(val) => setForm({ ...form, price: val })}
         keyboardType="decimal-pad"
-        style={{ marginBottom: isPriceValid ? 8 : 0 }}
-        error={!isPriceValid}
+        style={{ marginBottom: 8 }}
+        error={!isNew && !isPriceValid}
       />
-      {!isPriceValid ? (
-        <HelperText type="error" visible={true} style={{ marginBottom: 8 }}>
-          Price must be a positive number with up to 2 decimal places.
+      {!isPriceValid && !!form.price && (
+        <HelperText type="error" visible>
+          Price must be a positive number up to 2 decimals.
         </HelperText>
-      ) : null}
+      )}
+
       {/* Description */}
       <TextInput
         dense
         mode="outlined"
-        label="Item Description"
-        multiline
-        numberOfLines={3}
+        label="Description"
         value={form.description}
         onChangeText={(val) => setForm({ ...form, description: val })}
+        multiline
+        numberOfLines={3}
         style={{ marginBottom: 8 }}
       />
-      {/* Image Upload */}
+
+      {/* Image upload */}
       <ImageUploadComponent
-        // label and inputKey is null, since no need to use them
-        label={null}
+        label={null}        
         inputKey={null}
         imageKey="itemImage"
         form={form}
