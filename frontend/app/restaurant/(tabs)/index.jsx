@@ -20,15 +20,18 @@ export default function Home() {
   return (
     <MyScrollView>
       {/* Header */}
-      <View style={{ justifyContent: "center", alignItems: "center", padding: 20 }}>
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-          Welcome, {contextProfile.name}!
-        </Text>
+      <View style={{ justifyContent: "center", alignItems: "center", padding: 10 }}>
         {contextProfile.registration_status === "PENDING" ? (
           <Text style={{ marginTop: 10, color: "red", fontSize: 18, textAlign: "center" }}>
             Your account is under review by the Admin. Please wait and come back later.
           </Text>
-        ) : null}
+        ) : (
+          <>
+            <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", color: "#4682b4" }}>
+              Hello {contextProfile.name}, keep your menu fresh and up to date!
+            </Text>
+          </>
+        )}
       </View>
 
       {/* Show menu only if not pending */}
