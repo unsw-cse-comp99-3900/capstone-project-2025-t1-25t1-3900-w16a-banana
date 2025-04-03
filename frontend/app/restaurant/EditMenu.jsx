@@ -117,7 +117,7 @@ export default function EditMenuPage() {
       </View>
 
       {/* Done Button */}
-      <Button mode="outlined" onPress={() => router.back()} style={{ marginTop: 20 }}>
+      <Button mode="outlined" onPress={() => router.replace("/restaurant")} style={{ marginTop: 20 }}>
         Done
       </Button>
     </ScrollView>

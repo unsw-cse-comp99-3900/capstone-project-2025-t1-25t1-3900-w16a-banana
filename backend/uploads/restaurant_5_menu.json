@@ -1,0 +1,175 @@
+{
+  "restaurant_id": 5,
+  "categories": [
+    {
+      "name": "Biryani",
+      "items": [
+        {
+          "name": "Biryani Item 1",
+          "description": "Sizzling hot and bursting with flavor, just like home.",
+          "price": 21.32,
+          "url_img": "uploads/food/biryani 1.jpg"
+        },
+        {
+          "name": "Biryani Item 2",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 20.32,
+          "url_img": "uploads/food/biryani 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Spaghetti",
+      "items": [
+        {
+          "name": "Spaghetti Item 1",
+          "description": "Comfort food at its finest, prepared to perfection.",
+          "price": 18.2,
+          "url_img": "uploads/food/spaghetti 1.jpg"
+        },
+        {
+          "name": "Spaghetti Item 2",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 8.3,
+          "url_img": "uploads/food/spaghetti 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Meatballs",
+      "items": [
+        {
+          "name": "Meatballs Item 1",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 22.45,
+          "url_img": "uploads/food/meatballs 1.jpg"
+        },
+        {
+          "name": "Meatballs Item 2",
+          "description": "Served with a side of nostalgia and modern flair.",
+          "price": 24.29,
+          "url_img": "uploads/food/meatballs 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Pancakes",
+      "items": [
+        {
+          "name": "Pancakes Item 1",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 20.11,
+          "url_img": "uploads/food/pancakes 1.jpg"
+        },
+        {
+          "name": "Pancakes Item 2",
+          "description": "A delightful burst of spices and aromas in every bite.",
+          "price": 19.26,
+          "url_img": "uploads/food/pancakes 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Chicken Wings",
+      "items": [
+        {
+          "name": "Chicken Wings Item 1",
+          "description": "Served with a side of nostalgia and modern flair.",
+          "price": 24.9,
+          "url_img": "uploads/food/chicken wings 1.jpg"
+        },
+        {
+          "name": "Chicken Wings Item 2",
+          "description": "A cheesy, saucy classic that never disappoints.",
+          "price": 13.76,
+          "url_img": "uploads/food/chicken wings 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Tiramisu",
+      "items": [
+        {
+          "name": "Tiramisu Item 1",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 14.03,
+          "url_img": "uploads/food/tiramisu 1.jpg"
+        },
+        {
+          "name": "Tiramisu Item 2",
+          "description": "A delightful burst of spices and aromas in every bite.",
+          "price": 9.49,
+          "url_img": "uploads/food/tiramisu 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Hamburger",
+      "items": [
+        {
+          "name": "Hamburger Item 1",
+          "description": "A cheesy, saucy classic that never disappoints.",
+          "price": 5.42,
+          "url_img": "uploads/food/hamburger 1.jpg"
+        },
+        {
+          "name": "Hamburger Item 2",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 9.6,
+          "url_img": "uploads/food/hamburger 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Paneer Tikka",
+      "items": [
+        {
+          "name": "Paneer Tikka Item 1",
+          "description": "A delightful burst of spices and aromas in every bite.",
+          "price": 5.14,
+          "url_img": "uploads/food/paneer tikka 1.jpg"
+        },
+        {
+          "name": "Paneer Tikka Item 2",
+          "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+          "price": 9.58,
+          "url_img": "uploads/food/paneer tikka 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Tacos",
+      "items": [
+        {
+          "name": "Tacos Item 1",
+          "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+          "price": 22.19,
+          "url_img": "uploads/food/tacos 1.jpg"
+        },
+        {
+          "name": "Tacos Item 2",
+          "description": "Crispy on the outside, juicy on the inside\u2014served with house sauce.",
+          "price": 15.28,
+          "url_img": "uploads/food/tacos 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Cheesecake",
+      "items": [
+        {
+          "name": "Cheesecake Item 1",
+          "description": "Perfectly grilled and seasoned to satisfy any craving.",
+          "price": 18.38,
+          "url_img": "uploads/food/cheesecake 1.jpg"
+        },
+        {
+          "name": "Cheesecake Item 2",
+          "description": "A delightful burst of spices and aromas in every bite.",
+          "price": 15.78,
+          "url_img": "uploads/food/cheesecake 2.jpg"
+        }
+      ]
+    }
+  ]
+}

@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
 } from "react-native-paper";
 import axios from "axios";
-import { useRouter } from "expo-router";
 import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 import useToast from "../hooks/useToast";
@@ -26,8 +25,8 @@ export default function MenuCategoryEdit({ category, restaurantId, onRefresh, di
   // checks if user changed the category name
   const isCatChanged = categoryName.trim() !== originalName.trim();
 
-  console.log(categoryName, originalName, isCatChanged);
-
+  // turn on or off the new item form
+  const [showNewItemForm, setShowNewItemForm] = useState(false);
 
   // update the category name
   const saveCategoryName = async () => {
@@ -120,18 +119,27 @@ export default function MenuCategoryEdit({ category, restaurantId, onRefresh, di
         {category.items?.map((item, index) => (
           <MenuItemEdit
             key={item.id}
-            displayIndex={index + 1}
-            item={item}
+            item={item}  
             categoryId={category.id}
             onRefresh={onRefresh}
+            displayIndex={index+1}
           />
         ))}
       </View>
 
-      {/* Add Item */}
-      <Button mode="text" onPress={addItem}>
-        Add Item
+      {/* here is for a new item: a button to toggle on or off */}
+      <Button mode="text" icon="plus" onPress={() => setShowNewItemForm(!showNewItemForm)}>
+        {showNewItemForm ? "Hide New Item Form" : "Add New Item"}
       </Button>
+      {showNewItemForm && (
+        <View style={{ marginLeft: 1, marginTop: 2 }}>
+          <MenuItemEdit
+            item={null}       
+            categoryId={category.id}
+            onRefresh={onRefresh}
+          />
+        </View>
+      )}
     </View>
   );
 }

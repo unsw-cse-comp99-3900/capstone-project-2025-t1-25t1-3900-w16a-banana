@@ -7,6 +7,7 @@ import { BACKEND } from "../constants/backend";
 import useToast from "../hooks/useToast";
 import useAuth from "../hooks/useAuth";
 import { router } from "expo-router";
+import ZoomableImage from "./ZoomableImage";
 
 export default function RestaurantMenu({ restaurantId }) {
   const { showToast } = useToast();
@@ -85,18 +86,23 @@ export default function RestaurantMenu({ restaurantId }) {
     <ScrollView style={{ paddingTop: 12, paddingBottom: 12 }}>
       <List.Section>
         {/* Toggle button to expand or shrink all categories at once */}
-        <View style={{ flexDirection: "row", justifyContent: "flex-end", alignItems: "center", marginBottom: 12, gap: 8 }}>
-          <Button onPress={toggleAll}>
-            {isAllExpanded ? "Collapse All" : "Expand All"}
-          </Button>
-          {/* when the current viewer is the restaurant owner, then add the edit button */}
-          <Button
-            mode="elevated"
-            icon="pencil"
-            onPress={() => router.push("/restaurant/EditMenu")}
-          >
-            Edit
-          </Button>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 8 }}>
+          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+            {isRestaurantOwner ? "Current Menu" : "Restaurant Menu"}
+          </Text>
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <Button onPress={toggleAll}>
+              {isAllExpanded ? "Collapse All" : "Expand All"}
+            </Button>
+            {/* when the current viewer is the restaurant owner, then add the edit button */}
+            <Button
+              mode="elevated"
+              icon="pencil"
+              onPress={() => router.push("/restaurant/EditMenu")}
+            >
+              Edit
+            </Button>
+          </View>
         </View>
 
         {menuCategories.map((category) => {
@@ -119,15 +125,17 @@ export default function RestaurantMenu({ restaurantId }) {
                     title={capitalize.words(item.name)}
                     titleStyle={{ fontWeight: "bold" }}
                     description={item.description}
-                    // Left component: image (60x60)
+                    // image on the left, text on the right
                     left={() => (
-                      <Image
-                        source={{ uri: `${BACKEND}/${item.url_img}` }}
-                        style={{ width: 60, height: 60, marginRight: 8 }}
-                        resizeMode="cover"
+                      <ZoomableImage
+                        imageUrl={item.url_img}
+                        title={`Food: ${item.name}`}
+                        height={60}
+                        width={60}
+                        borderRadus={0}
+                        marginBottom={0}
                       />
                     )}
-                    // Right component: price
                     right={() => (
                       <View style={{ flexDirection: "row", alignItems: "center" }}>
                         {/* Price label */}

@@ -290,12 +290,16 @@ class ManageMenuItem(Resource):
 
         # Update Name. Check if name conflicts
         if args['name']:
-            if filter_menu_from_restaurant(
-                restaurant_id = restaurant.id,
-                name = args['name'],
-                first_only = True
-        )   :
+            # check for duplicate name, require the item id != this menu(item)_id
+            is_exist = MenuItem.query.join(MenuCategory).filter(
+                MenuCategory.restaurant_id == restaurant.id,
+                MenuItem.name == args['name'],
+                MenuItem.id != menu_id
+            ).first()
+
+            if is_exist:
                 return res_error(400, "Duplicate Item Name")
+
             item.name = args['name']
 
         # Check and update fields if provided

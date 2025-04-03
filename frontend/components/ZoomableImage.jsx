@@ -3,8 +3,9 @@ import { TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { BACKEND } from "../constants/backend";
 
-export default function ZoomableImage({ imageUrl, title = "Image View", height = 150, borderRadius = 10, marginBottom = 10 }) {
+export default function ZoomableImage({ imageUrl, title = "Image View", height = 150, borderRadius = 10, marginBottom = 10, width="100%" }) {
   const router = useRouter();
+  console.log(imageUrl);
 
   // make sure the image is real
   if (!imageUrl) return null;
@@ -17,7 +18,7 @@ export default function ZoomableImage({ imageUrl, title = "Image View", height =
     >
       <Image
         source={{ uri: fullImageUrl }}
-        style={{ width: "100%", height, borderRadius, marginBottom }}
+        style={{ width, height, borderRadius, marginBottom }}
         resizeMode="contain"
       />
     </TouchableOpacity>

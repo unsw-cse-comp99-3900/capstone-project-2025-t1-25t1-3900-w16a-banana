@@ -1,0 +1,175 @@
+{
+  "restaurant_id": 4,
+  "categories": [
+    {
+      "name": "Shawarma",
+      "items": [
+        {
+          "name": "Shawarma Item 1",
+          "description": "Comfort food at its finest, prepared to perfection.",
+          "price": 20.84,
+          "url_img": "uploads/food/shawarma 1.jpg"
+        },
+        {
+          "name": "Shawarma Item 2",
+          "description": "Served with a side of nostalgia and modern flair.",
+          "price": 16.93,
+          "url_img": "uploads/food/shawarma 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Samosa",
+      "items": [
+        {
+          "name": "Samosa Item 1",
+          "description": "Served with a side of nostalgia and modern flair.",
+          "price": 12.63,
+          "url_img": "uploads/food/samosa 1.jpg"
+        },
+        {
+          "name": "Samosa Item 2",
+          "description": "Sizzling hot and bursting with flavor, just like home.",
+          "price": 15.58,
+          "url_img": "uploads/food/samosa 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Hot Dog",
+      "items": [
+        {
+          "name": "Hot Dog Item 1",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 22.22,
+          "url_img": "uploads/food/hot dog 1.jpg"
+        },
+        {
+          "name": "Hot Dog Item 2",
+          "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+          "price": 18.61,
+          "url_img": "uploads/food/hot dog 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Waffles",
+      "items": [
+        {
+          "name": "Waffles Item 1",
+          "description": "Crispy on the outside, juicy on the inside\u2014served with house sauce.",
+          "price": 18.63,
+          "url_img": "uploads/food/waffles 1.jpg"
+        },
+        {
+          "name": "Waffles Item 2",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 20.02,
+          "url_img": "uploads/food/waffles 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Dessert",
+      "items": [
+        {
+          "name": "Dessert Item 1",
+          "description": "A cheesy, saucy classic that never disappoints.",
+          "price": 7.23,
+          "url_img": "uploads/food/dessert 1.jpg"
+        },
+        {
+          "name": "Dessert Item 2",
+          "description": "Served with a side of nostalgia and modern flair.",
+          "price": 8.16,
+          "url_img": "uploads/food/dessert 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Masala Dosa",
+      "items": [
+        {
+          "name": "Masala Dosa Item 1",
+          "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+          "price": 24.08,
+          "url_img": "uploads/food/masala dosa 1.jpg"
+        },
+        {
+          "name": "Masala Dosa Item 2",
+          "description": "Perfectly grilled and seasoned to satisfy any craving.",
+          "price": 24.44,
+          "url_img": "uploads/food/masala dosa 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Butter Chicken",
+      "items": [
+        {
+          "name": "Butter Chicken Item 1",
+          "description": "Comfort food at its finest, prepared to perfection.",
+          "price": 15.15,
+          "url_img": "uploads/food/butter chicken 1.jpg"
+        },
+        {
+          "name": "Butter Chicken Item 2",
+          "description": "Crispy on the outside, juicy on the inside\u2014served with house sauce.",
+          "price": 22.41,
+          "url_img": "uploads/food/butter chicken 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Dosa",
+      "items": [
+        {
+          "name": "Dosa Item 1",
+          "description": "Perfectly grilled and seasoned to satisfy any craving.",
+          "price": 21.83,
+          "url_img": "uploads/food/dosa 1.jpg"
+        },
+        {
+          "name": "Dosa Item 2",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 17.18,
+          "url_img": "uploads/food/dosa 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Sausage",
+      "items": [
+        {
+          "name": "Sausage Item 1",
+          "description": "Comfort food at its finest, prepared to perfection.",
+          "price": 12.48,
+          "url_img": "uploads/food/sausage 1.jpg"
+        },
+        {
+          "name": "Sausage Item 2",
+          "description": "Comfort food at its finest, prepared to perfection.",
+          "price": 15.79,
+          "url_img": "uploads/food/sausage 2.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Egg Rolls",
+      "items": [
+        {
+          "name": "Egg Rolls Item 1",
+          "description": "Handcrafted with care and culinary passion.",
+          "price": 23.37,
+          "url_img": "uploads/food/egg rolls 1.jpg"
+        },
+        {
+          "name": "Egg Rolls Item 2",
+          "description": "Rich, creamy, and decadently delicious.",
+          "price": 11.48,
+          "url_img": "uploads/food/egg rolls 2.jpg"
+        }
+      ]
+    }
+  ]
+}
