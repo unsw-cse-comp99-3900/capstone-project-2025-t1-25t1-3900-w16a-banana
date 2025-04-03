@@ -7,6 +7,7 @@ import { Dimensions, Image } from "react-native";
 import { IconButton } from "react-native-paper";
 import { BACKEND } from "../../../../../constants/backend";
 import { router } from "expo-router";
+import RestaurantMenu from "../../../../../components/RestaurantMenu";
 
 export default function ViewRestaurantPage() {
   const { restaurantId } = useLocalSearchParams();
@@ -83,10 +84,12 @@ export default function ViewRestaurantPage() {
       {/* Profile Info Card */}
       <View
         style={{
-          margin: 16,
           padding: 16,
           backgroundColor: "#f0f0f0",
           borderRadius: 12,
+          marginHorizontal: 16,
+          marginBottom: 2,
+          marginTop: 16,
         }}
       >
         <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 4 }}>
@@ -123,6 +126,11 @@ export default function ViewRestaurantPage() {
           <Text style={{ fontWeight: "bold" }}>Postcode: </Text>
           {restaurant.postcode}
         </Text>
+      </View>
+
+      {/* display the menus */}
+      <View style={{ paddingHorizontal: 16 }}>
+        <RestaurantMenu restaurantId={restaurantId} />
       </View>
     </ScrollView>
   );
