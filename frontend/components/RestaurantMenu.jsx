@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { ScrollView, View, Image } from "react-native";
-import { ActivityIndicator, Text, List, Button } from "react-native-paper";
+import { ActivityIndicator, Text, List, Button, IconButton } from "react-native-paper";
 import axios from "axios";
 import capitalize from "capitalize";
 import { BACKEND } from "../constants/backend";
 import useToast from "../hooks/useToast";
 import useAuth from "../hooks/useAuth";
+import { router } from "expo-router";
 
 export default function RestaurantMenu({ restaurantId }) {
   const { showToast } = useToast();
   const { contextProfile } = useAuth();
+  const isRestaurantOwner = (contextProfile.role === "restaurant" && Number(contextProfile.id) === Number(restaurantId));
 
   const [menuCategories, setMenuCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,12 +82,20 @@ export default function RestaurantMenu({ restaurantId }) {
   }
 
   return (
-    <ScrollView style={{ padding: 16 }}>
+    <ScrollView style={{ paddingTop: 12, paddingBottom: 12 }}>
       <List.Section>
         {/* Toggle button to expand or shrink all categories at once */}
-        <View style={{ flexDirection: "row", justifyContent: "flex-end", marginBottom: 12 }}>
+        <View style={{ flexDirection: "row", justifyContent: "flex-end", alignItems: "center", marginBottom: 12, gap: 8 }}>
           <Button onPress={toggleAll}>
             {isAllExpanded ? "Collapse All" : "Expand All"}
+          </Button>
+          {/* when the current viewer is the restaurant owner, then add the edit button */}
+          <Button
+            mode="elevated"
+            icon="pencil"
+            onPress={() => router.push("/restaurant/edit")}
+          >
+            Edit
           </Button>
         </View>
 
@@ -119,9 +129,18 @@ export default function RestaurantMenu({ restaurantId }) {
                     )}
                     // Right component: price
                     right={() => (
-                      <Text style={{ alignSelf: "center", marginRight: 16 }}>
-                        ${item.price}
-                      </Text>
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        {/* Price label */}
+                        <Text style={{ marginRight: 8 }}>${item.price}</Text>
+                        {/* show the shopping cart icon when it is hte customer */}
+                        {contextProfile.role === "customer" && (
+                          <IconButton
+                            icon="cart-plus"
+                            size={24}
+                            onPress={() => showToast("todo", "error")}
+                          />
+                        )}
+                      </View>
                     )}
                   />
                 ))

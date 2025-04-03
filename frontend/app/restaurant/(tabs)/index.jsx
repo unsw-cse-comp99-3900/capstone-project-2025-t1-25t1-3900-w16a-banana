@@ -2,6 +2,8 @@ import React from "react";
 import { View, Text } from "react-native";
 import useAuth from "../../../hooks/useAuth";
 import RestaurantMenu from "../../../components/RestaurantMenu";
+import MyScrollView from "../../../components/MyScrollView";
+import { Button, IconButton } from "react-native-paper";
 
 export default function Home() {
   const { contextProfile, isContextLoading } = useAuth();
@@ -16,7 +18,7 @@ export default function Home() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <MyScrollView>
       {/* Header */}
       <View style={{ justifyContent: "center", alignItems: "center", padding: 20 }}>
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>
@@ -31,8 +33,10 @@ export default function Home() {
 
       {/* Show menu only if not pending */}
       {contextProfile.registration_status !== "PENDING" && (
-        <RestaurantMenu restaurantId={contextProfile.id} />
+        <>
+          <RestaurantMenu restaurantId={contextProfile.id} />
+        </>
       )}
-    </View>
+    </MyScrollView>
   );
 }
