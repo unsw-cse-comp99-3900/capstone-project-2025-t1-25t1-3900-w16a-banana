@@ -100,9 +100,9 @@ def initialize_database():
                 state=state,
                 postcode=postcode,
                 abn=abn,
-                url_img1="uploads/restaurant_img1.jpg",
-                url_img2="uploads/restaurant_img2.jpg",
-                url_img3="uploads/restaurant_img3.jpg",
+                url_img1=f"uploads/restaurant/Image_{index+1}.jpg",
+                url_img2="uploads/restaurant/general_1.jpg",
+                url_img3="uploads/restaurant/general_2.jpg",
                 description=description,
                 registration_status=RegistrationStatus.APPROVED,
             )

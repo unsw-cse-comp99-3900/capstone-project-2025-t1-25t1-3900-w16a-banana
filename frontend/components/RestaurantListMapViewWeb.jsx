@@ -58,7 +58,7 @@ export default function RestaurantListGoogleMap({ restaurants, userLocation }) {
                   <img
                     src={`${BACKEND}/${r.url_img1}`}
                     alt={r.name}
-                    style={{ width: '100%', borderRadius: '6px', height: 100, objectFit: 'cover' }}
+                    style={{ width: '100%', borderRadius: '6px', height: 80, objectFit: 'cover' }}
                   />
                   <h3 style={{ margin: '8px 0 4px' }}>{r.name}</h3>
                   {r.distance && (
@@ -67,7 +67,7 @@ export default function RestaurantListGoogleMap({ restaurants, userLocation }) {
                     </p>
                   )}
                   <button 
-                    style={{ marginTop: '8px', padding: '8px 12px', backgroundColor: '#f6f6f6', color: '#0d6efd', border: 'none', borderRadius: '4px' }}
+                    style={{ marginTop: '8px', padding: '8px 8px', backgroundColor: '#f6f6f6', color: '#0d6efd', border: 'none', borderRadius: '4px' }}
                     onClick={() => console.log('View restaurant', r.id)}
                   >
                     View
