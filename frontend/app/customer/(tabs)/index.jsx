@@ -9,6 +9,7 @@ import { router } from "expo-router";
 import useToast from "../../../hooks/useToast";
 import axios from "axios";
 import { fetchLocationDetailFromAddress, fetchLocationDetailFromCoordinate } from "../../../utils/location";
+import RestaurantList from "../../../components/RestaurantList";
 
 const { width } = Dimensions.get("window");
 
@@ -144,9 +145,8 @@ export default function Home() {
       />
 
       {/* Placeholder for Restaurant List */}
-      <View style={{ marginTop: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Restaurants</Text>
-        <Text style={{ color: "gray" }}>Coming soon...</Text>
+      <View style={{ marginTop: 10 }}>
+        <RestaurantList userLocation={location} />
       </View>
     </MyScrollView>
   );
