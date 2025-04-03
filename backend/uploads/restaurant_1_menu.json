@@ -1,0 +1,176 @@
+
+{
+    "restaurant_id": 1,
+    "categories": [
+      {
+        "name": "Lasagna",
+        "items": [
+          {
+            "name": "Lasagna Special 1",
+            "description": "Prepared with traditional techniques and full of bold flavor.",
+            "price": 14.2,
+            "url_img": "uploads/food/lasagna 1.jpg"
+          },
+          {
+            "name": "Lasagna Delight 2",
+            "description": "A timeless classic elevated with our unique twist.",
+            "price": 16.61,
+            "url_img": "uploads/food/lasagna 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Pizza",
+        "items": [
+          {
+            "name": "Pizza Special 1",
+            "description": "A crowd-pleaser with a perfect balance of textures and taste.",
+            "price": 10.31,
+            "url_img": "uploads/food/pizza 1.jpg"
+          },
+          {
+            "name": "Pizza Delight 2",
+            "description": "A rich and hearty dish made to satisfy any craving.",
+            "price": 12.01,
+            "url_img": "uploads/food/pizza 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Mac And Cheese",
+        "items": [
+          {
+            "name": "Mac And Cheese Special 1",
+            "description": "Made with love and the freshest local ingredients.",
+            "price": 17.78,
+            "url_img": "uploads/food/mac and cheese 1.jpg"
+          },
+          {
+            "name": "Mac And Cheese Delight 2",
+            "description": "Layered with flavor and finished with a touch of elegance.",
+            "price": 12.45,
+            "url_img": "uploads/food/mac and cheese 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Wrap",
+        "items": [
+          {
+            "name": "Wrap Special 1",
+            "description": "A rich and hearty dish made to satisfy any craving.",
+            "price": 17.93,
+            "url_img": "uploads/food/wrap 1.jpg"
+          },
+          {
+            "name": "Wrap Delight 2",
+            "description": "Prepared with traditional techniques and full of bold flavor.",
+            "price": 11.75,
+            "url_img": "uploads/food/wrap 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Pho",
+        "items": [
+          {
+            "name": "Pho Special 1",
+            "description": "Perfect for a quick bite or a hearty meal, full of goodness.",
+            "price": 10.62,
+            "url_img": "uploads/food/pho 1.jpg"
+          },
+          {
+            "name": "Pho Delight 2",
+            "description": "Comfort food at its finest, creamy, crispy, and delicious.",
+            "price": 15.92,
+            "url_img": "uploads/food/pho 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Croissant",
+        "items": [
+          {
+            "name": "Croissant Special 1",
+            "description": "A timeless classic elevated with our unique twist.",
+            "price": 18.02,
+            "url_img": "uploads/food/croissant 1.jpg"
+          },
+          {
+            "name": "Croissant Delight 2",
+            "description": "A timeless classic elevated with our unique twist.",
+            "price": 12.06,
+            "url_img": "uploads/food/croissant 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Ramen",
+        "items": [
+          {
+            "name": "Ramen Special 1",
+            "description": "Perfect for a quick bite or a hearty meal, full of goodness.",
+            "price": 9.18,
+            "url_img": "uploads/food/ramen 1.jpg"
+          },
+          {
+            "name": "Ramen Delight 2",
+            "description": "A rich and hearty dish made to satisfy any craving.",
+            "price": 16.44,
+            "url_img": "uploads/food/ramen 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Spring Rolls",
+        "items": [
+          {
+            "name": "Spring Rolls Special 1",
+            "description": "A mouthwatering blend of spices and fresh ingredients served hot.",
+            "price": 16.85,
+            "url_img": "uploads/food/spring rolls 1.jpg"
+          },
+          {
+            "name": "Spring Rolls Delight 2",
+            "description": "Prepared with traditional techniques and full of bold flavor.",
+            "price": 12.93,
+            "url_img": "uploads/food/spring rolls 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Tacos",
+        "items": [
+          {
+            "name": "Tacos Special 1",
+            "description": "A timeless classic elevated with our unique twist.",
+            "price": 11.96,
+            "url_img": "uploads/food/tacos 1.jpg"
+          },
+          {
+            "name": "Tacos Delight 2",
+            "description": "Delicately cooked and garnished with herbs and sauces.",
+            "price": 10.99,
+            "url_img": "uploads/food/tacos 2.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Hot Dog",
+        "items": [
+          {
+            "name": "Hot Dog Special 1",
+            "description": "Delicately cooked and garnished with herbs and sauces.",
+            "price": 15.16,
+            "url_img": "uploads/food/hot dog 1.jpg"
+          },
+          {
+            "name": "Hot Dog Delight 2",
+            "description": "Perfect for a quick bite or a hearty meal, full of goodness.",
+            "price": 14.06,
+            "url_img": "uploads/food/hot dog 2.jpg"
+          }
+        ]
+      }
+    ]
+}

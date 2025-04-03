@@ -1,6 +1,7 @@
 import os
 import sys
 from datetime import datetime
+import json
 
 # find the app
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -39,7 +40,7 @@ restaurant_data = [
     ("parrapizza@example.com", "0455666777", "Parramatta Pizza", "654 Church St", "Parramatta", "NSW", "2150", "55555555555", "Family-friendly pizza restaurant in Parramatta."),
 ]
 
-def insert_customers():
+def initialize_database():
     with app.app_context():
         # drop all tables, and create againn
         db.drop_all()
@@ -99,6 +100,45 @@ def insert_customers():
             db.session.add(restaurant)
             db.session.commit()
 
+            # for each restaurant, use the uploads/restaurant_1_menu.json to create the category and items
+            menu_file = f"uploads/restaurant_{restaurant.id}_menu.json"
+            assert os.path.exists(menu_file), f"Menu file {menu_file} does not exist."
+
+            file = open(menu_file, "r")
+            menu = json.load(file)
+            file.close()
+
+            # extract the list of categories
+            categories = menu["categories"]
+            for cate in categories:
+                name = cate["name"]
+                new_category = MenuCategory(
+                    name=name,
+                    restaurant_id=restaurant.id,
+                )
+
+                db.session.add(new_category)
+                db.session.commit()
+
+                # get all items
+                items = cate["items"]
+                for item in items:
+                    name = item["name"]
+                    price = item["price"]
+                    description = item["description"]
+                    url_img = item["url_img"]
+
+                    new_item = MenuItem(
+                        name=name,
+                        price=price,
+                        description=description,
+                        url_img=url_img,
+                        category_id=new_category.id,
+                    )
+
+                    db.session.add(new_item)
+                    db.session.commit()
+
         # add one default admin
         admin = Admin(
             email="admin@example.com",
@@ -113,4 +153,4 @@ def insert_customers():
         print("Default data inserted successfully.")
 
 if __name__ == "__main__":
-    insert_customers()
+    initialize_database()
