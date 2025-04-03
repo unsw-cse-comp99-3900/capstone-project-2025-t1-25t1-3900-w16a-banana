@@ -93,7 +93,7 @@ export default function RestaurantMenu({ restaurantId }) {
           <Button
             mode="elevated"
             icon="pencil"
-            onPress={() => router.push("/restaurant/edit")}
+            onPress={() => router.push("/restaurant/EditMenu")}
           >
             Edit
           </Button>
