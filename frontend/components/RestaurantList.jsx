@@ -4,11 +4,14 @@ import axios from "axios";
 import RestaurantListItem from "./RestaurantListItem";
 import { calculateDistance, fetchLocationDetailFromAddress } from "../utils/location";
 import { BACKEND } from "../constants/backend";
+import { Button } from "react-native-paper";
+import RestaurantListMapViewWeb from "./RestaurantListMapViewWeb";
 
 export default function RestaurantList({ userLocation }) {
   const [restaurants, setRestaurants] = useState([]);
   const [sortedRestaurants, setSortedRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMapView, setIsMapView] = useState(false);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -16,7 +19,6 @@ export default function RestaurantList({ userLocation }) {
         const response = await axios.get(`${BACKEND}/search/restaurant`);
         const rawRestaurants = response.data;
 
-        // batch convert the restaurant address to coordinates
         const enriched = await Promise.all(
           rawRestaurants.map(async (r) => {
             const addressDict = {
@@ -46,7 +48,12 @@ export default function RestaurantList({ userLocation }) {
     if (!userLocation || restaurants.length === 0) return;
 
     const withDistance = restaurants.map((r) => {
-      const dist = calculateDistance(userLocation.lat, userLocation.lng, r.coordinates.lat, r.coordinates.lng);
+      const dist = calculateDistance(
+        userLocation.lat,
+        userLocation.lng,
+        r.coordinates.lat,
+        r.coordinates.lng
+      );
       return { ...r, distance: dist };
     });
 
@@ -54,16 +61,29 @@ export default function RestaurantList({ userLocation }) {
     setSortedRestaurants(sorted);
   }, [userLocation, restaurants]);
 
-  if (loading) {
-    return <ActivityIndicator />;
-  }
+  if (loading) return <ActivityIndicator />;
 
   return (
-    <View style={{ gap: 12 }}>
-      <Text style={{ fontSize: 18, fontWeight: "bold" }}>Restaurants</Text>
-      {sortedRestaurants.map((r) => (
-        <RestaurantListItem key={r.id} restaurant={r} />
-      ))}
+    <View style={{ padding: 4 }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Restaurants</Text>
+        <Button
+          mode="text"
+          onPress={() => setIsMapView(!isMapView)}
+          icon={isMapView ? "view-list" : "map"}
+        >
+          {isMapView ? "List View" : "Map View"}
+        </Button>
+      </View>
+
+      {isMapView ? (
+        <RestaurantListMapViewWeb
+          restaurants={sortedRestaurants}
+          userLocation={userLocation}
+        />
+      ) : (
+        sortedRestaurants.map((r) => <RestaurantListItem key={r.id} restaurant={r} />)
+      )}
     </View>
   );
 }

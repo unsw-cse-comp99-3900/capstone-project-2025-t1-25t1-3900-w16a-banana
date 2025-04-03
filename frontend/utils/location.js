@@ -32,14 +32,12 @@ export async function fetchLocationDetailFromAddress(addressDict) {
   // write the dict to string
   const { address, suburb, state, postcode } = addressDict;
   const addressString = `${address}, ${suburb}, ${state}, ${postcode}`;
-  console.log("line 35", addressString);
 
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(addressString)}&key=${GOOGLE_API_KEY}`;
 
   try {
     const response = await axios.get(url);
     const data = response.data;
-    console.log(data);
 
     if (!data.results || data.results.length === 0) return null;
 

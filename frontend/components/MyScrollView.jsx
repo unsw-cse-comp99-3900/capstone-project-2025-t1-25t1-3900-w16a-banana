@@ -10,7 +10,7 @@ export default function MyScrollView({ children }) {
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
       <ScrollView 
-        contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 16 }}
+        contentContainerStyle={{ paddingTop: 12, paddingBottom: 20, paddingHorizontal: 10 }}
         showsVerticalScrollIndicator={true}
       >
         {children}

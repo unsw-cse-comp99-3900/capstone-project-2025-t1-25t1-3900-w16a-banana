@@ -55,8 +55,7 @@ export default function Login() {
       login(responseData);
       router.navigate(`/${form.userType}`);
     } catch (error) {
-      const message =
-        error.response?.data?.message || "Login failed. Please try again.";
+      const message = error.response?.data?.message || "Login failed. Please try again.";
       showToast(message, "error");
     }
   };

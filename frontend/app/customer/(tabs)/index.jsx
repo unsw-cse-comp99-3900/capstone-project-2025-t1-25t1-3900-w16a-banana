@@ -141,11 +141,11 @@ export default function Home() {
         mode="outlined"
         placeholder="Search"
         left={<TextInput.Icon icon="magnify" />}
-        style={{ marginBottom: 16, backgroundColor: "#FFF" }}
+        style={{ marginBottom: 8, backgroundColor: "#FFF" }}
       />
 
       {/* Placeholder for Restaurant List */}
-      <View style={{ marginTop: 10 }}>
+      <View>
         <RestaurantList userLocation={location} />
       </View>
     </MyScrollView>
