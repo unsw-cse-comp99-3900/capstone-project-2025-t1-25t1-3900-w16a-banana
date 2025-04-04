@@ -81,12 +81,6 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
             size={20}
             onPress={() => router.push(`/customer/view/restaurant/${restaurant.restaurant_id}`)}
           />
-          {/* empty the whole cart */}
-          <IconButton
-            icon="delete"
-            size={20}
-            onPress={emptyCartAction}
-          />
         </View>
       </View>
 
@@ -125,21 +119,43 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
       ))}
 
       {/* Totals and the place order button, all to the right */}
-      <View style={{ flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-end", gap: 8 }}>
-        <View>
-          <Text variant="titleSmall">Subtotal: ${subtotal.toFixed(2)}</Text>
-          <Text variant="titleSmall">Delivery Fee: ${DELIVERY_FEE.toFixed(2)}</Text>
-          <Text variant="titleSmall" style={{ fontWeight: "bold" }}>Total: ${total.toFixed(2)}</Text>
+      <View style={{ flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", gap: 8 }}>
+        <View style={{ width: "95%", gap: 2 }}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text variant="titleSmall">Subtotal:</Text>
+            <Text variant="titleSmall">${subtotal.toFixed(2)}</Text>
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text variant="titleSmall">Delivery Fee:</Text>
+            <Text variant="titleSmall">${DELIVERY_FEE.toFixed(2)}</Text>
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text variant="titleSmall" style={{ fontWeight: "bold" }}>Total:</Text>
+            <Text variant="titleSmall" style={{ fontWeight: "bold" }}>${total.toFixed(2)}</Text>
+          </View>
         </View>
 
-        <Button 
-          mode="text"
-          icon="cart-check"
-          onPress={() => console.log("Placing order for", restaurant.restaurant_id)}
-          style={{ width: "fit-content" }}
-        >
-          Place Order
-        </Button>
+        {/* view, to the end */}
+        <View style={{ flexDirection: "row", width: "100%", alignItems: "flex-end", justifyContent: "flex-end" }}>
+          {/* empty the whole cart */}
+          <Button
+            mode="text"
+            icon="trash-can-outline"
+            onPress={emptyCartAction}
+            style={{ width: "fit-content" }}
+          >
+            Clear
+          </Button>
+          {/* place order */}
+          <Button 
+            mode="text"
+            icon="cart-check"
+            onPress={() => console.log("Placing order for", restaurant.restaurant_id)}
+            style={{ width: "fit-content" }}
+          >
+            Order
+          </Button>
+        </View>
       </View>
     </View>
   );

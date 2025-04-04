@@ -127,7 +127,7 @@ export default function Home() {
           height={150}
           autoPlay
           data={carouselImages}
-          scrollAnimationDuration={1500}
+          scrollAnimationDuration={5500}
           renderItem={renderCarouselItem}
           style={{ borderRadius: 10 }}
           loop
