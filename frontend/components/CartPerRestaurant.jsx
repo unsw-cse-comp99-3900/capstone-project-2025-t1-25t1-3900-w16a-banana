@@ -9,12 +9,14 @@ import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 import { router } from "expo-router";
 import useDialog from "../hooks/useDialog";
+import useToast from "../hooks/useToast";
 
 const DELIVERY_FEE = 10;
 
 export default function CartPerRestaurant({ restaurant, onUpdated }) {
   const { contextProfile } = useAuth();
   const { showDialog } = useDialog();
+  const { showToast } = useToast();
 
   const updateQuantity = async (menu_id, quantity) => {
     const url = `${BACKEND}/customer-order/cart`;
@@ -48,9 +50,17 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
   };
 
   const emptyCartCallAPI = async () => {
-    alert("TODO!!!");
+    const url = `${BACKEND}/customer-order/cart/restaurant/${restaurant.restaurant_id}`;
+    const config = { headers: { Authorization: contextProfile.token } };
 
-
+    try {
+      const response = await axios.delete(url, config);
+      showToast("Items removed from cart", "success");
+      onUpdated();
+    } catch (err) {
+      console.error("Failed to remove items from cart:", err);
+      showToast("Failed to remove items from cart", "error");
+    }
   };
 
   return (

@@ -34,6 +34,37 @@ from routes.customer_order.services import (
     format_cart_items_with_restaurant_filter
 )
 
+@api.route('/cart/restaurant/<int:restaurant_id>')
+class ShopItemsWithRestaurant(Resource):
+    @api.doc(description="Remove all items from the cart from given restaurant")
+    @api.expect(auth_header)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    @api.response(401, "Unauthorised", error_res)
+    def delete(self, restaurant_id: int):
+        """Clear the cart for a given restaurant"""
+
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+        
+        # Get all cart items that belong to this restaurant
+        cart_items = format_cart_items_with_restaurant_filter(
+            cart_items = filter_cart_items(customer_id = customer.id),
+            restaurant_id = restaurant_id
+        )
+
+        for cart_item in cart_items:
+            record = CartItem.query.filter_by(
+                customer_id = customer.id,
+                menu_id = cart_item['menu_id']
+            ).first()
+            
+            db.session.delete(record)
+            db.session.commit()
+
+        return {'message': 'Cart Cleared'}, 200
+
 @api.route('/cart')
 class ShopItems(Resource):
     # """Route: /cart"""
