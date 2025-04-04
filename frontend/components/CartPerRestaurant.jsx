@@ -9,12 +9,15 @@ import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 import { router } from "expo-router";
 import useDialog from "../hooks/useDialog";
+import useToast from "../hooks/useToast";
 
 const DELIVERY_FEE = 10;
 
+// onUpdated is a callback function from the parent component cart.jsx to update the whole page.
 export default function CartPerRestaurant({ restaurant, onUpdated }) {
   const { contextProfile } = useAuth();
   const { showDialog } = useDialog();
+  const { showToast } = useToast();
 
   const updateQuantity = async (menu_id, quantity) => {
     const url = `${BACKEND}/customer-order/cart`;
@@ -24,7 +27,7 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
     try {
       const response = await axios.put(url, payload, config);
       console.log(response.data);
-      onUpdated(); // re-fetch cart
+      onUpdated();
     } catch (err) {
       console.error("Failed to update item:", err);
     }
@@ -48,9 +51,17 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
   };
 
   const emptyCartCallAPI = async () => {
-    alert("TODO!!!");
+    const url = `${BACKEND}/customer-order/cart/restaurant/${restaurant.restaurant_id}`;
+    const config = { headers: { Authorization: contextProfile.token } };
 
-
+    try {
+      const response = await axios.delete(url, config);
+      showToast("Items removed from cart", "success");
+      onUpdated();
+    } catch (err) {
+      console.error("Failed to remove items from cart:", err);
+      showToast("Failed to remove items from cart", "error");
+    }
   };
 
   return (
@@ -150,7 +161,7 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
           <Button 
             mode="text"
             icon="cart-check"
-            onPress={() => console.log("Placing order for", restaurant.restaurant_id)}
+            onPress={() => alert("Place order TODO!!!")}
             style={{ width: "fit-content" }}
           >
             Order

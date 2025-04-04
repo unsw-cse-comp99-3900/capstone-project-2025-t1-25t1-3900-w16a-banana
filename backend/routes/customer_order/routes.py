@@ -34,26 +34,29 @@ from routes.customer_order.services import (
     format_cart_items_with_restaurant_filter
 )
 
-@api.route('/cart')
-class ShopItems(Resource):
-    # """Route: /cart"""
-    # @api.expect(auth_header)
-    # @api.marshal_list_with(cart_item_model)
-    # @api.response(200, "Success")
-    # @api.response(400, "Bad Request", error_res)
-    # @api.response(401, "Unauthorised", error_res)
-    # def get(self):
-    #     """Get All Items' ID in the shopping cart"""
-    #     # Check customer token
-    #     customer = get_customer_by_token(tokenize(request.headers))
-    #     if not customer:
-    #         return res_error(401)
+@api.route('/cart/restaurant/<int:restaurant_id>')
+class ShopItemsWithRestaurant(Resource):
+    @api.doc(description="Remove all items from the cart from given restaurant")
+    @api.expect(auth_header)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    @api.response(401, "Unauthorised", error_res)
+    def delete(self, restaurant_id: int):
+        """Clear the cart for a given restaurant"""
 
-    #     # Get all items in the cart
-    #     cart_items = filter_cart_items(customer_id = customer.id)
-    #     items = format_cart_items(cart_items)
-    #     return items, 200
-    
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+        
+        empty_cart_items_from_restaurant(
+            customer_id = customer.id,
+            restaurant_id = restaurant_id
+        )
+
+        return {'message': 'Cart Cleared'}, 200
+
+@api.route('/cart/v2')
+class ShopItemsV2(Resource):
     """Route: /cart"""
     @api.expect(auth_header)
     @api.response(200, "Success")
@@ -69,6 +72,26 @@ class ShopItems(Resource):
         # Get all items in the cart
         cart_items = filter_cart_items(customer_id = customer.id)
         items = format_cart_items_v2(cart_items)
+        return items, 200
+
+@api.route('/cart')
+class ShopItems(Resource):
+    """Route: /cart"""
+    @api.expect(auth_header)
+    @api.marshal_list_with(cart_item_model)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    @api.response(401, "Unauthorised", error_res)
+    def get(self):
+        """Get All Items' ID in the shopping cart"""
+        # Check customer token
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        # Get all items in the cart
+        cart_items = filter_cart_items(customer_id = customer.id)
+        items = format_cart_items(cart_items)
         return items, 200
 
     @api.expect(auth_header, cart_item_update_req)

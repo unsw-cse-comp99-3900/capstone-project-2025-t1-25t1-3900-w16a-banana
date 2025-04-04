@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, ActivityIndicator } from "react-native";
-import { Button } from "react-native-paper";
+import { View, ActivityIndicator } from "react-native";
+import { Button, Text } from "react-native-paper";
 import { useRouter } from "expo-router";
 import ProfileAvatar from "./ProfileAvatar";
 import MyScrollView from "./MyScrollView";
@@ -31,7 +31,7 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
         <ProfileAvatar userType={userType} />
 
         {/* Display Name */}
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 10 }}>
+        <Text variant="titleLarge" style={{ fontWeight: "bold", marginTop: 10 }}>
           {isDriver ? `${userProfile.first_name} ${userProfile.last_name}` :
            isRestaurant ? userProfile.name : 
            isCustomer ? userProfile.username :
@@ -41,10 +41,10 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
         {/* Registration Status (For Driver & Restaurant) */}
         {(isDriver || isRestaurant) && isSelfProfile && userProfile.registration_status === "PENDING" && (
           <>
-            <Text style={{ marginTop: 10, color: "red", fontSize: 16, textAlign: "center" }}>
+            <Text variant="titleMedium" style={{ marginTop: 10, color: "red", textAlign: "center" }}>
               Profile update is under system review.
             </Text>
-            <Text style={{ color: "red", fontSize: 16, textAlign: "center" }}>
+            <Text variant="titleMedium" style={{ color: "red", textAlign: "center" }}>
               The review will be completed within 24 hours.
             </Text>
           </>
@@ -53,10 +53,10 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
         {/* isDriver, isRestaurant, isSelfProfile, and the status is REJECTEd, ask the user to update the application profile */}
         {(isDriver || isRestaurant) && isSelfProfile && userProfile.registration_status === "REJECTED" && (
           <>
-            <Text style={{ marginTop: 10, color: "red", fontSize: 16, textAlign: "center" }}>
+            <Text variant="titleMedium" style={{ marginTop: 10, color: "red", textAlign: "center" }}>
               Your application has been rejected.
             </Text>
-            <Text style={{ color: "red", fontSize: 16, textAlign: "center" }}>
+            <Text variant="titleMedium" style={{ color: "red", textAlign: "center" }}>
               Please update your profile and wait for approval again.
             </Text>
           </>
@@ -72,46 +72,46 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
 
         {/* Personal Info Section */}
         <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7 }}>
+          <Text variant="titleMedium" style={{ fontWeight: "bold", paddingBottom: 7 }}>
             {isRestaurant ? "Business Information" : "Personal Information"}
           </Text>
           
           {/* Common Fields */}
-          {isCustomer && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Username:</Text> {userProfile.username}</Text>}
-          {isDriver && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Name:</Text> {`${userProfile.first_name} ${userProfile.last_name}`}</Text>}
-          {isRestaurant && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Name:</Text> {userProfile.name}</Text>}
-          <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Email:</Text> {userProfile.email}</Text>
-          {!isAdmin && <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Phone:</Text> {userProfile.phone}</Text>}
+          {isCustomer && <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Username:</Text> {userProfile.username}</Text>}
+          {isDriver && <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Name:</Text> {`${userProfile.first_name} ${userProfile.last_name}`}</Text>}
+          {isRestaurant && <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Name:</Text> {userProfile.name}</Text>}
+          <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Email:</Text> {userProfile.email}</Text>
+          {!isAdmin && <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Phone:</Text> {userProfile.phone}</Text>}
 
           {/* Driver-Specific Fields */}
           {isDriver && (
             <>
-              <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>License Number:</Text> {userProfile.license_number}</Text>
-              <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Car Plate:</Text> {userProfile.car_plate}</Text>
+              <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>License Number:</Text> {userProfile.license_number}</Text>
+              <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Car Plate:</Text> {userProfile.car_plate}</Text>
             </>
           )}
 
           {/* Restaurant-Specific Fields */}
           {isRestaurant && (
-            <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>ABN:</Text> {userProfile.abn}</Text>
+            <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>ABN:</Text> {userProfile.abn}</Text>
           )}
         </View>
 
         {/* Address Section */}
         {isCustomer || isRestaurant ? (
           <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7 }}>Address</Text>
-            <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Address:</Text> {userProfile.address}</Text>
-            <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Suburb:</Text> {userProfile.suburb}</Text>
-            <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>State:</Text> {userProfile.state}</Text>
-            <Text style={{ fontSize: 16 }}><Text style={{ fontWeight: "bold" }}>Postcode:</Text> {userProfile.postcode}</Text>
+            <Text variant="titleMedium" style={{ fontWeight: "bold", paddingBottom: 7 }}>Address</Text>
+            <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Address:</Text> {userProfile.address}</Text>
+            <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Suburb:</Text> {userProfile.suburb}</Text>
+            <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>State:</Text> {userProfile.state}</Text>
+            <Text variant="titleMedium"><Text style={{ fontWeight: "bold" }}>Postcode:</Text> {userProfile.postcode}</Text>
           </View>
         ) : null}
 
         {/* Business Photos (For Restaurant) */}
         {isRestaurant && (
           <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7 }}>Business Photos</Text>
+            <Text variant="titleMedium" style={{ fontWeight: "bold", paddingBottom: 7 }}>Business Photos</Text>
             <ZoomableImage imageUrl={userProfile.url_img1} title="Business Photo 1" />
             <ZoomableImage imageUrl={userProfile.url_img2} title="Business Photo 2" />
             <ZoomableImage imageUrl={userProfile.url_img3} title="Business Photo 3" />
@@ -121,10 +121,9 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
         {/* Driver License & Registration Images */}
         {isDriver && (
           <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", paddingBottom: 7 }}>Documents</Text>
-            <Text style={{ fontSize: 16, fontWeight: "bold", paddingBottom: 7 }}>License Image:</Text>
+            <Text variant="titleMedium" style={{ fontWeight: "bold", paddingBottom: 5 }}>License Image:</Text>
             <ZoomableImage imageUrl={userProfile.url_license_image} title="License Image" />
-            <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>Registration Paper:</Text>
+            <Text variant="titleMedium" style={{ fontWeight: "bold", paddingBottom: 5 }}>Registration Paper:</Text>
             <ZoomableImage imageUrl={userProfile.url_registration_paper} title="Registration Paper" />
           </View>
         )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, ActivityIndicator, ScrollView } from "react-native";
 import axios from "axios";
 import CartPerRestaurant from "../../../components/CartPerRestaurant";
@@ -8,6 +8,7 @@ import useAuth from "../../../hooks/useAuth";
 import useDialog from "../../../hooks/useDialog";
 import MyScrollView from "../../../components/MyScrollView";
 import { Text, Icon } from "react-native-paper";
+import { useFocusEffect } from "expo-router";
 
 export default function Cart() {
   const { showToast } = useToast();
@@ -19,7 +20,7 @@ export default function Cart() {
   const [loading, setLoading] = useState(true);
 
   const fetchCart = async () => {
-    const url = `${BACKEND}/customer-order/cart`;
+    const url = `${BACKEND}/customer-order/cart/v2`;
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {
@@ -38,6 +39,13 @@ export default function Cart() {
     fetchCart();
   }, [contextProfile]);
 
+  // force refresh everytime when this page is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchCart();
+    }, [contextProfile])
+  );
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -48,18 +56,28 @@ export default function Cart() {
 
   return (
     <MyScrollView>
-      <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12, }}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12 }}>
         <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-          Your Cart
+          Shopping Cart
         </Text>
       </View>
-      {cartData.map((restaurant) => (
-        <CartPerRestaurant
-          key={restaurant.restaurant_id}
-          restaurant={restaurant}
-          onUpdated={fetchCart}
-        />
-      ))}
+
+      {cartData.length === 0 ? (
+        <View style={{ alignItems: "center", marginTop: 40 }}>
+          <Icon source="cart-off" size={60} color="#ccc" />
+          <Text variant="titleMedium" style={{ marginTop: 12, color: "#999" }}>
+            Your cart is currently empty.
+          </Text>
+        </View>
+      ) : (
+        cartData.map((restaurant) => (
+          <CartPerRestaurant
+            key={restaurant.restaurant_id}
+            restaurant={restaurant}
+            onUpdated={fetchCart}
+          />
+        ))
+      )}
     </MyScrollView>
   );
 }

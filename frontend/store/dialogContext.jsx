@@ -48,9 +48,17 @@ export const DialogProvider = ({ children }) => {
       {/* the dialog component */}
       <Portal>
         <Dialog visible={dialog.visible} onDismiss={hideDialog}>
-          {dialog.title ? <Dialog.Title>{dialog.title}</Dialog.Title> : null}
+          {dialog.title ? 
+            <Dialog.Title>
+              <Text variant="titleLarge">
+                {dialog.title}
+              </Text>
+            </Dialog.Title> 
+          : null}
           <Dialog.Content>
-            <Text>{dialog.message}</Text>
+            <Text variant="titleMedium">
+              {dialog.message}
+            </Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={hideDialog}>
