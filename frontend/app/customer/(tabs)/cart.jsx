@@ -34,8 +34,9 @@ export default function Cart() {
   };
 
   useEffect(() => {
+    if (!contextProfile) return;
     fetchCart();
-  }, []);
+  }, [contextProfile]);
 
   if (loading) {
     return (
@@ -47,9 +48,8 @@ export default function Cart() {
 
   return (
     <MyScrollView>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16, marginTop: 8 }}>
-        <Icon source="cart" size={24} iconColor="blue" />
-        <Text variant="titleLarge" style={{ marginLeft: 8, fontWeight: "bold" }}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12, }}>
+        <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
           Your Cart
         </Text>
       </View>
