@@ -20,7 +20,7 @@ export default function Cart() {
   const [loading, setLoading] = useState(true);
 
   const fetchCart = async () => {
-    const url = `${BACKEND}/customer-order/cart`;
+    const url = `${BACKEND}/customer-order/cart/v2`;
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {

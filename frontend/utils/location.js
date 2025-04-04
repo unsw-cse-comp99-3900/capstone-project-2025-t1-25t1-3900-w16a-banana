@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const GOOGLE_API_KEY = "AIzaSyATnj7gIKlNSS8hZdGpV_E3XLOik8OY9tY";
+import { GOOGLE_API_KEY } from "../constants/map";
 
 // input longitude and latitude, 
 // output: {longitude, latitude, suburb, postcode, state}

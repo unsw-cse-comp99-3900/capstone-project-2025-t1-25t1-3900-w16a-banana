@@ -47,7 +47,7 @@ export default function RestaurantMenu({ restaurantId }) {
   }, [restaurantId]);
 
   const fetchCart = async () => {
-    const url = `${BACKEND}/customer-order/cart`;
+    const url = `${BACKEND}/customer-order/cart/v2`;
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {
