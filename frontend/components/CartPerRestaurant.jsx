@@ -13,6 +13,7 @@ import useToast from "../hooks/useToast";
 
 const DELIVERY_FEE = 10;
 
+// onUpdated is a callback function from the parent component cart.jsx to update the whole page.
 export default function CartPerRestaurant({ restaurant, onUpdated }) {
   const { contextProfile } = useAuth();
   const { showDialog } = useDialog();
@@ -26,7 +27,7 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
     try {
       const response = await axios.put(url, payload, config);
       console.log(response.data);
-      onUpdated(); // re-fetch cart
+      onUpdated();
     } catch (err) {
       console.error("Failed to update item:", err);
     }
@@ -160,7 +161,7 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
           <Button 
             mode="text"
             icon="cart-check"
-            onPress={() => console.log("Placing order for", restaurant.restaurant_id)}
+            onPress={() => alert("Place order TODO!!!")}
             style={{ width: "fit-content" }}
           >
             Order

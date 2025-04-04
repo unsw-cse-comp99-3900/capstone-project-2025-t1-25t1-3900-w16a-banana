@@ -50,7 +50,7 @@ export default function Cart() {
     <MyScrollView>
       <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12, }}>
         <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-          Your Cart
+          Shopping Cart
         </Text>
       </View>
       {cartData.map((restaurant) => (

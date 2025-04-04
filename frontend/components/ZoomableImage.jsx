@@ -19,7 +19,7 @@ export default function ZoomableImage({ imageUrl, title = "Image View", height =
       <Image
         source={{ uri: fullImageUrl }}
         style={{ width, height, borderRadius, marginBottom }}
-        resizeMode="contain"
+        resizeMode="cover"
       />
     </TouchableOpacity>
   );
