@@ -48,20 +48,10 @@ class ShopItemsWithRestaurant(Resource):
         if not customer:
             return res_error(401)
         
-        # Get all cart items that belong to this restaurant
-        cart_items = format_cart_items_with_restaurant_filter(
-            cart_items = filter_cart_items(customer_id = customer.id),
+        empty_cart_items_from_restaurant(
+            customer_id = customer.id,
             restaurant_id = restaurant_id
         )
-
-        for cart_item in cart_items:
-            record = CartItem.query.filter_by(
-                customer_id = customer.id,
-                menu_id = cart_item['menu_id']
-            ).first()
-            
-            db.session.delete(record)
-            db.session.commit()
 
         return {'message': 'Cart Cleared'}, 200
 

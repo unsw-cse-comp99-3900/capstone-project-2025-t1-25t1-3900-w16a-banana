@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { ScrollView, View } from "react-native";
 import { ActivityIndicator, Text, List, Button, IconButton } from "react-native-paper";
 import axios from "axios";
@@ -6,7 +6,7 @@ import capitalize from "capitalize";
 import { BACKEND } from "../constants/backend";
 import useToast from "../hooks/useToast";
 import useAuth from "../hooks/useAuth";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import ZoomableImage from "./ZoomableImage";
 import RestaurantMenuItem from "./RestaurantMenuItem";
 
@@ -60,6 +60,15 @@ export default function RestaurantMenu({ restaurantId }) {
       console.error("Failed to fetch cart", err);
     }
   };
+
+  // update the cart when this page gets focused
+  useFocusEffect(
+    useCallback(() => {
+      if (isCustomer) {
+        fetchCart();
+      }
+    }, [contextProfile, isCustomer])
+  );
 
   const updateCart = async (menu_id, quantity) => {
     try {
