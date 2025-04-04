@@ -83,25 +83,27 @@ export default function RestaurantMenu({ restaurantId }) {
   }
 
   return (
-    <ScrollView style={{ paddingTop: 12, paddingBottom: 12 }}>
+    <ScrollView style={{ paddingTop: 8, paddingBottom: 12 }}>
       <List.Section>
         {/* Toggle button to expand or shrink all categories at once */}
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 8 }}>
           <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
-            {isRestaurantOwner ? "Current Menu" : "Restaurant Menu"}
+            {isRestaurantOwner ? "Current Menu" : "View Menu"}
           </Text>
           <View style={{ flexDirection: "row", gap: 8 }}>
             <Button onPress={toggleAll}>
               {isAllExpanded ? "Collapse All" : "Expand All"}
             </Button>
             {/* when the current viewer is the restaurant owner, then add the edit button */}
-            <Button
-              mode="elevated"
-              icon="pencil"
-              onPress={() => router.push("/restaurant/EditMenu")}
-            >
-              Edit
-            </Button>
+            {isRestaurantOwner && 
+              <Button
+                mode="elevated"
+                icon="pencil"
+                onPress={() => router.push("/restaurant/EditMenu")}
+              >
+                Edit
+              </Button>
+            }
           </View>
         </View>
 

@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, Dimensions } from "react-native";
-import { TextInput, Button } from "react-native-paper";
+import { View, Text, Image, Dimensions } from "react-native";
+import { Button } from "react-native-paper";
 import ReanimatedCarousel from "react-native-reanimated-carousel";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MyScrollView from "../../../components/MyScrollView";
 import useDialog from "../../../hooks/useDialog";
 import { router } from "expo-router";
 import useToast from "../../../hooks/useToast";
-import axios from "axios";
-import { fetchLocationDetailFromAddress, fetchLocationDetailFromCoordinate } from "../../../utils/location";
+import { fetchLocationDetailFromCoordinate } from "../../../utils/location";
 import RestaurantList from "../../../components/RestaurantList";
 
 const { width } = Dimensions.get("window");
@@ -129,24 +127,19 @@ export default function Home() {
           height={150}
           autoPlay
           data={carouselImages}
-          scrollAnimationDuration={1500}
+          scrollAnimationDuration={5500}
           renderItem={renderCarouselItem}
           style={{ borderRadius: 10 }}
           loop
         />
       </View>
-      {/* Search Bar */}
-      <TextInput
-        dense
-        mode="outlined"
-        placeholder="Search"
-        left={<TextInput.Icon icon="magnify" />}
-        style={{ marginBottom: 8, backgroundColor: "#FFF" }}
-      />
 
       {/* Placeholder for Restaurant List */}
       <View>
-        <RestaurantList userLocation={location} />
+        <RestaurantList 
+          userLocation={location} 
+          showTextFilter={true}
+        />
       </View>
     </MyScrollView>
   );

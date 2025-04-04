@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image } from "react-native";
 import { Button } from "react-native-paper";
 import { BACKEND } from "../constants/backend";
+import { router } from "expo-router";
 
 export default function RestaurantListItem({ restaurant }) {
   return (
@@ -43,7 +44,7 @@ export default function RestaurantListItem({ restaurant }) {
         <View style={{ marginTop: 10, alignItems: "flex-end" }}>
           <Button
             mode="text"
-            onPress={() => console.log("View restaurant", restaurant.id)}
+            onPress={() => router.push(`/customer/view/restaurant/${restaurant.id}`)}
           >
             View
           </Button>

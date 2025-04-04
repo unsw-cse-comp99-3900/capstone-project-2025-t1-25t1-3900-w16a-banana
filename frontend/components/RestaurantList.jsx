@@ -4,14 +4,15 @@ import axios from "axios";
 import RestaurantListItem from "./RestaurantListItem";
 import { calculateDistance, fetchLocationDetailFromAddress } from "../utils/location";
 import { BACKEND } from "../constants/backend";
-import { Button } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import RestaurantListMapViewWeb from "./RestaurantListMapViewWeb";
 
-export default function RestaurantList({ userLocation }) {
+export default function RestaurantList({ userLocation, showTextFilter = false }) {
   const [restaurants, setRestaurants] = useState([]);
   const [sortedRestaurants, setSortedRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMapView, setIsMapView] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -61,11 +62,27 @@ export default function RestaurantList({ userLocation }) {
     setSortedRestaurants(sorted);
   }, [userLocation, restaurants]);
 
+  // Filter restaurants by search text
+  const filteredRestaurants = sortedRestaurants.filter((r) => {
+    const keyword = searchText.toLowerCase();
+    return (
+      r.name.toLowerCase().includes(keyword) ||
+      r.description?.toLowerCase().includes(keyword)
+    );
+  });
+
   if (loading) return <ActivityIndicator />;
 
   return (
     <View style={{ padding: 4 }}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 4,
+        }}
+      >
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>Restaurants</Text>
         <Button
           mode="text"
@@ -78,11 +95,32 @@ export default function RestaurantList({ userLocation }) {
 
       {isMapView ? (
         <RestaurantListMapViewWeb
-          restaurants={sortedRestaurants}
+          restaurants={filteredRestaurants}
           userLocation={userLocation}
         />
       ) : (
-        sortedRestaurants.map((r) => <RestaurantListItem key={r.id} restaurant={r} />)
+        <View>
+          {showTextFilter && (
+            <TextInput
+              dense={true}
+              label="Search Restaurant..."
+              mode="outlined"
+              placeholder="Search"
+              value={searchText}
+              onChangeText={setSearchText}
+              left={<TextInput.Icon icon="magnify" />}
+              right={
+                searchText.length > 0 ? (
+                  <TextInput.Icon icon="close" onPress={() => setSearchText("")} />
+                ) : null
+              }
+              style={{ marginBottom: 12, backgroundColor: "#FFF" }}
+            />
+          )}
+          {filteredRestaurants.map((r) => (
+            <RestaurantListItem key={r.id} restaurant={r} />
+          ))}
+        </View>
       )}
     </View>
   );
