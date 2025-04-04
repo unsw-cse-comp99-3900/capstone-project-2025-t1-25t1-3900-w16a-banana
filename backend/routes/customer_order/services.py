@@ -42,6 +42,40 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
 
     return items
 
+
+def format_cart_items_v2(cart_items):
+    """Format raw cart items, group under each restaurant"""
+
+    result_dict = {}
+    for item in cart_items:
+        restaurant = get_restaurant_by_menu(item.menu_id)
+        menus = filter_menus(id = item.menu_id)
+        menu = menus[0]
+        
+        if restaurant.id not in result_dict:
+            result_dict[restaurant.id] = {
+                'restaurant_id': restaurant.id,
+                'restaurant_name': restaurant.name,
+                'restaurant_img': restaurant.url_img1,
+                'items': []
+            }
+        
+        result_dict[restaurant.id]['items'].append({
+            'menu_id': menu.id,
+            'menu_name': menu.name,
+            'price': menu.price,
+            'quantity': item.quantity,
+            'total_price': item.quantity * menu.price,
+            'url_img': menu.url_img
+        })
+
+    # convert the result_dict to a list of dictionaries, order by the restaurant_id
+    result_list = [v for v in result_dict.values()]
+    result_list.sort(key=lambda x: x['restaurant_id'])
+
+    return result_list
+
+
 def format_cart_items_with_restaurant_filter(
         cart_items: List[CartItem], restaurant_id: int
 ) -> List[FormatCartItems]:
