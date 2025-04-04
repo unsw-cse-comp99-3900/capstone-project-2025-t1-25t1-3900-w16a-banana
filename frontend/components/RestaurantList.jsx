@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import axios from "axios";
 import RestaurantListItem from "./RestaurantListItem";
 import { calculateDistance, fetchLocationDetailFromAddress } from "../utils/location";
 import { BACKEND } from "../constants/backend";
-import { Button, TextInput } from "react-native-paper";
+import { Button, TextInput, Text } from "react-native-paper";
 import RestaurantListMapViewWeb from "./RestaurantListMapViewWeb";
 
 export default function RestaurantList({ userLocation, showTextFilter = false }) {
@@ -83,7 +83,7 @@ export default function RestaurantList({ userLocation, showTextFilter = false })
           marginBottom: 4,
         }}
       >
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Restaurants</Text>
+        <Text variant="titleLarge">Restaurants</Text>
         <Button
           mode="text"
           onPress={() => setIsMapView(!isMapView)}

@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
-import { Button } from "react-native-paper";
+import { View, Image } from "react-native";
+import { Button, Text } from "react-native-paper";
 import { BACKEND } from "../constants/backend";
 import { router } from "expo-router";
 
@@ -25,18 +25,18 @@ export default function RestaurantListItem({ restaurant }) {
 
       {/* Content */}
       <View style={{ padding: 12 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 4 }}>
+        <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
           {restaurant.name}
         </Text>
-        <Text style={{ fontSize: 14 }}>
+        <Text variant="titleSmall">
           {restaurant.suburb}, {restaurant.state}
         </Text>
         {restaurant.distance && (
-          <Text style={{ color: "gray", marginTop: 2 }}>
-            ~{restaurant.distance.toFixed(1)} km away
+          <Text variant="titleSmall" style={{ color: "gray" }}>
+            ~ {restaurant.distance.toFixed(1)} km away
           </Text>
         )}
-        <Text style={{ marginTop: 8, color: "#444", fontStyle: "italic" }}>
+        <Text variant="titleSmall" style={{ color: "#444", fontStyle: "italic" }}>
           {restaurant.description}
         </Text>
 

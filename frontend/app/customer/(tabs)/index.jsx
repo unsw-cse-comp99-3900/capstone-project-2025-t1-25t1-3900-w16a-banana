@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, Dimensions } from "react-native";
-import { Button } from "react-native-paper";
+import { View, Image, Dimensions } from "react-native";
+import { Button, Text } from "react-native-paper";
 import ReanimatedCarousel from "react-native-reanimated-carousel";
 import MyScrollView from "../../../components/MyScrollView";
 import useDialog from "../../../hooks/useDialog";

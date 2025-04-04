@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import useAuth from "../../../hooks/useAuth";
 import RestaurantMenu from "../../../components/RestaurantMenu";
 import MyScrollView from "../../../components/MyScrollView";
-import { Button, IconButton } from "react-native-paper";
+import { Text } from "react-native-paper";
 
 export default function Home() {
   const { contextProfile, isContextLoading } = useAuth();
@@ -12,7 +12,7 @@ export default function Home() {
   if (isContextLoading || !contextProfile) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading...</Text>
+        <Text variant="titleLarge">Menu Loading...</Text>
       </View>
     );
   }
@@ -22,12 +22,18 @@ export default function Home() {
       {/* Header */}
       <View style={{ justifyContent: "center", alignItems: "center", padding: 10 }}>
         {contextProfile.registration_status === "PENDING" ? (
-          <Text style={{ marginTop: 10, color: "red", fontSize: 18, textAlign: "center" }}>
+          <Text 
+            variant="titleMedium"
+            style={{ marginTop: 10, color: "red", textAlign: "center" }}
+          >
             Your account is under review by the Admin. Please wait and come back later.
           </Text>
         ) : (
           <>
-            <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", color: "#4682b4" }}>
+            <Text 
+              variant="titleMedium"
+              style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", color: "#4682b4" }}
+            >
               Hello {contextProfile.name}, keep your menu fresh and up to date!
             </Text>
           </>

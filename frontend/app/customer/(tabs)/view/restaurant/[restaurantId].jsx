@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Linking, Pressable, ScrollView } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { View, ActivityIndicator, Linking, Pressable, ScrollView, Dimensions, Image } from "react-native";
+import { useLocalSearchParams, router } from "expo-router";
 import axios from "axios";
 import Carousel from "react-native-reanimated-carousel";
-import { Dimensions, Image } from "react-native";
-import { IconButton } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
 import { BACKEND } from "../../../../../constants/backend";
-import { router } from "expo-router";
 import RestaurantMenu from "../../../../../components/RestaurantMenu";
 
 export default function ViewRestaurantPage() {
@@ -84,7 +82,8 @@ export default function ViewRestaurantPage() {
       {/* Profile Info Card */}
       <View
         style={{
-          padding: 16,
+          paddingHorizontal: 16,
+          paddingVertical: 12,
           backgroundColor: "#f0f0f0",
           borderRadius: 12,
           marginHorizontal: 16,
@@ -92,12 +91,15 @@ export default function ViewRestaurantPage() {
           marginTop: 16,
         }}
       >
-        <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 4 }}>
+        <Text 
+          variant="titleLarge"
+          style={{ fontWeight: "bold" }}
+        >
           {restaurant.name}
         </Text>
         {/* Phone Section with call icon */}
         <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-          <Text style={{ fontSize: 16 }}>
+          <Text variant="titleSmall">
             <Text style={{ fontWeight: "bold" }}>Phone: </Text>
             {restaurant.phone}
           </Text>
@@ -110,19 +112,19 @@ export default function ViewRestaurantPage() {
         </View>
 
         {/* Address Section */}
-        <Text style={{ fontSize: 16 }}>
+        <Text variant="titleSmall">
           <Text style={{ fontWeight: "bold" }}>Address: </Text>
           {restaurant.address}
         </Text>
-        <Text style={{ fontSize: 16 }}>
+        <Text variant="titleSmall">
           <Text style={{ fontWeight: "bold" }}>Suburb: </Text>
           {restaurant.suburb}
         </Text>
-        <Text style={{ fontSize: 16 }}>
+        <Text variant="titleSmall">
           <Text style={{ fontWeight: "bold" }}>State: </Text>
           {restaurant.state}
         </Text>
-        <Text style={{ fontSize: 16 }}>
+        <Text variant="titleSmall">
           <Text style={{ fontWeight: "bold" }}>Postcode: </Text>
           {restaurant.postcode}
         </Text>
