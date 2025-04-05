@@ -5,7 +5,7 @@ import { Picker } from "@react-native-picker/picker";
 import { isPostalCode } from "validator";
 import useAuth from "../hooks/useAuth";
 
-export default function AddressForm ({ form, setForm, allowContextAddress = false }) {
+export default function AddressForm ({ form, setForm, allowContextAddress = false, showSubmit = false, submitCallback = () => {} }) {
   const { contextProfile } = useAuth();
   
   const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
@@ -74,18 +74,30 @@ export default function AddressForm ({ form, setForm, allowContextAddress = fals
           Please enter a valid Australian postcode
         </HelperText>
       ) : null}
-      <View style={{ width: "48%", borderRadius: 5, borderWidth: 1, borderColor: "#323232", overflow: "hidden" }}>
-        <Picker
-          selectedValue={form.state}
-          onValueChange={(value) => handleChange("state", value)}
-          style={{ height: 50 }}
-        >
-          <Picker.Item label="Select State" value="" />
-          {states.map((state) => (
-            <Picker.Item key={state} label={state} value={state} />
-          ))}
-        </Picker>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <View style={{ width: "48%", borderRadius: 5, borderWidth: 1, borderColor: "#323232", overflow: "hidden" }}>
+          <Picker
+            selectedValue={form.state}
+            onValueChange={(value) => handleChange("state", value)}
+            style={{ height: 50 }}
+          >
+            <Picker.Item label="Select State" value="" />
+            {states.map((state) => (
+              <Picker.Item key={state} label={state} value={state} />
+            ))}
+          </Picker>
+        </View>
+        {showSubmit && (
+          <Button
+            mode="text"
+            icon="check"
+            onPress={submitCallback}
+          >
+            Submit
+          </Button>
+        )}
       </View>
+
     </View>
   );
 };

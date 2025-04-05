@@ -8,16 +8,27 @@ import useAuth from "../../../../hooks/useAuth";
 import useToast from "../../../../hooks/useToast";
 import MyScrollView from "../../../../components/MyScrollView";
 import AddressForm from "../../../../components/AddressForm";
+import useDialog from "../../../../hooks/useDialog";
+import { calculateDistance, fetchLocationDetailFromAddress } from "../../../../utils/location";
+import { calculateDeliveryFee } from "../../../../utils/fee";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { restaurantId } = useLocalSearchParams();
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
+  const { showDialog } = useDialog();
 
-  const [restaurantCart, setRestaurantCart] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [deliveryFee, setDeliveryFee] = useState(10); // will be updated based on distance
+
+  // cart detail: does not allow to edit on this page
+  const [restaurantCart, setRestaurantCart] = useState(null);
+
+  // delivery fee, needs to wait for the input address
+  const [deliveryFee, setDeliveryFee] = useState(null);
+  const [distance, setDistance] = useState(null);
+
+  // address form, initially empty, allow customer to fill with default address
   const [form, setForm] = useState({
     address: "",
     suburb: "",
@@ -26,8 +37,9 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
+    if (!contextProfile) return;
     fetchCart();
-  }, [restaurantId]);
+  }, [restaurantId, contextProfile]);
 
   const fetchCart = async () => {
     const url = `${BACKEND}/customer-order/cart/v2`;
@@ -51,7 +63,8 @@ export default function CheckoutPage() {
     ? restaurantCart.items.reduce((sum, item) => sum + item.total_price, 0)
     : 0;
 
-  const total = subtotal + deliveryFee;
+  const total = deliveryFee !== null ? subtotal + deliveryFee : subtotal + 0;
+  const gst = total / 11;
 
   const handleChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -65,8 +78,38 @@ export default function CheckoutPage() {
     );
   }
 
+  const getFee = async () => {
+    // check the address, suburb, state, postcode should all be filled, if not showToast
+    const { address, suburb, state, postcode } = form;
+    if (!address || !suburb || !state || !postcode) {
+      showToast("Please fill all address fields before submission.", "error");
+      return;
+    }
+
+    // get the {longitude, latitude} from the address
+    const userLocation = await fetchLocationDetailFromAddress(form);
+    console.log(userLocation);
+
+    // also need the restaurant address
+    const restaurantAddress = restaurantCart.address;
+    const restaurantLocation = await fetchLocationDetailFromAddress(restaurantAddress);
+    console.log(restaurantLocation);
+    
+    // now calcualte the distance in km
+    const distance = calculateDistance(
+      userLocation.lat,
+      userLocation.lng,
+      restaurantLocation.lat,
+      restaurantLocation.lng
+    );
+
+    const fee = calculateDeliveryFee(distance);
+    setDeliveryFee(fee);
+    setDistance(distance);
+  };
+
   return (
-    <MyScrollView style={{ padding: 16 }}>
+    <MyScrollView>
       {/* Back Button */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
         <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
@@ -106,23 +149,69 @@ export default function CheckoutPage() {
         </View>
       ))}
 
-      {/* Address Form */}
-      <View style={{ marginTop: 20 }}>
-        <AddressForm form={form} setForm={setForm} allowContextAddress />
-      </View>
+      {/* Address Form, add the submit button to check the distance */}
+      <AddressForm 
+        form={form} 
+        setForm={setForm} 
+        allowContextAddress 
+        showSubmit 
+        submitCallback={getFee}
+      />
 
-      {/* Total Section */}
-      <View style={{ marginTop: 24, marginBottom: 16 }}>
-        <Text variant="titleSmall">Subtotal: ${subtotal.toFixed(2)}</Text>
-        <Text variant="titleSmall">Delivery Fee: ${deliveryFee.toFixed(2)}</Text>
-        <Text variant="titleMedium" style={{ fontWeight: "bold", marginTop: 4 }}>
-          Total: ${total.toFixed(2)}
-        </Text>
+      {/* Divider Line */}
+      <View style={{ height: 1, backgroundColor: "#ddd", marginTop: 24, marginBottom: 8 }} />
+
+      {/* Totals Section */}
+      <View style={{ marginBottom: 16, gap: 6 }}>
+        {/* subtotal line */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text variant="titleMedium">Subtotal:</Text>
+          <Text variant="titleMedium">${subtotal.toFixed(2)}</Text>
+        </View>
+        {/* delivery fee line */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Text variant="titleMedium">Delivery Fee:</Text>
+            {distance !== null && (
+              <Text variant="titleMedium">
+                ({distance.toFixed(2)} km)
+              </Text>
+            )}
+          </View>
+          {deliveryFee === null ? (
+            <Text
+              variant="titleMedium"
+              style={{ fontStyle: "italic", color: "#888" }}
+            >
+              Waiting for Address...
+            </Text>
+          ) : (
+            <Text variant="titleMedium">${deliveryFee.toFixed(2)}</Text>
+          )}
+        </View>
+        {/* total = subtotal + delivery fee */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+            Total:
+          </Text>
+          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+            ${total.toFixed(2)}
+          </Text>
+        </View>
+        {/* GST = total / 11 */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text variant="titleMedium" style={{ color: "#666" }}>
+            Incl GST:
+          </Text>
+          <Text variant="titleMedium" style={{ color: "#666" }}>
+            ${(total / 11).toFixed(2)}
+          </Text>
+        </View>
       </View>
 
       {/* Bottom Buttons */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 16 }}>
-        <Button mode="outlined" onPress={() => router.back()}>
+        <Button mode="text" onPress={() => router.replace("/customer/cart")}>
           BACK
         </Button>
         <Button mode="contained" onPress={() => alert("TODO")}>
