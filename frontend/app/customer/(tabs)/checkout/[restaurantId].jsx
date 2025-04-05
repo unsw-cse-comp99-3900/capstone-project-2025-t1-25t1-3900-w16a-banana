@@ -175,6 +175,12 @@ export default function CheckoutPage() {
       showToast("Please enter a valid credit card number.", "error");
       return;
     }
+
+    // if the deliveryFee is null, ask to click on the submit address
+    if (deliveryFee === null) {
+      showToast("Please click on the submit address button to view the delivery fee.", "error");
+      return;
+    }
     
     showDialog({
       title: "Confirm Order",
