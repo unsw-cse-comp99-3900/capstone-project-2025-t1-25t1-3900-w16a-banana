@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Image, Pressable } from "react-native";
-import { Text, List, Chip } from "react-native-paper";
+import { Text, List, Chip, Button } from "react-native-paper";
 import { BACKEND } from "../constants/backend";
 import capitalize from "capitalize";
 import ApprovedGIF from "../assets/images/approved.gif";
@@ -107,34 +107,13 @@ export default function OrderCard({ entry }) {
           resizeMode="cover"
         />
       </View>
-      
-      {/* Order Meta */}
-      <View style={{ marginTop: 8 }}>
-        <Text variant="bodySmall" style={{ color: "#666" }}>
-          Ordered at: {formattedDate}
-        </Text>
-        <Text variant="bodySmall" style={{ color: "#666" }}>
-          Deliver to: {order.address}, {order.suburb}, {order.state} {order.postcode}
-        </Text>
-      </View>
-
-      {/* Price Summary */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
-        <Text variant="titleSmall" style={{ fontWeight: "600" }}>
-          Total:
-        </Text>
-        <Text variant="titleSmall" style={{ fontWeight: "bold" }}>
-          ${total.toFixed(2)}
-        </Text>
-      </View>
 
       {/* Accordion */}
       <List.Accordion
-        title="View Items"
+        title={expanded ? "Hide Items" : "Items"}
         expanded={expanded}
         onPress={toggleExpanded}
-        style={{ backgroundColor: "transparent", paddingLeft: 0 }}
-        titleStyle={{ fontWeight: "bold", fontSize: 15 }}
+        style={{ backgroundColor: "transparent", padding: 0, marginBottom: 8 }}
       >
         {items.map((item) => (
           <View
@@ -154,6 +133,56 @@ export default function OrderCard({ entry }) {
           </View>
         ))}
       </List.Accordion>
+
+      {/* Price Summary */}
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
+        <Text variant="titleSmall">Total:</Text>
+        <Text variant="titleSmall">${total.toFixed(2)}</Text>
+      </View>
+
+      {/* Order Info Rows */}
+      <View style={{ marginBottom: 8, gap: 4 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text variant="bodySmall" style={{ color: "#666" }}>Order Time:</Text>
+          <Text variant="bodySmall" style={{ color: "#666" }}>{formattedDate}</Text>
+        </View>
+
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text variant="bodySmall" style={{ color: "#666" }}>Deliver To:</Text>
+          <Text variant="bodySmall" style={{ color: "#666", textAlign: "right", flex: 1 }}>
+            {order.address}, {order.suburb}, {order.state} {order.postcode}
+          </Text>
+        </View>
+
+        {order.pickup_time && (
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text variant="bodySmall" style={{ color: "#666" }}>Pickup Ready At:</Text>
+            <Text variant="bodySmall" style={{ color: "#666" }}>
+              {new Date(order.pickup_time).toLocaleString()}
+            </Text>
+          </View>
+        )}
+
+        {order.delivery_time && (
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text variant="bodySmall" style={{ color: "#666" }}>Delivered At:</Text>
+            <Text variant="bodySmall" style={{ color: "#666" }}>
+              {new Date(order.delivery_time).toLocaleString()}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* buttons on the far right */}
+      <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
+        {/* view the details */}
+        <Button
+          mode="text"
+          onPress={() => alert("TODO")}
+        >
+          Details
+        </Button>
+      </View>
     </View>
   );
 }
