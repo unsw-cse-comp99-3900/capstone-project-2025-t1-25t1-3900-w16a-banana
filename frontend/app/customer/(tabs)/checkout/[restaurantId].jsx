@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Image } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { Text, Button, IconButton, TextInput } from "react-native-paper";
 import axios from "axios";
 import { BACKEND } from "../../../../constants/backend";
@@ -31,18 +31,35 @@ export default function CheckoutPage() {
   // credit card: 16 digits
   const [cardNumber, setCardNumber] = useState("");
 
+  // customer note
+  const [note, setNote] = useState("");
+
   // address form, initially empty, allow customer to fill with default address
-  const [form, setForm] = useState({
+  const initialForm = {
     address: "",
     suburb: "",
     state: "",
     postcode: "",
-  });
+  }
+
+  const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
     if (!contextProfile) return;
     fetchCart();
   }, [restaurantId, contextProfile]);
+
+  // use focus in effect: set all input fields to empty, and refetch
+  useFocusEffect(
+    useCallback(() => {
+      setForm(initialForm);
+      setDeliveryFee(null);
+      setDistance(null);
+      setCardNumber("");
+      setNote("");
+      fetchCart();
+    }, [restaurantId, contextProfile])
+  );
 
   const fetchCart = async () => {
     const url = `${BACKEND}/customer-order/cart/v2`;
@@ -125,15 +142,54 @@ export default function CheckoutPage() {
     setCardNumber(digitsOnly);
   };
 
-  const submitOrder = async () => {
+  const submitOrder = () => {
+    const submitOrderCallAPI = async () => {
+      const url = `${BACKEND}/customer-order/order`;
+      const config = { headers: { Authorization: contextProfile.token } };
 
+      const payload = {
+        "restaurant_id": restaurantCart.restaurant_id,
+        "address": form.address,
+        "suburb": form.suburb,
+        "state": form.state,
+        "postcode": form.postcode,
+        "card_number": cardNumber,
+        "order_price": subtotal,
+        "delivery_fee": deliveryFee,
+        "total_price": total,
+        "customer_notes": note,
+      };
+
+      try {
+        const response = await axios.post(url, payload, config);
+        showToast("Order submitted successfully!", "success");
+        router.replace("/customer/history");
+      } catch (error) {
+        console.error("Error submitting order:", error);
+        showToast("Failed to submit order", "error");
+      }
+    };
+
+    // simple check if the credit card is 16 digits
+    if (cardNumber.length !== 16) {
+      showToast("Please enter a valid credit card number.", "error");
+      return;
+    }
+    
+    showDialog({
+      title: "Confirm Order",
+      message: "Please confirm your order before submission.",
+      onConfirm: submitOrderCallAPI,
+      confirmText: "Yes",
+      cancelText: "No",
+    });
   };
 
   return (
     <MyScrollView>
       {/* Back Button */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
-        <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
+        <IconButton icon="arrow-left" size={24} onPress={() => router.replace("/customer/cart")} />
         <Text variant="headlineSmall" style={{ marginLeft: 4 }}>
           Order Checkout
         </Text>
@@ -169,6 +225,21 @@ export default function CheckoutPage() {
           <Text variant="titleSmall">x {item.quantity}</Text>
         </View>
       ))}
+
+      {/* add customer note, multiline */}
+      <Text variant="titleMedium" style={{ marginBottom: 6, marginTop: 16 }}>
+        Customer Note (optional)
+      </Text>
+      <TextInput
+        label="Customer Note (optional)"
+        mode="outlined"
+        multiline
+        numberOfLines={3}
+        value={note}
+        onChangeText={setNote}
+        style={{ marginBottom: 8 }}
+        placeholder="Add any special instructions or requests here..."
+      />
 
       {/* Address Form, add the submit button to check the distance */}
       <AddressForm 
