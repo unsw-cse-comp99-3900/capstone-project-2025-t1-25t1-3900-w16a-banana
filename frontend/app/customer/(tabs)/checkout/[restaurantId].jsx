@@ -28,6 +28,9 @@ export default function CheckoutPage() {
   const [deliveryFee, setDeliveryFee] = useState(null);
   const [distance, setDistance] = useState(null);
 
+  // credit card: 16 digits
+  const [cardNumber, setCardNumber] = useState("");
+
   // address form, initially empty, allow customer to fill with default address
   const [form, setForm] = useState({
     address: "",
@@ -108,13 +111,31 @@ export default function CheckoutPage() {
     setDistance(distance);
   };
 
+  // show the default card info as: ---- ---- ---- ---- 
+  // and when number comes, insert space every 4 digits
+  const formatCardNumberDisplay = (value) => {
+    if (!value) return "---- ---- ---- ----";
+
+    const digits = value.replace(/\D/g, "").slice(0, 16);
+    return digits.replace(/(.{4})/g, "$1 ").trim();
+  };
+
+  const handleCardNumberChange = (text) => {
+    const digitsOnly = text.replace(/\D/g, "").slice(0, 16);
+    setCardNumber(digitsOnly);
+  };
+
+  const submitOrder = async () => {
+
+  };
+
   return (
     <MyScrollView>
       {/* Back Button */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
         <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
         <Text variant="headlineSmall" style={{ marginLeft: 4 }}>
-          Checkout
+          Order Checkout
         </Text>
       </View>
 
@@ -156,6 +177,19 @@ export default function CheckoutPage() {
         allowContextAddress 
         showSubmit 
         submitCallback={getFee}
+      />
+
+      {/* card number */}
+      <Text variant="titleMedium" style={{ marginBottom: 8, marginTop: 16 }}>
+        Credit Card Information
+      </Text>
+      <TextInput
+        label="Card Number"
+        mode="outlined"
+        keyboardType="number-pad" // Add this to show number keyboard
+        value={formatCardNumberDisplay(cardNumber)}
+        onChangeText={handleCardNumberChange}
+        placeholder="---- ---- ---- ----"
       />
 
       {/* Divider Line */}
@@ -210,11 +244,11 @@ export default function CheckoutPage() {
       </View>
 
       {/* Bottom Buttons */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 16 }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 16, marginBottom: 16 }}>
         <Button mode="text" onPress={() => router.replace("/customer/cart")}>
           BACK
         </Button>
-        <Button mode="contained" onPress={() => alert("TODO")}>
+        <Button mode="outlined" onPress={submitOrder}>
           Submit
         </Button>
       </View>
