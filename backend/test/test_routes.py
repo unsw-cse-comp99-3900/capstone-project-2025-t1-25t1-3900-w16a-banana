@@ -191,7 +191,10 @@ def test_04_customer_order(client):
         state='NSW',
         postcode='2000',
         customer_notes='Hello this is note',
-        card_number='1234-1234-4567-7890'
+        card_number='1234-1234-4567-7890',
+        order_price=10.0,
+        delivery_fee=2.0,
+        total_price=12.0
     )
     assert response.status_code == 200
 
