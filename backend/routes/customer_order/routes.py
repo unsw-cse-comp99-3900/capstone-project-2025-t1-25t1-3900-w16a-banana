@@ -15,7 +15,8 @@ from db_model.db_query import (
     get_customer_by_token,
     filter_cart_items,
     filter_orders,
-    filter_menus
+    filter_menus,
+    get_order_by_order_id
 )
 from routes.customer_order.models import (
     api,
@@ -244,3 +245,42 @@ class OrderItems(Resource):
         empty_cart_items_from_restaurant(customer.id, data['restaurant_id'])
 
         return new_order.dict(), 200
+
+
+@api.route('/')
+class CustomerOrderV2(Resource):
+    @api.expect(auth_header)
+    @api.response(200, 'Success')
+    @api.response(400, 'Bad Request', error_res)
+    @api.response(401, 'Unauthorised', error_res)
+    def get(self):
+        """Get all orders of a customer, via token"""
+
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        orders = filter_orders(customer_id=customer.id)
+        results = [get_order_by_order_id(order.id) for order in orders]
+        return results, 200
+
+@api.route('/<int:order_id>')
+class CustomerOneOrder(Resource):
+    @api.expect(auth_header)
+    @api.response(200, 'Success')
+    @api.response(400, 'Bad Request', error_res)
+    @api.response(401, 'Unauthorised', error_res)
+    def get(self, order_id: int):
+        """Get a single order for my customer via order_id"""
+
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        orders = filter_orders(customer_id=customer.id, id=order_id)
+        if not orders:
+            return res_error(400, 'Invalid Order ID')
+
+        order = orders[0]
+        results = get_order_by_order_id(order.id)
+        return results, 200

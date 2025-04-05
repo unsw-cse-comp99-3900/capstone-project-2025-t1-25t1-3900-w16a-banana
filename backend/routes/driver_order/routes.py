@@ -9,7 +9,8 @@ from utils.response import res_error
 from db_model.db_query import (
     filter_orders,
     get_driver_by_token,
-    get_orders_waiting_driver
+    get_orders_waiting_driver,
+    get_order_by_order_id
 )
 from db_model.db_enum import OrderStatus
 from routes.driver_order.models import (
@@ -138,3 +139,36 @@ class CompleteOrder(Resource):
 
         db.session.commit()
         return { 'message': 'Delivery Completed' }, 200
+
+# order_type: new, in_progress, completed
+# new: the order is not taken by any driver yet
+# in_progress: I have taken this order, and I am doing it
+# completed: delivered
+@api.route('/<string:order_type>')
+@api.doc(params={
+    'order_type': {
+        'description': 'Order Type',
+        'enum': ['new', 'in_progress', 'completed'],
+        'type': 'string'
+    }
+})
+class AvailableOrdersV2(Resource):
+    @api.expect(auth_header)
+    @api.response(200, 'Success')
+    @api.response(400, 'Bad Request', message_res)
+    @api.response(401, 'Unauthorised', message_res)
+    def get(self, order_type):
+        """Get all available orders so the driver can accept"""
+        driver = get_driver_by_token(tokenize(request.headers))
+        if not driver:
+            return res_error(401)
+
+        if order_type == 'new':
+            orders = get_orders_waiting_driver()
+        elif order_type == 'in_progress':
+            orders = filter_orders(driver_id=driver.id, order_status=OrderStatus.DELIVERED)
+        elif order_type == 'completed':
+            orders = filter_orders(driver_id=driver.id, order_status=OrderStatus.DELIVERED)
+        
+        results = [get_order_by_order_id(o.id) for o in orders]
+        return results, 200

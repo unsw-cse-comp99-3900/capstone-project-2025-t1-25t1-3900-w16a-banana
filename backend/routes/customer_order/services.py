@@ -130,9 +130,9 @@ def make_order(
         suburb = data['suburb'],
         state = State(data['state']),
         postcode = data['postcode'],
-        order_price = data['order_price'],
-        delivery_fee = data['delivery_fee'],
-        total_price = data['total_price'],
+        order_price = round(data['order_price'], 2),
+        delivery_fee = round(data['delivery_fee'], 2),
+        total_price = round(data['total_price'], 2),
         customer_notes = data['customer_notes'],
         card_number = data['card_number']
     )

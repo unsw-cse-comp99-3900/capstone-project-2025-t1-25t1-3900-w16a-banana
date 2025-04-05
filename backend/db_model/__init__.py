@@ -274,8 +274,8 @@ class Order(BaseModel):
 
     # the order should have order time, pickup time, delivery time
     order_time = db.Column(db.DateTime, default=datetime.now)
-    pickup_time = db.Column(db.DateTime, nullable=True)
-    delivery_time = db.Column(db.DateTime, nullable=True)
+    pickup_time = db.Column(db.DateTime, nullable=True, default=None)
+    delivery_time = db.Column(db.DateTime, nullable=True, default=None)
 
     # the customer or the restaurant can leave some notes
     customer_notes = db.Column(db.String(255), nullable=True)

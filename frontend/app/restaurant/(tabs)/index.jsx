@@ -34,7 +34,7 @@ export default function Home() {
               variant="titleMedium"
               style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", color: "#4682b4" }}
             >
-              Hello {contextProfile.name}, keep your menu fresh and up to date!
+              Please keep your menu fresh and up to date!
             </Text>
           </>
         )}
