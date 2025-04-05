@@ -107,7 +107,7 @@ class GetCompleteOrders(Resource):
 @api.doc(params={
     'order_type': {
         'description': 'Order type to filter',
-        'enum': ['pending', 'in-progress', 'completed', 'all'],
+        'enum': ['pending', 'accepted', 'ready_for_pickup', 'all'],
         'type': 'string'
     }
 })
@@ -126,13 +126,10 @@ class OrderResourceVe(Resource):
         
         if order_type == 'pending':
             orders = filter_orders(restaurant_id = restaurant.id, order_status = OrderStatus.PENDING)
-        elif order_type == 'in-progress':
+        elif order_type == 'accepted':
             orders = filter_orders(restaurant_id = restaurant.id, order_status = OrderStatus.ACCEPTED)
-        elif order_type == 'completed':
-            orders = Order.query.filter(
-                Order.restaurant_id == restaurant.id,
-                Order.order_status.in_([OrderStatus.DELIVERED, OrderStatus.CANCELLED])
-            )
+        elif order_type == 'ready_for_pickup':
+            orders = filter_orders(restaurant_id = restaurant.id, order_status = OrderStatus.READY_FOR_PICKUP)
         elif order_type == 'all':
             orders = filter_orders(restaurant_id = restaurant.id)
         else:
@@ -171,7 +168,7 @@ class SingleOrder(Resource):
 
         return get_order_by_order_id(order.id), 200
 
-@api.route('/<string:action>/<int:order_id>')
+@api.route('/orders/<string:action>/<int:order_id>')
 @api.doc(params={
     'action': {
         'description': 'Action to perform (accept/reject/ready)',
@@ -181,7 +178,6 @@ class SingleOrder(Resource):
     'order_id': 'Order ID'
 })
 class OrderActions(Resource):
-    """Route: /orders/<string:action>/<int:order_id>"""
     @api.expect(auth_header)
     @api.response(200, 'Success', error_res)
     @api.response(400, 'Bad Request', error_res)

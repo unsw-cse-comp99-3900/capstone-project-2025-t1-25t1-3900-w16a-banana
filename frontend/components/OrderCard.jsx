@@ -183,6 +183,13 @@ export default function OrderCard({ entry }) {
         >
           Details
         </Button>
+        {/* approve button: only for the restaurant, and when the order is pending */}
+        <Button
+          mode="text"
+          onPress={() => alert("TODO")}
+        >
+          Approve
+        </Button>
       </View>
     </View>
   );
