@@ -57,7 +57,7 @@ export default function Cart() {
   return (
     <MyScrollView>
       <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12 }}>
-        <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+        <Text variant="titleLarge">
           Shopping Cart
         </Text>
       </View>

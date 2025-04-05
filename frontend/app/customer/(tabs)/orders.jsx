@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Text, ActivityIndicator } from 'react-native-paper';
+import { Text, ActivityIndicator, Icon } from 'react-native-paper';
 import { BACKEND } from '../../../constants/backend';
 import useAuth from '../../../hooks/useAuth';
 import useToast from '../../../hooks/useToast';
@@ -65,36 +65,61 @@ export default function Orders() {
     );
   }
 
+  if (!loading && orders.length === 0) {
+    return (
+      <MyScrollView>
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12 }}>
+          <Text variant="titleLarge">
+            Orders
+          </Text>
+        </View>
+        <View style={{ alignItems: "center", marginTop: 40 }}>
+          <Icon source="clipboard-text-off" size={60} color="#ccc" />
+          <Text variant="titleMedium" style={{ marginTop: 12, color: "#999" }}>
+            You have no orders yet.
+          </Text>
+        </View>
+      </MyScrollView>
+    );
+  }
+
   return (
     <MyScrollView>
-      <Text variant="titleLarge" style={{ marginBottom: 8 }}>
-        {`Ongoing Orders (${inProgressOrders.length})`}
-      </Text>
-      {inProgressOrders.length === 0 ? (
-        <Text>No ongoing orders.</Text>
-      ) : (
-        inProgressOrders.map((entry) => (
-          <OrderCard key={entry.order.id} entry={entry} />
-        ))
-      )}
-
-      {/* Divider */}
-      <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 4 }} />
-
-      {/* Past Orders */}
-      <Text variant="titleLarge" style={{ marginTop: 8, marginBottom: 8 }}>
-        {`Past Orders (${pastOrders.length})`}
-      </Text>
-      {groupedPastOrders.map(({ date, entries }) => (
-        <View key={date} style={{ marginBottom: 16 }}>
-          <Text variant="titleMedium" style={{ marginBottom: 4 }}>
-            {date}
+      {/* if no orders, then don't show that section */}
+      {inProgressOrders.length > 0 && (
+        <View style={{ flexDirection: 'column', marginBottom: 4 }}>
+          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+            {`Ongoing Orders (${inProgressOrders.length})`}
           </Text>
-          {entries.map((entry) => (
+          {inProgressOrders.map((entry) => (
             <OrderCard key={entry.order.id} entry={entry} />
           ))}
         </View>
-      ))}
+      )}
+
+      {/* divider exists if two parts are shown */}
+      {inProgressOrders.length > 0 && pastOrders.length > 0 && (
+        <View style={{ height: 1, backgroundColor: '#ddd', marginVertical: 8 }} />
+      )}
+
+      {/* if no orders, then don't show */}
+      {pastOrders.length > 0 && (
+        <View style={{ flexDirection: 'column', marginBottom: 4 }}>
+          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+            {`Past Orders (${pastOrders.length})`}
+          </Text>
+          {groupedPastOrders.map(({ date, entries }) => (
+            <View key={date} style={{ marginBottom: 16 }}>
+              <Text variant="titleMedium" style={{ marginBottom: 4 }}>
+                {date}
+              </Text>
+              {entries.map((entry) => (
+                <OrderCard key={entry.order.id} entry={entry} />
+              ))}
+            </View>
+          ))}
+        </View>
+      )}
     </MyScrollView>
   );
 }
