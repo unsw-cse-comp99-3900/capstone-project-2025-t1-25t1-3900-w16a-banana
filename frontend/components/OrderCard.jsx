@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { View, Image } from "react-native";
+import { View, Image, Pressable } from "react-native";
 import { Text, List, Chip } from "react-native-paper";
 import { BACKEND } from "../constants/backend";
 import capitalize from "capitalize";
+import ApprovedGIF from "../assets/images/approved.gif";
+import DeliveryGIF from "../assets/images/delivery.gif";
+import PendingGIF from "../assets/images/pending.gif";
+import PickupGIF from "../assets/images/pickup.gif";
+import useAuth from "../hooks/useAuth";
+import useToast from "../hooks/useToast";
+import useDialog from "../hooks/useDialog";
+import { router } from "expo-router";
 
 // Utility for status badge colors (customize freely)
 const statusColorMap = {
@@ -14,7 +22,18 @@ const statusColorMap = {
   CANCELLED: "#F44336",
 };
 
+const statusGIFMap = {
+  PENDING: PendingGIF,
+  ACCEPTED: ApprovedGIF,
+  READY_FOR_PICKUP: PickupGIF,
+  PICKED_UP: DeliveryGIF,
+};
+
 export default function OrderCard({ entry }) {
+  const { contextProfile } = useAuth();
+  const { showToast } = useToast();
+  const { showDialog } = useDialog();
+
   const [expanded, setExpanded] = useState(false);
 
   const { order, restaurant, items } = entry;
@@ -30,38 +49,65 @@ export default function OrderCard({ entry }) {
   return (
     <View
       style={{
-        backgroundColor: "#f9f9f9",
+        borderWidth: 1,
+        borderColor: "#ddd",
         borderRadius: 12,
-        padding: 12,
-        marginBottom: 12,
+        overflow: "hidden",
+        marginBottom: 16,
+        padding: 14,
+        backgroundColor: "#fff",
         shadowColor: "#000",
         shadowOpacity: 0.05,
         shadowRadius: 4,
         elevation: 2,
       }}
     >
-      {/* Header: Restaurant + Status */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Image
-            source={{ uri: `${BACKEND}/${restaurant.url_profile_image}` }}
-            style={{ width: 30, height: 30, borderRadius: 15 }}
-          />
-          <Text variant="titleSmall" style={{ fontWeight: "bold" }}>
-            {restaurant.name}
+      {/* Header: Left shows the restaurant info + bottom chip, right shows the GIF */}
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+        {/* top: restaurant info, bottom: badge */}
+        <View style={{ flexDirection: "column", flex: 1, gap: 8}}>
+          <Pressable
+            onPress={() => router.push(`/customer/view/restaurant/${restaurant.id}`)}
+            style={{ 
+              flexDirection: "row", 
+              alignItems: "center", 
+              gap: 8,
+              cursor: "pointer",
+            }}
+          >
+            <Image
+              source={{ uri: `${BACKEND}/${restaurant.url_img1}` }}
+              style={{ width: 30, height: 30, borderRadius: "50%", marginRight: 4 }}
+            />
+            <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+              {restaurant.name}
+            </Text>
+          </Pressable>
+          {/* a chip to show the status */}
+          <Text
+            variant="labelMedium"
+            style={{
+              fontWeight: "bold",
+              backgroundColor: statusColorMap[order.order_status],
+              color: "#fff",
+              width: "fit-content",
+              textTransform: "uppercase",
+              paddingHorizontal: 6,
+              paddingVertical: 3,
+              borderRadius: 8,
+            }}
+          >
+            {`#${capitalize.words(order.order_status.replace("_", " "))}`}
           </Text>
         </View>
-
-        <Chip
-          style={{
-            backgroundColor: statusColorMap[order.order_status],
-          }}
-          textStyle={{ color: "#fff", fontWeight: "bold" }}
-        >
-          {capitalize.words(order.order_status.replace("_", " "))}
-        </Chip>
+        {/* right: to show the GIF */}
+        <Image
+          source={statusGIFMap[order.order_status]}
+          style={{ width: 60, height: 60 }}
+          resizeMode="cover"
+        />
       </View>
-
+      
       {/* Order Meta */}
       <View style={{ marginTop: 8 }}>
         <Text variant="bodySmall" style={{ color: "#666" }}>

@@ -7,6 +7,7 @@ import useToast from '../../../hooks/useToast';
 import axios from 'axios';
 import OrderCard from '../../../components/OrderCard';
 import groupOrdersByDate from '../../../utils/group';
+import MyScrollView from '../../../components/MyScrollView';
 
 export default function Orders() {
   const { contextProfile } = useAuth();
@@ -65,11 +66,10 @@ export default function Orders() {
   }
 
   return (
-    <ScrollView style={{ padding: 16 }}>
+    <MyScrollView>
       <Text variant="titleLarge" style={{ marginBottom: 8 }}>
-        In Progress Orders
+        {`Ongoing Orders (${inProgressOrders.length})`}
       </Text>
-
       {inProgressOrders.length === 0 ? (
         <Text>No ongoing orders.</Text>
       ) : (
@@ -78,10 +78,13 @@ export default function Orders() {
         ))
       )}
 
-      <Text variant="titleLarge" style={{ marginTop: 24, marginBottom: 8 }}>
-        Past Orders
-      </Text>
+      {/* Divider */}
+      <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 4 }} />
 
+      {/* Past Orders */}
+      <Text variant="titleLarge" style={{ marginTop: 8, marginBottom: 8 }}>
+        {`Past Orders (${pastOrders.length})`}
+      </Text>
       {groupedPastOrders.map(({ date, entries }) => (
         <View key={date} style={{ marginBottom: 16 }}>
           <Text variant="titleMedium" style={{ marginBottom: 4 }}>
@@ -92,6 +95,6 @@ export default function Orders() {
           ))}
         </View>
       ))}
-    </ScrollView>
+    </MyScrollView>
   );
 }
