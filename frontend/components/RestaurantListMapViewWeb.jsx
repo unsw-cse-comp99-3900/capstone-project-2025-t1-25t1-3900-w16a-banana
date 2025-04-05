@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 import useToast from '../hooks/useToast';
 import { BACKEND } from '../constants/backend';
+import { router } from 'expo-router';
 
 const containerStyle = {
   height: '400px',
@@ -68,7 +69,7 @@ export default function RestaurantListGoogleMap({ restaurants, userLocation }) {
                   )}
                   <button 
                     style={{ marginTop: '8px', padding: '8px 8px', backgroundColor: '#f6f6f6', color: '#0d6efd', border: 'none', borderRadius: '4px' }}
-                    onClick={() => console.log('View restaurant', r.id)}
+                    onClick={() => router.push(`/customer/view/restaurant/${r.id}`)}
                   >
                     View
                   </button>

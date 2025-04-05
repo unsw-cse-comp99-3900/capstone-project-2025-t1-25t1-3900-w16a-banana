@@ -89,7 +89,10 @@ class CustomerTest(UserTest):
         state: str,
         postcode: str,
         customer_notes: str,
-        card_number: str
+        card_number: str,
+        order_price: float,
+        delivery_fee: float,
+        total_price: float
     ):
         """POST /customer-order/order"""
         res = client.post(
@@ -102,7 +105,10 @@ class CustomerTest(UserTest):
                 'state': state,
                 'postcode': postcode,
                 'customer_notes': customer_notes,
-                'card_number': card_number
+                'card_number': card_number,
+                'order_price': order_price,
+                'delivery_fee': delivery_fee,
+                'total_price': total_price
             }
         )
         return res

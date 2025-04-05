@@ -57,8 +57,18 @@ def format_cart_items_v2(cart_items):
                 'restaurant_id': restaurant.id,
                 'restaurant_name': restaurant.name,
                 'restaurant_img': restaurant.url_img1,
-                'items': []
+                'items': [],
             }
+
+            # also add the restaurant address
+            address = {
+                'address': restaurant.address,
+                'suburb': restaurant.suburb,
+                'state': restaurant.state.value,
+                'postcode': restaurant.postcode,
+            }
+
+            result_dict[restaurant.id]["address"] = address
         
         result_dict[restaurant.id]['items'].append({
             'menu_id': menu.id,
@@ -120,9 +130,9 @@ def make_order(
         suburb = data['suburb'],
         state = State(data['state']),
         postcode = data['postcode'],
-        order_price = 0,
-        delivery_fee = 0,
-        total_price = 0,
+        order_price = data['order_price'],
+        delivery_fee = data['delivery_fee'],
+        total_price = data['total_price'],
         customer_notes = data['customer_notes'],
         card_number = data['card_number']
     )
@@ -136,20 +146,14 @@ def attach_order_items(
     Order will now have updated information.
     """
     order_items: List[OrderItem] = []
-    total_price = 0
+
     for formatted_cart_item in formatted_cart_items:
-        total_price += formatted_cart_item['total_price']
         order_items.append(OrderItem(
             order_id = order.id,
             menu_id = formatted_cart_item['menu_id'],
             price = formatted_cart_item['price'],
             quantity = formatted_cart_item['quantity'],
         ))
-
-    # TODO: Add delivery fee calculation
-    order.order_price = total_price
-    order.delivery_fee = 8
-    order.total_price = order.order_price + order.delivery_fee
 
     return order_items
 

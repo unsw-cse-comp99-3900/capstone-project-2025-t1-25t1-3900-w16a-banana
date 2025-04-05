@@ -195,6 +195,7 @@ class OrderItems(Resource):
         """
         Place order for Given Restaurant ID.
         This function also works when there are items from different restaurant.
+        The frontend needs to input the order_price, delivery_fee, and total_price ( = order_price + delivery_fee).
         """
         customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
