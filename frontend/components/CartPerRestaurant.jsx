@@ -161,7 +161,7 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
           <Button 
             mode="text"
             icon="cart-check"
-            onPress={() => alert("Place order TODO!!!")}
+            onPress={() => router.push(`/customer/checkout/${restaurant.restaurant_id}`)}
             style={{ width: "fit-content" }}
           >
             Order

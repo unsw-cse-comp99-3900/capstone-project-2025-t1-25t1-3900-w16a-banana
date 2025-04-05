@@ -23,20 +23,20 @@ export default function RestaurantMenu({ restaurantId }) {
   const [expandedCategories, setExpandedCategories] = useState([]);
 
   // during loading, fetch the menu, and also fetch the cart if the user is a customer
+  const fetchMenu = async () => {
+    const url = `${BACKEND}/restaurant-menu/${restaurantId}`;
+
+    try {
+      const response = await axios.get(url);
+      setMenuCategories(response.data);
+    } catch (error) {
+      showToast("Failed to fetch restaurant menu", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMenu = async () => {
-      const url = `${BACKEND}/restaurant-menu/${restaurantId}`;
-
-      try {
-        const response = await axios.get(url);
-        setMenuCategories(response.data);
-      } catch (error) {
-        showToast("Failed to fetch restaurant menu", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     // for everyone
     fetchMenu();
 
@@ -61,9 +61,11 @@ export default function RestaurantMenu({ restaurantId }) {
     }
   };
 
-  // update the cart when this page gets focused
+  // update the menu for everyone, and for customer, update the cart
   useFocusEffect(
     useCallback(() => {
+      fetchMenu();
+
       if (isCustomer) {
         fetchCart();
       }

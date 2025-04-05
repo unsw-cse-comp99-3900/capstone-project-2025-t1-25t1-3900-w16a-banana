@@ -25,7 +25,7 @@ export default function PersonalInfoForm ({ form, setForm, userType }) {
   const isAdmin = userType === "admin";
 
   return (
-    <View>
+    <View style={{ marginBottom: 15, }}>
       {isCustomer && (
         <TextInput
           label="Username"
