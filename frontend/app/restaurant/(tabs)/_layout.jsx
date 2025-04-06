@@ -37,7 +37,7 @@ export default function TabLayout() {
       icon: hasNewOrders ? "clipboard-alert" : "clipboard-list",
       visible: true,
     },
-    { name: "index", title: "Menu", icon: "menu", visible: true },
+    { name: "menu", title: "Menu", icon: "menu", visible: true },
     { name: "notifications", title: "Notifications", icon: "bell", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
     // Hidden tab
@@ -46,9 +46,9 @@ export default function TabLayout() {
 
   // Tabs shown when registration is still pending
   const pendingTabs = [
-    { name: "index", title: "Home", icon: "home", visible: true },
-    { name: "profile", title: "Profile", icon: "account", visible: true },
     { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
+    { name: "menu", title: "Home", icon: "home", visible: true },
+    { name: "profile", title: "Profile", icon: "account", visible: true },
     { name: "notifications", title: "Notifications", icon: "bell", visible: false },
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
   ];
