@@ -38,14 +38,19 @@ export default function TabLayout() {
       icon: hasNewOrders ? "clipboard-alert" : "clipboard-list",
       visible: true,
     },
+    { name: "history", title: "History", icon: "history", visible: true },
     { name: "notifications", title: "Notifications", icon: "bell", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
+    // hidden tabs
+    { name: "index", title: "Home", icon: "home", visible: false },
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
   ];
 
   const pendingTabs = [
     { name: "index", title: "Home", icon: "home", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
+    // hidden tabs
+    { name: "history", title: "History", icon: "history", visible: false },
     { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
     { name: "notifications", title: "Notifications", icon: "bell", visible: false },
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },

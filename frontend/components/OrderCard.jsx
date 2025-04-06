@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Image, Pressable } from "react-native";
-import { Text, List, Chip, Button } from "react-native-paper";
+import { Text, List, Chip, Button, Icon } from "react-native-paper";
 import { BACKEND } from "../constants/backend";
 import capitalize from "capitalize";
 import ApprovedGIF from "../assets/images/approved.gif";
@@ -11,8 +11,11 @@ import useAuth from "../hooks/useAuth";
 import useToast from "../hooks/useToast";
 import useDialog from "../hooks/useDialog";
 import { router } from "expo-router";
+import { calculateDistance, fetchLocationDetailFromAddress } from "../utils/location";
+import useUserLocation from "../hooks/useUserLocation";
+import OrderPathOverview from "./OrderPathOverview";
 
-// Utility for status badge colors (customize freely)
+// colors for different statuses
 const statusColorMap = {
   PENDING: "#FFA500",
   ACCEPTED: "#2196F3",
@@ -29,6 +32,8 @@ const statusGIFMap = {
   PICKED_UP: DeliveryGIF,
 };
 
+// This component shows a simplified view for one order. 
+// It is used for 3 user roles: customer, restaurant, and driver.
 export default function OrderCard({ entry }) {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
@@ -45,6 +50,22 @@ export default function OrderCard({ entry }) {
   const total = order.total_price;
 
   const formattedDate = new Date(order.order_time).toLocaleString();
+
+  // for the driver, display the pickup address to the delivery address
+  const restaurantAddress = {
+    address: restaurant.address,
+    suburb: restaurant.suburb,
+    state: restaurant.state,
+    postcode: restaurant.postcode,
+  };
+
+  const deliveryAddress = {
+    address: order.address,
+    suburb: order.suburb,
+    state: order.state,
+    postcode: order.postcode,
+  };
+
 
   return (
     <View
@@ -63,6 +84,14 @@ export default function OrderCard({ entry }) {
         elevation: 2,
       }}
     >
+      {/* for the driver only, show the overview of the path */}
+      {contextProfile?.role === "driver" && (
+        <OrderPathOverview
+          restaurantAddress={restaurantAddress}
+          deliveryAddress={deliveryAddress}
+        />
+      )}
+
       {/* Header: Left shows the restaurant info + bottom chip, right shows the GIF */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
         {/* top: restaurant info, bottom: badge */}
