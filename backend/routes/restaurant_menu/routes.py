@@ -45,9 +45,7 @@ class MenuCategories(Resource):
 
         # Get every categories
         categories = filter_menu_categories(restaurant_id = restaurant.id)
-
         return [category.dict() for category in categories], 200
-
 
 @api.route('/category/new')
 class NewMenuCategory(Resource):
@@ -62,16 +60,13 @@ class NewMenuCategory(Resource):
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401)
-
-        name = request.json['name']
-
         # Check for duplicate name
+        name = request.json['name']
         if filter_menu_categories(
             restaurant_id = restaurant.id,
             name = name
         ):
             return res_error(400, 'Category already exists')
-
         # Make and commit new category
         category = MenuCategory(
             restaurant_id=restaurant.id,
@@ -79,20 +74,36 @@ class NewMenuCategory(Resource):
         )
         db.session.add(category)
         db.session.commit()
-
         return category.dict(), 200
 
 @api.route('/category/<int:category_id>')
 class MenuCategoryUpdate(Resource):
     """Route: /categories/category_id"""
+    @api.expect(auth_header)
+    @api.response(200, 'Success', menu_category_model)
+    @api.response(404, 'Not Found', message_res)
+    def get(self, category_id: int):
+        """Get specific category of a restuarant"""
+        # Authenticate
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
+        if not restaurant:
+            return res_error(401)
+        # Get category and return if found. Otherwise, 404 error.
+        categories = filter_menu_categories(
+            restaurant_id = restaurant.id,
+            category_id = category_id
+        )
+        if not categories:
+            return res_error(404, "Category not found")
+        return categories[0].dict(), 200
+
     @api.expect(auth_header, update_menu_category_req)
-    @api.response(200, "Success", menu_category_model)
-    @api.response(400, "Bad Request ", message_res)
-    @api.response(401, "Unauthorised", message_res)
-    @api.response(404, "Not Found", message_res)
+    @api.response(200, 'Success', menu_category_model)
+    @api.response(400, 'Bad Request ', message_res)
+    @api.response(401, 'Unauthorised', message_res)
+    @api.response(404, 'Not Found', message_res)
     def put(self, category_id):
         """Restaurant updates an existing menu category name"""
-
         # Authenticate
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:

@@ -15,7 +15,8 @@ from db_model.db_query import (
 from routes.chat.models import (
     api,
     message_res,
-    send_message_req
+    send_message_req,
+    chat_model, get_all_chat_res
 )
 from routes.chat.services import can_this_user_chat
 
@@ -23,6 +24,7 @@ from routes.chat.services import can_this_user_chat
 class GetAllChat(Resource):
     """Route: /get/all"""
     @api.expect(auth_header)
+    @api.response(200, 'Success', get_all_chat_res)
     def get(self):
         """Get all user's chat log"""
         # Get Myself from Token
@@ -58,6 +60,7 @@ class GetAllChat(Resource):
 class GetChatWith(Resource):
     """Route: /get/<string:user_type>/<int:user_id>"""
     @api.expect(auth_header)
+    @api.marshal_list_with(chat_model)
     def get(self, user_type: str, user_id: int):
         """Get the chat of myself with the given user"""
         # Get Myself from Token
@@ -87,9 +90,7 @@ class GetChatWith(Resource):
             user2_id = me.id
         )
 
-        return {
-            'chats': [chat.dict() for chat in chats]
-        }, 200
+        return [chat.dict() for chat in chats], 200
 
 
 @api.route('/send/<string:user_type>/<int:user_id>')
