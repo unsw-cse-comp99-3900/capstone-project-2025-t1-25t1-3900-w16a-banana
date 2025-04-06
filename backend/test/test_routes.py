@@ -50,6 +50,9 @@ def test_01_customer_register_login(client):
     response = customer1.login(client)
     assert response.status_code == 200
     assert 'token' in response.get_json()
+    response = customer2.login(client)
+    assert response.status_code == 200
+    assert 'token' in response.get_json()
 
 def test_01_restaurant_register_login(client):
     """Test for Restaurant Register and Login"""
@@ -68,6 +71,9 @@ def test_01_restaurant_register_login(client):
     response = restaurant1.login(client)
     assert response.status_code == 200
     assert 'token' in response.get_json()
+    response = restaurant2.login(client)
+    assert response.status_code == 200
+    assert 'token' in response.get_json()
 
 def test_01_driver_register_login(client):
     """Test for Driver Register and Login"""
@@ -82,8 +88,11 @@ def test_01_driver_register_login(client):
     # Weak passowrd should fail to register
     response = driver_weak_password.register(client)
     assert response.status_code == 400
-    # Login with driver
+    # Login with driver1 and driver2
     response = driver1.login(client)
+    assert response.status_code == 200
+    assert 'token' in response.get_json()
+    response = driver2.login(client)
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
@@ -104,7 +113,6 @@ def test_02_approve_reject_pending_restaurant(client):
     assert restaurant1.get_me(client).get_json()['registration_status']\
     == 'APPROVED'
     # Reject restaurant2
-    restaurant2.login(client)
     assert pendings[1]['email'] == restaurant2.email
     response = admin1.pending_application_action(
         client, 'restaurant', restaurant2.get_id(), 'reject'
@@ -250,7 +258,6 @@ def test_06_driver_handling_order(client):
     assert order['customer_id'] == customer1.get_id()
     assert order['restaurant_id'] == restaurant1.get_id()
 
-
     # Pick up or complete should fail when not accepted by driver
     response = driver1.pickup_order(client, order['id'])
     assert response.status_code == 404
@@ -274,3 +281,58 @@ def test_06_driver_handling_order(client):
     # Complete the order
     response = driver1.complete_order(client, order['id'])
     assert response.status_code == 200
+
+def test_06_chat(client):
+    """Test for chatting"""
+    # 1. Chat between Customer and Restaurant
+    # Customer send chat
+    response = customer1.chat_send(
+        client, 'restaurant', restaurant1.get_id(), 'customer to restaurant'
+    )
+    assert response.status_code == 200
+    # Chek if restaurant received
+    response = restaurant1.chat_get(client, 'customer', customer1.get_id())
+    assert response.status_code == 200
+    chat_logs = response.get_json()
+    assert len(chat_logs) == 1
+    assert chat_logs[0]['from_type'] == 'CUSTOMER'
+    assert chat_logs[0]['from_id'] == customer1.get_id()
+    assert chat_logs[0]['message'] == 'customer to restaurant'
+    # Restaurant send chat
+    restaurant1.chat_send(client, 'customer', customer1.get_id(), 'restaurant to customer')
+    assert response.status_code == 200
+    # Check if customer received
+    response = customer1.chat_get(client, 'restaurant', restaurant1.get_id())
+    assert response.status_code == 200
+    chat_logs = response.get_json()
+    assert len(chat_logs) == 2
+    assert chat_logs[1]['from_type'] == 'RESTAURANT'
+    assert chat_logs[1]['from_id'] == restaurant1.get_id()
+    assert chat_logs[1]['message'] == 'restaurant to customer'
+    # 2. Chat between customer and driver
+    response = customer1.chat_send(
+        client, 'driver', driver1.get_id(), 'customer to driver'
+    )
+    assert response.status_code == 200
+    response = driver1.chat_send(
+        client, 'customer', customer1.get_id(), 'driver to customer'
+    )
+    assert response.status_code == 200
+    # 3. Chat between driver and restaurant
+    response = restaurant1.chat_send(
+        client, 'driver', driver1.get_id(), 'restaurant to driver'
+    )
+    assert response.status_code == 200
+    response = driver1.chat_send(
+        client, 'restaurant', restaurant1.get_id(), 'driver to restaurant'
+    )
+    assert response.status_code == 200
+    # 4. Chat between Customers is not allowed.
+    response = customer1.chat_send(client, 'customer', customer2.get_id(), 'Failed Message')
+    assert response.status_code == 400
+    # 5. Chat between Restaurants is not allowed.
+    response = restaurant1.chat_send(client, 'restaurant', restaurant2.get_id(), 'Failed Message')
+    assert response.status_code == 400
+    # 6. Chat between Drivers is not allowed.
+    response = driver1.chat_send(client, 'driver', driver2.get_id(), 'Failed Message')
+    assert response.status_code == 400
