@@ -20,9 +20,18 @@ const statusColorMap = {
   PENDING: "#FFA500",
   RESTAURANT_ACCEPTED: "#2196F3",
   READY_FOR_PICKUP: "#00BCD4",
-  PICKED_UP: "#673AB7",
+  PICKED_UP: "#9977d4",
   DELIVERED: "#4CAF50",
-  CANCELLED: "#F44336",
+  CANCELLED: "#f7776e",
+};
+
+const statusTextMap = {
+  PENDING: "Pending",
+  RESTAURANT_ACCEPTED: "Restaurant Accepted",
+  READY_FOR_PICKUP: "Ready for Pickup",
+  PICKED_UP: "On the Way",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
 };
 
 const statusGIFMap = {
@@ -157,18 +166,45 @@ export default function OrderCard({ entry }) {
         elevation: 2,
       }}
     >
+      {/* show the order ID, total 5 digits, and the chip for the status */}
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+          Order #{String(order.id).padStart(5, "0")}
+        </Text>
+        <Text
+          variant="labelMedium"
+          style={{
+            fontWeight: "bold",
+            backgroundColor: statusColorMap[order.order_status],
+            color: "#fff",
+            width: "fit-content",
+            textTransform: "uppercase",
+            paddingHorizontal: 6,
+            paddingVertical: 3,
+            borderRadius: 8,
+          }}
+        >
+          #{capitalize.words(statusTextMap[order.order_status])}
+        </Text>
+      </View>
+
+      {/* Divider */}
+      <View style={{ height: 1, backgroundColor: '#ddd', marginBottom: 12 }} />
+
       {/* for the driver only, show the overview of the path */}
       {contextProfile?.role === "driver" && (
         <OrderPathOverview
           restaurantAddress={restaurantAddress}
           deliveryAddress={deliveryAddress}
+          orderStatus={order.order_status}
         />
       )}
-
+      
       {/* Header: Left shows the restaurant info + bottom chip, right shows the GIF */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-        {/* top: restaurant info, bottom: badge */}
+        {/* top: info, bottom: badge */}
         <View style={{ flexDirection: "column", flex: 1, gap: 8}}>
+          {/* when the user is the customer or the driver, shows the restaurant info */}
           <Pressable
             onPress={() => router.push(`/customer/view/restaurant/${restaurant.id}`)}
             style={{ 
@@ -186,29 +222,15 @@ export default function OrderCard({ entry }) {
               {restaurant.name}
             </Text>
           </Pressable>
-          {/* a chip to show the status */}
-          <Text
-            variant="labelMedium"
-            style={{
-              fontWeight: "bold",
-              backgroundColor: statusColorMap[order.order_status],
-              color: "#fff",
-              width: "fit-content",
-              textTransform: "uppercase",
-              paddingHorizontal: 6,
-              paddingVertical: 3,
-              borderRadius: 8,
-            }}
-          >
-            {`#${capitalize.words(order.order_status.replace(/_/g, " "))}`}
-          </Text>
         </View>
-        {/* right: to show the GIF */}
-        <Image
-          source={statusGIFMap[order.order_status]}
-          style={{ width: 60, height: 60 }}
-          resizeMode="cover"
-        />
+        {/* right: to show the GIF, when the order status is not delivered or cancelled */}
+        {order.order_status !== "DELIVERED" && order.order_status !== "CANCELLED" && (
+          <Image
+            source={statusGIFMap[order.order_status]}
+            style={{ width: 60, height: 60 }}
+            resizeMode="cover"
+          />
+        )}
       </View>
 
       {/* Accordion */}

@@ -4,13 +4,19 @@ import { Text, Icon } from "react-native-paper";
 import { fetchLocationDetailFromAddress, calculateDistance } from "../utils/location";
 import useUserLocation from "../hooks/useUserLocation";
 
-export default function OrderPathOverview({ restaurantAddress, deliveryAddress }) {
+// When the order status is RESTAURANT_ACCEPTED, or READY_FOR_PICKUP, 
+// show two paths: driver -> restaurant, and restaurant -> customer
+// When the order status is PICKED_UP, show one path: driver -> customer
+export default function OrderPathOverview({ restaurantAddress, deliveryAddress, orderStatus }) {
   const { locationDetails: driverLocation } = useUserLocation();
 
   const [restaurantLocation, setRestaurantLocation] = useState(null);
   const [deliveryLocation, setDeliveryLocation] = useState(null);
   const [distance1, setDistance1] = useState(null); // driver -> restaurant
   const [distance2, setDistance2] = useState(null); // restaurant -> customer
+  const [distance3, setDistance3] = useState(null); // driver -> customer
+
+  const showTwoDistance = orderStatus === "RESTAURANT_ACCEPTED" || orderStatus === "READY_FOR_PICKUP";
 
   useEffect(() => {
     const getDistance = async () => {
@@ -22,9 +28,11 @@ export default function OrderPathOverview({ restaurantAddress, deliveryAddress }
 
       const d1 = calculateDistance(driverLocation.lat, driverLocation.lng, restLoc.lat, restLoc.lng);
       const d2 = calculateDistance(restLoc.lat, restLoc.lng, delivLoc.lat, delivLoc.lng);
+      const d3 = calculateDistance(driverLocation.lat, driverLocation.lng, delivLoc.lat, delivLoc.lng);
 
       setDistance1(d1);
       setDistance2(d2);
+      setDistance3(d3);
     };
 
     if (!driverLocation) return;
@@ -33,55 +41,82 @@ export default function OrderPathOverview({ restaurantAddress, deliveryAddress }
 
   if (!driverLocation || !restaurantLocation || !deliveryLocation) return null;
 
+  // If the order
   return (
     <View>
       <View
         style={{
           flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
           marginBottom: 8,
         }}
       >
-        {/* Driver */}
-        <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Icon source="car" size={20} color="#666" />
-          <Text variant="bodySmall" style={{ color: "#666" }}>
-            {driverLocation.suburb}
-          </Text>
-        </View>
+        {showTwoDistance ? (
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%"}}>
+            {/* Driver */}
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Icon source="car" size={20} color="#666" />
+              <Text variant="bodySmall" style={{ color: "#666" }}>
+                {driverLocation.suburb}
+              </Text>
+            </View>
 
-        {/* Distance to restaurant */}
-        <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Icon source="arrow-right-bold" size={16} color="#aaa" />
-          <Text variant="bodySmall" style={{ color: "#888" }}>
-            {distance1 ? `${distance1.toFixed(1)} km` : "—"}
-          </Text>
-        </View>
+            {/* Distance to restaurant */}
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Icon source="arrow-right-bold" size={16} color="#aaa" />
+              <Text variant="bodySmall" style={{ color: "#888" }}>
+                {distance1 ? `${distance1.toFixed(1)} km` : "—"}
+              </Text>
+            </View>
 
-        {/* Restaurant */}
-        <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Icon source="food" size={20} color="#666" />
-          <Text variant="bodySmall" style={{ color: "#666" }}>
-            {restaurantLocation.suburb}
-          </Text>
-        </View>
+            {/* Restaurant */}
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Icon source="food" size={20} color="#666" />
+              <Text variant="bodySmall" style={{ color: "#666" }}>
+                {restaurantLocation.suburb}
+              </Text>
+            </View>
 
-        {/* Distance to customer */}
-        <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Icon source="arrow-right-bold" size={16} color="#aaa" />
-          <Text variant="bodySmall" style={{ color: "#888" }}>
-            {distance2 ? `${distance2.toFixed(1)} km` : "—"}
-          </Text>
-        </View>
+            {/* Distance to customer */}
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Icon source="arrow-right-bold" size={16} color="#aaa" />
+              <Text variant="bodySmall" style={{ color: "#888" }}>
+                {distance2 ? `${distance2.toFixed(1)} km` : "—"}
+              </Text>
+            </View>
 
-        {/* Customer */}
-        <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Icon source="home-outline" size={20} color="#666" />
-          <Text variant="bodySmall" style={{ color: "#666" }}>
-            {deliveryLocation.suburb}
-          </Text>
-        </View>
+            {/* Customer */}
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Icon source="home-outline" size={20} color="#666" />
+              <Text variant="bodySmall" style={{ color: "#666" }}>
+                {deliveryLocation.suburb}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%"}}>
+            {/* show driver to the customer only */}
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Icon source="car" size={20} color="#666" />
+              <Text variant="bodySmall" style={{ color: "#666" }}>
+                {driverLocation.suburb}
+              </Text>
+            </View>
+
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Icon source="arrow-right-bold" size={16} color="#aaa" />
+              <Text variant="bodySmall" style={{ color: "#888" }}>
+                {distance3 ? `${distance3.toFixed(1)} km` : "—"}
+              </Text>
+            </View>
+
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Icon source="home-outline" size={20} color="#666" />
+              <Text variant="bodySmall" style={{ color: "#666" }}>
+                {deliveryLocation.suburb}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
       <View style={{ height: 1, backgroundColor: '#ddd', marginBottom: 12 }} />
     </View>
