@@ -63,11 +63,12 @@ class AcceptOrder(Resource):
             return res_error(404, 'Order Not Found')
         order = orders[0]
 
+        # if the order is already accepted by other driver, then it cannot be accepted.
         if order.driver_id:
             return res_error(404, 'Order Accepted By Other Driver')
 
-        if order.order_status != OrderStatus.ACCEPTED\
-            and order.order_status != OrderStatus.READY_FOR_PICKUP:
+        # if this order is not approved by the restaurant, then it cannot be accepted.
+        if order.order_status == OrderStatus.PENDING:
             return res_error(400, 'Order Cannot Be Accepted')
 
         order.driver_id = driver.id

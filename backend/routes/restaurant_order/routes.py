@@ -62,7 +62,7 @@ class GetActiveOrders(Resource):
         active_orders: List[Order] = []
         for order in orders:
             status = order.order_status
-            if status == OrderStatus.ACCEPTED\
+            if status == OrderStatus.RESTAURANT_ACCEPTED\
                 or status == OrderStatus.READY_FOR_PICKUP\
                 or status == OrderStatus.PICKED_UP:
                 active_orders.append(order)
@@ -127,7 +127,7 @@ class OrderResourceVe(Resource):
         if order_type == 'pending':
             orders = filter_orders(restaurant_id = restaurant.id, order_status = OrderStatus.PENDING)
         elif order_type == 'accepted':
-            orders = filter_orders(restaurant_id = restaurant.id, order_status = OrderStatus.ACCEPTED)
+            orders = filter_orders(restaurant_id = restaurant.id, order_status = OrderStatus.RESTAURANT_ACCEPTED)
         elif order_type == 'ready_for_pickup':
             orders = filter_orders(restaurant_id = restaurant.id, order_status = OrderStatus.READY_FOR_PICKUP)
         elif order_type == 'all':
@@ -201,7 +201,7 @@ class OrderActions(Resource):
 
         msg: str = ''
         if action == 'accept':
-            order.order_status = OrderStatus.ACCEPTED
+            order.order_status = OrderStatus.RESTAURANT_ACCEPTED
             msg = 'Order Accepted'
         elif action == 'reject':
             order.order_status = OrderStatus.CANCELLED

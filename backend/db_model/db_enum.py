@@ -15,12 +15,12 @@ class ChatSupportUserType(Enum):
 class OrderStatus(Enum):
     """
     Class for Enum of Order Status.
-    Customer orders item -> PENDING -> Restaurant confirms -> ACCEPTED
+    Customer orders item -> PENDING -> Restaurant confirms -> RESTAURANT_ACCEPTED
     -> Restaurant notify food ready -> READY_FOR_PICKUP -> Driver pick up order
     -> PICKED_UP -> Driver completes delivery -> DELIVERED
     """
     PENDING = 'PENDING'
-    ACCEPTED = 'ACCEPTED'
+    RESTAURANT_ACCEPTED = 'RESTAURANT_ACCEPTED'
     READY_FOR_PICKUP = 'READY_FOR_PICKUP'
     PICKED_UP = 'PICKED_UP'
     DELIVERED = 'DELIVERED'

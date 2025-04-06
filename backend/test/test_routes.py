@@ -241,7 +241,7 @@ def test_05_restaurant_accept(client):
     # The order should be active now
     response = restaurant1.orders_get(client, 'active')
     assert response.status_code == 200
-    assert response.get_json()['orders'][0]['order_status'] == 'ACCEPTED'
+    assert response.get_json()['orders'][0]['order_status'] == 'RESTAURANT_ACCEPTED'
 
     # Ready for pickup
     response = restaurant1.order_action(client, 'ready', order_id)

@@ -44,6 +44,8 @@ export default function DriverOrdersScreen() {
       setNewOrders(newRes.data || []);
       setToPickupOrders(pickupRes.data || []);
       setDeliveringOrders(deliveringRes.data || []);
+
+      console.log("line 48", pickupRes.data);
     } catch (err) {
       console.error(err);
       showToast("Failed to fetch driver orders", "error");
@@ -123,8 +125,8 @@ export default function DriverOrdersScreen() {
                     size={18}
                     style={{
                       position: "absolute",
-                      top: 8,
-                      right: 8,
+                      top: 6,
+                      right: 6,
                       backgroundColor: "#8833ff",
                       color: "#fff",
                     }}

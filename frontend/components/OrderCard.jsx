@@ -12,13 +12,13 @@ import useToast from "../hooks/useToast";
 import useDialog from "../hooks/useDialog";
 import { router } from "expo-router";
 import { calculateDistance, fetchLocationDetailFromAddress } from "../utils/location";
-import useUserLocation from "../hooks/useUserLocation";
 import OrderPathOverview from "./OrderPathOverview";
+import axios from "axios";
 
 // colors for different statuses
 const statusColorMap = {
   PENDING: "#FFA500",
-  ACCEPTED: "#2196F3",
+  RESTAURANT_ACCEPTED: "#2196F3",
   READY_FOR_PICKUP: "#00BCD4",
   PICKED_UP: "#673AB7",
   DELIVERED: "#4CAF50",
@@ -27,7 +27,7 @@ const statusColorMap = {
 
 const statusGIFMap = {
   PENDING: PendingGIF,
-  ACCEPTED: ApprovedGIF,
+  RESTAURANT_ACCEPTED: ApprovedGIF,
   READY_FOR_PICKUP: PickupGIF,
   PICKED_UP: DeliveryGIF,
 };
@@ -66,6 +66,52 @@ export default function OrderCard({ entry }) {
     postcode: order.postcode,
   };
 
+  // restaurant: accept or reject the order,
+  // action = "accept" or "reject"
+  const restaurantAcceptRejectOrder = (action) => {
+    // showDialog to confirm the action
+    showDialog({
+      title: `Order Action Confirmation`,
+      message: `Are you sure you want to ${action} this order?`,
+      confirmText: "Yes",
+      cancelText: "No",
+      onConfirm: async () => {
+        const url = `${BACKEND}/restaurant-order/orders/${action}/${order.id}`;
+        const config = { headers: { Authorization: contextProfile.token } };
+    
+        try {
+          await axios.post(url, {}, config);
+          showToast(`Order ${action === "accept" ? "accepted" : "rejected"}`, "success");
+        } catch (error) {
+          console.error(error);
+          showToast(`Failed to ${action} order`, "error");
+        }
+      }
+    });
+  };
+
+  // driver: accept the order
+  const driverAcceptOrder = () => {
+    // confirm the action
+    showDialog({
+      title: "Accept Order Confirmation",
+      message: "Are you sure you want to accept this order?",
+      confirmText: "Yes",
+      cancelText: "No",
+      onConfirm: async () => {
+        const url = `${BACKEND}/driver-order/order/accept/${order.id}`;
+        const config = { headers: { Authorization: contextProfile.token } };
+    
+        try {
+          await axios.post(url, {}, config);
+          showToast("Order accepted", "success");
+        } catch (error) {
+          console.error(error);
+          showToast("Failed to accept order", "error");
+        }
+      }
+    });
+  };
 
   return (
     <View
@@ -219,14 +265,14 @@ export default function OrderCard({ entry }) {
               textColor="red"
               mode="elevated"
               compact
-              onPress={() => alert("TODO")}
+              onPress={() => restaurantAcceptRejectOrder("reject")}
             >
               Cancel
             </Button>
             <Button
               mode="elevated"
               compact
-              onPress={() => alert("TODO")}
+              onPress={() => restaurantAcceptRejectOrder("accept")}
             >
               Approve
             </Button>
@@ -237,7 +283,7 @@ export default function OrderCard({ entry }) {
           <Button
             mode="elevated"
             compact
-            onPress={() => alert("TODO")}
+            onPress={driverAcceptOrder}
           >
             Accept
           </Button>
