@@ -45,7 +45,7 @@ export default function OrderPathOverview({ restaurantAddress, deliveryAddress }
       >
         {/* Driver */}
         <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Icon source="car" size={28} color="#666" />
+          <Icon source="car" size={20} color="#666" />
           <Text variant="bodySmall" style={{ color: "#666" }}>
             {driverLocation.suburb}
           </Text>
@@ -61,7 +61,7 @@ export default function OrderPathOverview({ restaurantAddress, deliveryAddress }
 
         {/* Restaurant */}
         <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Icon source="food" size={28} color="#666" />
+          <Icon source="food" size={20} color="#666" />
           <Text variant="bodySmall" style={{ color: "#666" }}>
             {restaurantLocation.suburb}
           </Text>
@@ -77,7 +77,7 @@ export default function OrderPathOverview({ restaurantAddress, deliveryAddress }
 
         {/* Customer */}
         <View style={{ flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Icon source="home-outline" size={28} color="#666" />
+          <Icon source="home-outline" size={20} color="#666" />
           <Text variant="bodySmall" style={{ color: "#666" }}>
             {deliveryLocation.suburb}
           </Text>

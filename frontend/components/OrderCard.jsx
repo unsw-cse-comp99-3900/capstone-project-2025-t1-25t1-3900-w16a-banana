@@ -171,7 +171,7 @@ export default function OrderCard({ entry }) {
       </View>
 
       {/* Order Info Rows */}
-      <View style={{ marginBottom: 8, gap: 4 }}>
+      <View style={{ marginBottom: 12, gap: 4 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text variant="bodySmall" style={{ color: "#666" }}>Order Time:</Text>
           <Text variant="bodySmall" style={{ color: "#666" }}>{formattedDate}</Text>
@@ -204,21 +204,44 @@ export default function OrderCard({ entry }) {
       </View>
 
       {/* buttons on the far right */}
-      <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
-        {/* view the details */}
+      <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12 }}>
+        {/* view the details: this button is always there. */}
         <Button
           mode="text"
           onPress={() => alert("TODO")}
         >
           Details
         </Button>
-        {/* approve button: only for the restaurant, and when the order is pending */}
-        <Button
-          mode="text"
-          onPress={() => alert("TODO")}
-        >
-          Approve
-        </Button>
+        {/* approve button: only for the restaurant, and when the order is pending, show approve and reject two buttons */}
+        {contextProfile?.role === "restaurant" && order.order_status === "PENDING" && (
+          <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
+            <Button
+              textColor="red"
+              mode="elevated"
+              compact
+              onPress={() => alert("TODO")}
+            >
+              Cancel
+            </Button>
+            <Button
+              mode="elevated"
+              compact
+              onPress={() => alert("TODO")}
+            >
+              Approve
+            </Button>
+          </View>
+        )}
+        {/* Accept button: only for the driver, and when the order.driver_id is none */}
+        {contextProfile?.role === "driver" && order.driver_id === null && (
+          <Button
+            mode="elevated"
+            compact
+            onPress={() => alert("TODO")}
+          >
+            Accept
+          </Button>
+        )}
       </View>
     </View>
   );
