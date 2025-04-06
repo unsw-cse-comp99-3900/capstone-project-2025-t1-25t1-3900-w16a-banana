@@ -12,9 +12,10 @@ export default function TabLayout() {
     if (!contextProfile?.token) return;
 
     const fetchPendingOrders = async () => {
+      const url = `${BACKEND}/restaurant-order/pending`;
       const config = { headers: { Authorization: contextProfile.token } };
       try {
-        const res = await axios.get(`${BACKEND}/restaurant-order/pending`, config);
+        const res = await axios.get(url, config);
         const pending = res.data || [];
         setHasNewOrders(pending.length > 0);
       } catch (err) {
@@ -22,9 +23,8 @@ export default function TabLayout() {
       }
     };
 
+    // set initial fetch, and re-poll every 10 seconds
     fetchPendingOrders();
-
-    // set up polling for every 10 seconds
     const interval = setInterval(fetchPendingOrders, 10000);
     return () => clearInterval(interval);
   }, [contextProfile]);
