@@ -59,8 +59,6 @@ export default function OrderCard({ entry }) {
   const delivery = order.delivery_fee;
   const total = order.total_price;
 
-  const formattedDate = new Date(order.order_time).toLocaleString();
-
   // for the driver, display the pickup address to the delivery address
   const restaurantAddress = {
     address: restaurant.address,
@@ -314,24 +312,26 @@ export default function OrderCard({ entry }) {
         </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text variant="bodySmall" style={{ color: "#666" }}>Order Time:</Text>
-          <Text variant="bodySmall" style={{ color: "#666" }}>{formattedDate}</Text>
+          <Text variant="bodySmall" style={{ color: "#666" }}>Order Created At:</Text>
+          <Text variant="bodySmall" style={{ color: "#666" }}>
+            {order.order_time}
+          </Text>
         </View>
 
         {order.pickup_time && (
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text variant="bodySmall" style={{ color: "#666" }}>Pickup Ready At:</Text>
+            <Text variant="bodySmall" style={{ color: "#666" }}>Driver Picked Up At:</Text>
             <Text variant="bodySmall" style={{ color: "#666" }}>
-              {new Date(order.pickup_time).toLocaleString()}
+              {order.pickup_time}
             </Text>
           </View>
         )}
 
         {order.delivery_time && (
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text variant="bodySmall" style={{ color: "#666" }}>Delivered At:</Text>
+            <Text variant="bodySmall" style={{ color: "#666" }}>Finish Delivery At:</Text>
             <Text variant="bodySmall" style={{ color: "#666" }}>
-              {new Date(order.delivery_time).toLocaleString()}
+              {order.delivery_time}
             </Text>
           </View>
         )}
