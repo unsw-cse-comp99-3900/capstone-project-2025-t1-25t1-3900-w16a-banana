@@ -200,13 +200,13 @@ export default function OrderCard({ entry }) {
         />
       )}
       
-      {/* Header: Left shows the restaurant info + bottom chip, right shows the GIF */}
+      {/* Header: Left shows the info, right shows the GIF */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
         {/* top: info, bottom: badge */}
         <View style={{ flexDirection: "column", flex: 1, gap: 8}}>
           {/* when the user is the customer or the driver, shows the restaurant info */}
           <Pressable
-            onPress={() => router.push(`/customer/view/restaurant/${restaurant.id}`)}
+            onPress={() => router.push(`/${contextProfile.role}/view/restaurant/${restaurant.id}`)}
             style={{ 
               flexDirection: "row", 
               alignItems: "center", 
@@ -268,15 +268,15 @@ export default function OrderCard({ entry }) {
       {/* Order Info Rows */}
       <View style={{ marginBottom: 12, gap: 4 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text variant="bodySmall" style={{ color: "#666" }}>Order Time:</Text>
-          <Text variant="bodySmall" style={{ color: "#666" }}>{formattedDate}</Text>
-        </View>
-
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text variant="bodySmall" style={{ color: "#666" }}>Deliver To:</Text>
           <Text variant="bodySmall" style={{ color: "#666", textAlign: "right", flex: 1 }}>
             {order.address}, {order.suburb}, {order.state} {order.postcode}
           </Text>
+        </View>
+
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text variant="bodySmall" style={{ color: "#666" }}>Order Time:</Text>
+          <Text variant="bodySmall" style={{ color: "#666" }}>{formattedDate}</Text>
         </View>
 
         {order.pickup_time && (

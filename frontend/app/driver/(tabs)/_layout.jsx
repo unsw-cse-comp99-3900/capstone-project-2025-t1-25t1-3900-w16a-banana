@@ -44,6 +44,7 @@ export default function TabLayout() {
     // hidden tabs
     { name: "index", title: "Home", icon: "home", visible: false },
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
+    { name: "view/restaurant/[restaurantId]", title: "Restaurant", icon: "store", visible: false },
   ];
 
   const pendingTabs = [
@@ -54,6 +55,7 @@ export default function TabLayout() {
     { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
     { name: "notifications", title: "Notifications", icon: "bell", visible: false },
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
+    { name: "view/restaurant/[restaurantId]", title: "Restaurant", icon: "store", visible: false },
   ];
 
   const tabsToShow = isPendingDriver ? pendingTabs : normalTabs;
