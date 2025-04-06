@@ -242,17 +242,23 @@ def get_orders_of_driver_from_order_type(driver_id: int, order_type: str) -> Lis
     """order_type: new, in_progress, delivering, completed, all"""
 
     if order_type == 'new':
+        # require this order must be accepted by the restaurant first, 
+        # then it can be shown to the driver.
+        # so the order_status can be: RESTAURANT_ACCEPTED, READY_FOR_PICKUP
         return Order.query.filter(
             Order.driver_id.is_(None),
-            Order.order_status != OrderStatus.CANCELLED
+            Order.order_status.in_([
+                OrderStatus.RESTAURANT_ACCEPTED,
+                OrderStatus.READY_FOR_PICKUP,
+            ])
         ).all()
-    elif order_type == 'in_progress':
+    elif order_type == 'to_pickup':
         # this order belongs to this driver,
-        # order status: accepted (in cooking), ready_for_pickup (waiting for driver)
+        # order status: restaurant_accepted (in cooking), ready_for_pickup (waiting for driver)
         return Order.query.filter(
             Order.driver_id == driver_id,
             Order.order_status.in_([
-                OrderStatus.ACCEPTED,
+                OrderStatus.RESTAURANT_ACCEPTED,
                 OrderStatus.READY_FOR_PICKUP,
             ])
         ).all()

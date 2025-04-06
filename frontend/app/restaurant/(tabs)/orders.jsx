@@ -122,8 +122,8 @@ export default function RestaurantOrdersScreen() {
                     size={18}
                     style={{
                       position: "absolute",
-                      top: 8,
-                      right: 8,
+                      top: 6,
+                      right: 6,
                       backgroundColor: "#8833ff",
                       color: "#fff",
                     }}

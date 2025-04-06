@@ -16,9 +16,14 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
 
+  // use effect to keep fetching every 10 seconds
   useEffect(() => {
     if (!contextProfile?.token) return;
     fetchOrders();
+
+    // keep doing it every 10 seconds
+    const interval = setInterval(fetchOrders, 10000);
+    return () => clearInterval(interval);
   }, [contextProfile]);
 
   const fetchOrders = async () => {
@@ -37,7 +42,7 @@ export default function Orders() {
   };
 
   // Filter & sort orders
-  const inProgressStatuses = ['PENDING', 'ACCEPTED', 'READY_FOR_PICKUP', 'PICKED_UP'];
+  const inProgressStatuses = ['PENDING', 'RESTAURANT_ACCEPTED', 'READY_FOR_PICKUP', 'PICKED_UP'];
 
   const inProgressOrders = useMemo(() => {
     return orders
