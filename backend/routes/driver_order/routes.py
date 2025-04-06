@@ -10,7 +10,7 @@ from db_model.db_query import (
     filter_orders,
     get_driver_by_token,
     get_orders_waiting_driver,
-    get_orders_of_driver_in_progress,
+    get_orders_of_driver_from_order_type,
     get_order_by_order_id
 )
 from db_model.db_enum import OrderStatus
@@ -149,7 +149,7 @@ class CompleteOrder(Resource):
 @api.doc(params={
     'order_type': {
         'description': 'Order Type',
-        'enum': ['new', 'in_progress', 'completed', 'all'],
+        'enum': ['new', 'to_pickup', 'delivering', 'completed', 'all'],
         'type': 'string'
     }
 })
@@ -164,14 +164,6 @@ class AvailableOrdersV2(Resource):
         if not driver:
             return res_error(401)
 
-        if order_type == 'new':
-            orders = get_orders_waiting_driver()
-        elif order_type == 'in_progress':
-            orders = get_orders_of_driver_in_progress(driver.id)
-        elif order_type == 'completed':
-            orders = filter_orders(driver_id=driver.id, order_status=OrderStatus.DELIVERED)
-        elif order_type == 'all':
-            orders = filter_orders(driver_id=driver.id)
-        
-        results = [get_order_by_order_id(o.id) for o in orders]
-        return results, 200
+        orders = get_orders_of_driver_from_order_type(driver.id, order_type)
+        response = [get_order_by_order_id(order.id) for order in orders]
+        return response, 200
