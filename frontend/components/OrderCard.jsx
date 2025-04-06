@@ -44,13 +44,14 @@ const statusGIFMap = {
 // This component shows a simplified view for one order. 
 // It is used for 3 user roles: customer, restaurant, and driver.
 export default function OrderCard({ entry }) {
+  console.log(entry);
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
   const { showDialog } = useDialog();
 
   const [expanded, setExpanded] = useState(false);
 
-  const { order, restaurant, items } = entry;
+  const { order, restaurant, items, customer } = entry;
 
   const toggleExpanded = () => setExpanded(!expanded);
 
@@ -149,6 +150,28 @@ export default function OrderCard({ entry }) {
     });
   };
 
+  const driverFinishDelivery = () => {
+    // confirm the action
+    showDialog({
+      title: "Finish Delivery Confirmation",
+      message: "Please confirm that you have delivered the order.",
+      confirmText: "Yes",
+      cancelText: "No",
+      onConfirm: async () => {
+        const url = `${BACKEND}/driver-order/order/complete/${order.id}`;
+        const config = { headers: { Authorization: contextProfile.token } };
+    
+        try {
+          await axios.post(url, {}, config);
+          showToast("Order delivered", "success");
+        } catch (error) {
+          console.error(error);
+          showToast("Failed to finish delivery", "error");
+        }
+      }
+    });
+  };
+  
   return (
     <View
       style={{
@@ -189,7 +212,7 @@ export default function OrderCard({ entry }) {
       </View>
 
       {/* Divider */}
-      <View style={{ height: 1, backgroundColor: '#ddd', marginBottom: 12 }} />
+      <View style={{ height: 1, backgroundColor: '#ddd', marginBottom: 8 }} />
 
       {/* for the driver only, show the overview of the path */}
       {contextProfile?.role === "driver" && (
@@ -201,10 +224,9 @@ export default function OrderCard({ entry }) {
       )}
       
       {/* Header: Left shows the info, right shows the GIF */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-        {/* top: info, bottom: badge */}
-        <View style={{ flexDirection: "column", flex: 1, gap: 8}}>
-          {/* when the user is the customer or the driver, shows the restaurant info */}
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        {/* When the user is a customer, sees the restaurant avatar + restaurant name, pressable */}
+        {contextProfile?.role === "customer" && (
           <Pressable
             onPress={() => router.push(`/${contextProfile.role}/view/restaurant/${restaurant.id}`)}
             style={{ 
@@ -218,11 +240,28 @@ export default function OrderCard({ entry }) {
               source={{ uri: `${BACKEND}/${restaurant.url_img1}` }}
               style={{ width: 30, height: 30, borderRadius: "50%", marginRight: 4 }}
             />
-            <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+            <Text variant="titleMedium">
               {restaurant.name}
             </Text>
           </Pressable>
-        </View>
+        )}
+        {/* When the user is a driver, top: From xxx, bottom: to xxx */}
+        {contextProfile?.role === "driver" && (
+          <View style={{ flexDirection: "column", gap: 2 }}>
+            <Text variant="bodyMedium">
+              From: {restaurant.name}
+            </Text>
+            <Text variant="bodyMedium">
+              To Customer: {customer.username}
+            </Text>
+          </View>
+        )}
+        {/* When the user is a restaurant, only see the customer name */}
+        {contextProfile?.role === "restaurant" && (
+          <Text variant="titleMedium">
+            {`Customer: ${customer.username}`}
+          </Text>
+        )}
         {/* right: to show the GIF, when the order status is not delivered or cancelled */}
         {order.order_status !== "DELIVERED" && order.order_status !== "CANCELLED" && (
           <Image
@@ -355,6 +394,16 @@ export default function OrderCard({ entry }) {
             onPress={driverPickupOrder}
           >
             Confirm Pickup
+          </Button>
+        )}
+        {/* for the driver, when the order is picked_up, show the delivered button for the driver */}
+        {contextProfile?.role === "driver" && order.order_status === "PICKED_UP" && (
+          <Button
+            mode="elevated"
+            compact
+            onPress={driverFinishDelivery}
+          >
+            Mark Delivered
           </Button>
         )}
       </View>
