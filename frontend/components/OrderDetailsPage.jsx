@@ -1,11 +1,26 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Image } from 'react-native';
-import { Text, Divider } from 'react-native-paper';
+import { Text, Divider, IconButton } from 'react-native-paper';
 import MyScrollView from './MyScrollView';
 import axios from 'axios';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { BACKEND } from '../constants/backend';
 import useAuth from '../hooks/useAuth';
+import ApprovedGIF from "../assets/images/approved.gif";
+import DeliveryGIF from "../assets/images/delivery.gif";
+import PendingGIF from "../assets/images/pending.gif";
+import PickupGIF from "../assets/images/pickup.gif";
+import DeliveredGIF from "../assets/images/delivered.gif";
+import { STATUS_COLOR_MAP, STATUS_TEXT_MAP } from '../utils/order';
+import capitalize from 'capitalize';
+
+const statusGIFMap = {
+  PENDING: PendingGIF,
+  RESTAURANT_ACCEPTED: ApprovedGIF,
+  READY_FOR_PICKUP: PickupGIF,
+  PICKED_UP: DeliveryGIF,
+  DELIVERED: DeliveredGIF,
+};
 
 export default function OrderDetailsPage({ orderId }) {
   const { contextProfile } = useAuth();
@@ -43,9 +58,74 @@ export default function OrderDetailsPage({ orderId }) {
 
   return (
     <MyScrollView>
-      <Text variant="titleLarge" style={{ marginBottom: 10 }}>
-        Order Details (ID: {order.id})
-      </Text>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+          <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
+          <Text variant="titleLarge">
+            Order #{String(order.id).padStart(5, "0")}
+          </Text>
+        </View>
+        <Text
+          variant="labelLarge"
+          style={{
+            fontWeight: "bold",
+            backgroundColor: STATUS_COLOR_MAP[order.order_status],
+            color: "#fff",
+            width: "fit-content",
+            textTransform: "uppercase",
+            paddingHorizontal: 6,
+            paddingVertical: 3,
+            borderRadius: 8,
+          }}
+        >
+          #{capitalize.words(STATUS_TEXT_MAP[order.order_status])}
+        </Text>
+      </View>
+      
+      {/* when the order status is not delivered or cancelled */}
+      {order.order_status !== "DELIVERED" && order.order_status !== "CANCELLED" && (
+        <View>
+          <Text variant="titleMedium" style={{ marginBottom: 4 }}>Order Status</Text>
+          {(() => {
+            const steps = [
+              { key: "PENDING", label: "Pending" },
+              { key: "RESTAURANT_ACCEPTED", label: "Cooking" },
+              { key: "READY_FOR_PICKUP", label: "Ready for Pickup" },
+              { key: "PICKED_UP", label: "Picked Up" },
+              { key: "DELIVERED", label: "Delivered" },
+            ];
+
+            const currentIndex = steps.findIndex(s => s.key === order.order_status);
+            const remainingSteps = steps.slice(currentIndex);
+
+            return (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                {remainingSteps.map((step, index) => (
+                  <React.Fragment key={step.key}>
+                    <View style={{ alignItems: "center", gap: 4 }}>
+                      <Image
+                        source={statusGIFMap[step.key]}
+                        style={{ width: 40, height: 40 }}
+                      />
+                      <Text variant="labelMedium"
+                        style={{
+                          fontWeight: currentIndex === index + 1 ? "bold" : "normal",
+                        }}
+                      >
+                        {step.label}
+                      </Text>
+                    </View>
+                    {index !== remainingSteps.length - 1 && (
+                      <IconButton icon="arrow-right-bold" size={20} iconColor="#888" />
+                    )}
+                  </React.Fragment>
+                ))}
+              </View>
+            );
+          })()}
+          <Divider style={{ marginBottom: 8, marginTop: 16 }} />
+        </View>
+      )}
 
       {/* Restaurant Info: when the contextProfile is not the restaurant, show the restaurant info */}
       {contextProfile?.role !== "restaurant" && (

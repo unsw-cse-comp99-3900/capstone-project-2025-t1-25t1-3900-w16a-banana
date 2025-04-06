@@ -14,26 +14,9 @@ import { router } from "expo-router";
 import { calculateDistance, fetchLocationDetailFromAddress } from "../utils/location";
 import OrderPathOverview from "./OrderPathOverview";
 import axios from "axios";
+import { STATUS_COLOR_MAP, STATUS_TEXT_MAP } from "../utils/order";
 
-// colors for different statuses
-const statusColorMap = {
-  PENDING: "#FFA500",
-  RESTAURANT_ACCEPTED: "#2196F3",
-  READY_FOR_PICKUP: "#00BCD4",
-  PICKED_UP: "#9977d4",
-  DELIVERED: "#4CAF50",
-  CANCELLED: "#f7776e",
-};
-
-const statusTextMap = {
-  PENDING: "Pending",
-  RESTAURANT_ACCEPTED: "Restaurant Accepted",
-  READY_FOR_PICKUP: "Ready for Pickup",
-  PICKED_UP: "On the Way",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};
-
+// some GIF
 const statusGIFMap = {
   PENDING: PendingGIF,
   RESTAURANT_ACCEPTED: ApprovedGIF,
@@ -196,7 +179,7 @@ export default function OrderCard({ entry }) {
           variant="labelMedium"
           style={{
             fontWeight: "bold",
-            backgroundColor: statusColorMap[order.order_status],
+            backgroundColor: STATUS_COLOR_MAP[order.order_status],
             color: "#fff",
             width: "fit-content",
             textTransform: "uppercase",
@@ -205,7 +188,7 @@ export default function OrderCard({ entry }) {
             borderRadius: 8,
           }}
         >
-          #{capitalize.words(statusTextMap[order.order_status])}
+          #{capitalize.words(STATUS_TEXT_MAP[order.order_status])}
         </Text>
       </View>
 
