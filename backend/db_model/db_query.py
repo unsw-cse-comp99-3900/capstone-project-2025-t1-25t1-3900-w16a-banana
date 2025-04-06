@@ -238,6 +238,14 @@ def get_orders_waiting_driver() -> List[Order]:
         Order.order_status != OrderStatus.CANCELLED
     ).all()
 
+def get_orders_of_driver_in_progress(driver_id: int) -> List[Order]:
+    """Get All Orders that is in progress for a given driver"""
+    return Order.query.filter(
+        Order.driver_id == driver_id,
+        Order.order_status != OrderStatus.CANCELLED,
+        Order.order_status != OrderStatus.DELIVERED
+    ).all() 
+
 # the order_id is assumed to be valid.
 def get_order_by_order_id(order_id: int):
     order = Order.query.get(order_id)

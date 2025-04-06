@@ -163,7 +163,7 @@ export default function CheckoutPage() {
       try {
         const response = await axios.post(url, payload, config);
         showToast("Order submitted successfully!", "success");
-        router.replace("/customer/history");
+        router.replace("/customer/orders");
       } catch (error) {
         console.error("Error submitting order:", error);
         showToast("Failed to submit order", "error");

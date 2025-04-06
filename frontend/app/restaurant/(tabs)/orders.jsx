@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Text, ActivityIndicator, TouchableRipple } from "react-native-paper";
+import { Text, ActivityIndicator, TouchableRipple, Badge } from "react-native-paper";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
 import useToast from "../../../hooks/useToast";
@@ -81,6 +81,13 @@ export default function RestaurantOrdersScreen() {
   const tabKeys = Object.keys(TABS);
   const activeOrders = getActiveOrders();
 
+  // badge for each tab text, show them on the top right corner of the tab text.
+  const badgeValues = {
+    "pending": pendingOrders.length,
+    "accepted": acceptedOrders.length,
+    "ready_for_pickup": pickupOrders.length,
+  }
+
   return (
     <ScrollView style={{ paddingTop: 14, paddingBottom: 20 }}>
       <Text variant="titleLarge" style={{ marginBottom: 14, paddingHorizontal: 16 }}>
@@ -88,7 +95,7 @@ export default function RestaurantOrdersScreen() {
       </Text>
       <View style={{ flex: 1, flexDirection: "row" }}>
         {/* Left vertical tabs */}
-        <View style={{ width: "15%", backgroundColor: "#f2f2f2", borderRightWidth: 1, borderColor: "#ccc" }}>
+        <View style={{ width: "18%", backgroundColor: "#f2f2f2", borderRightWidth: 1, borderColor: "#ccc" }}>
           {tabKeys.map((key) => (
             <TouchableRipple key={key} onPress={() => setActiveTab(key)}>
               <View
@@ -109,13 +116,28 @@ export default function RestaurantOrdersScreen() {
                 >
                   {TABS[key].label}
                 </Text>
+                {/* if there are orders in this category, show the order count in the badge */}
+                {badgeValues[key] > 0 && (
+                  <Badge
+                    size={18}
+                    style={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      backgroundColor: "#8833ff",
+                      color: "#fff",
+                    }}
+                  >
+                    {badgeValues[key]}
+                  </Badge>
+                )}
               </View>
             </TouchableRipple>
           ))}
         </View>
 
         {/* Right content */}
-        <View style={{ flex: 1, padding: 16 }}>
+        <View style={{ flex: 1, padding: 10 }}>
           <Text variant="titleMedium" style={{ marginBottom: 8 }}>
             {TABS[activeTab].label}
           </Text>
