@@ -1,21 +1,50 @@
 import React from "react";
 import { View } from "react-native";
-import { TextInput, Text, HelperText } from "react-native-paper";
+import { TextInput, Text, HelperText, Button } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { isPostalCode } from "validator";
+import useAuth from "../hooks/useAuth";
 
-export default function AddressForm ({ form, setForm }) {
+export default function AddressForm ({ form, setForm, allowContextAddress = false, showSubmit = false, submitCallback = () => {} }) {
+  const { contextProfile } = useAuth();
+  
   const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
 
   const handleChange = (key, value) => {
     setForm((prevForm) => ({ ...prevForm, [key]: value }));
   };
 
+  const fillDefaultAddress = () => {
+    if (contextProfile) {
+      const { address, suburb, state, postcode } = contextProfile;
+      setForm((prevForm) => ({
+        ...prevForm,
+        address: address || "",
+        suburb: suburb || "",
+        state: state || "",
+        postcode: postcode || "",
+      }));
+    }
+  };
+
   return (
     <View>
-      <Text variant="titleMedium" style={{ marginTop: 15, marginBottom: 10 }}>
-        Address Information
-      </Text>
+      {/* Text: address information, and a button: fill with default address */}
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <Text variant="titleMedium">
+          Address Information
+        </Text>
+        {allowContextAddress && (
+          <Button
+            mode="text"
+            onPress={fillDefaultAddress}
+            icon="home-account"
+          >
+            Use Default
+          </Button>
+        )}
+      </View>
+
       <TextInput
         label="Address"
         mode="outlined"
@@ -45,18 +74,30 @@ export default function AddressForm ({ form, setForm }) {
           Please enter a valid Australian postcode
         </HelperText>
       ) : null}
-      <View style={{ width: "48%", borderRadius: 5, borderWidth: 1, borderColor: "#323232", overflow: "hidden" }}>
-        <Picker
-          selectedValue={form.state}
-          onValueChange={(value) => handleChange("state", value)}
-          style={{ height: 50 }}
-        >
-          <Picker.Item label="Select State" value="" />
-          {states.map((state) => (
-            <Picker.Item key={state} label={state} value={state} />
-          ))}
-        </Picker>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <View style={{ width: "48%", borderRadius: 5, borderWidth: 1, borderColor: "#323232", overflow: "hidden" }}>
+          <Picker
+            selectedValue={form.state}
+            onValueChange={(value) => handleChange("state", value)}
+            style={{ height: 50 }}
+          >
+            <Picker.Item label="Select State" value="" />
+            {states.map((state) => (
+              <Picker.Item key={state} label={state} value={state} />
+            ))}
+          </Picker>
+        </View>
+        {showSubmit && (
+          <Button
+            mode="text"
+            icon="check"
+            onPress={submitCallback}
+          >
+            Submit
+          </Button>
+        )}
       </View>
+
     </View>
   );
 };

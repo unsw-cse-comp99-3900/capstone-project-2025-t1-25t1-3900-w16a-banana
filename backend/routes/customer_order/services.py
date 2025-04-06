@@ -42,6 +42,50 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
 
     return items
 
+
+def format_cart_items_v2(cart_items):
+    """Format raw cart items, group under each restaurant"""
+
+    result_dict = {}
+    for item in cart_items:
+        restaurant = get_restaurant_by_menu(item.menu_id)
+        menus = filter_menus(id = item.menu_id)
+        menu = menus[0]
+        
+        if restaurant.id not in result_dict:
+            result_dict[restaurant.id] = {
+                'restaurant_id': restaurant.id,
+                'restaurant_name': restaurant.name,
+                'restaurant_img': restaurant.url_img1,
+                'items': [],
+            }
+
+            # also add the restaurant address
+            address = {
+                'address': restaurant.address,
+                'suburb': restaurant.suburb,
+                'state': restaurant.state.value,
+                'postcode': restaurant.postcode,
+            }
+
+            result_dict[restaurant.id]["address"] = address
+        
+        result_dict[restaurant.id]['items'].append({
+            'menu_id': menu.id,
+            'menu_name': menu.name,
+            'price': menu.price,
+            'quantity': item.quantity,
+            'total_price': item.quantity * menu.price,
+            'url_img': menu.url_img
+        })
+
+    # convert the result_dict to a list of dictionaries, order by the restaurant_id
+    result_list = [v for v in result_dict.values()]
+    result_list.sort(key=lambda x: x['restaurant_id'])
+
+    return result_list
+
+
 def format_cart_items_with_restaurant_filter(
         cart_items: List[CartItem], restaurant_id: int
 ) -> List[FormatCartItems]:
@@ -86,9 +130,9 @@ def make_order(
         suburb = data['suburb'],
         state = State(data['state']),
         postcode = data['postcode'],
-        order_price = 0,
-        delivery_fee = 0,
-        total_price = 0,
+        order_price = round(data['order_price'], 2),
+        delivery_fee = round(data['delivery_fee'], 2),
+        total_price = round(data['total_price'], 2),
         customer_notes = data['customer_notes'],
         card_number = data['card_number']
     )
@@ -102,20 +146,14 @@ def attach_order_items(
     Order will now have updated information.
     """
     order_items: List[OrderItem] = []
-    total_price = 0
+
     for formatted_cart_item in formatted_cart_items:
-        total_price += formatted_cart_item['total_price']
         order_items.append(OrderItem(
             order_id = order.id,
             menu_id = formatted_cart_item['menu_id'],
             price = formatted_cart_item['price'],
             quantity = formatted_cart_item['quantity'],
         ))
-
-    # TODO: Add delivery fee calculation
-    order.order_price = total_price
-    order.delivery_fee = 8
-    order.total_price = order.order_price + order.delivery_fee
 
     return order_items
 

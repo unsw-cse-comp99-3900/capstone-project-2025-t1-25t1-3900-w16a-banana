@@ -3,8 +3,8 @@ import useAuth from "../../../hooks/useAuth";
 
 // normal tabs, when the driver's registration_status is not pending
 const tabs = [
-  { name: "index", title: "Home", icon: "home", visible: true },
   { name: "orders", title: "Orders", icon: "clipboard-list", visible: true },
+  { name: "index", title: "Menu", icon: "menu", visible: true },
   { name: "notifications", title: "Notifications", icon: "bell", visible: true },
   { name: "profile", title: "Profile", icon: "account", visible: true },
   // Hidden tabs

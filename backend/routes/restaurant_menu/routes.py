@@ -6,7 +6,7 @@ from utils.db import db
 from utils.file import save_image
 from utils.header import auth_header, tokenize
 from utils.response import res_error
-from db_model import MenuCategory, MenuItem
+from db_model import MenuCategory, MenuItem, Restaurant
 from db_model.db_query import (
     get_restaurant_by_token,
     filter_menu_categories,
@@ -297,16 +297,20 @@ class ManageMenuItem(Resource):
             url_img = save_image(args['img'])
             if not url_img:
                 return res_error(400, "Unsupported Image File")
-            item.url_img = save_image(args['img'])
+            item.url_img = url_img
 
         # Update Name. Check if name conflicts
         if args['name']:
-            if filter_menu_from_restaurant(
-                restaurant_id = restaurant.id,
-                name = args['name'],
-                first_only = True
-        )   :
+            # check for duplicate name, require the item id != this menu(item)_id
+            is_exist = MenuItem.query.join(MenuCategory).filter(
+                MenuCategory.restaurant_id == restaurant.id,
+                MenuItem.name == args['name'],
+                MenuItem.id != menu_id
+            ).first()
+
+            if is_exist:
                 return res_error(400, "Duplicate Item Name")
+
             item.name = args['name']
 
         # Check and update fields if provided
@@ -349,3 +353,34 @@ class ManageMenuItem(Resource):
         db.session.commit()
 
         return {'message': 'Menu item deleted successfully'}, 200
+
+
+# get the full menu of a restaurant, using the restaurant id
+# no need to authenticate
+@api.route("/<int:restaurant_id>")
+class FullMenu(Resource):
+    @api.response(200, "Success, return the full menu")
+    @api.response(400, "Bad request, invalid restaurant id")
+    def get(self, restaurant_id):
+        """Obtain the full menu of a restuarnat using the id"""
+
+        restaurant = Restaurant.query.get(restaurant_id)
+        if not restaurant:
+            return res_error(400, "Invalid Restaurant ID")
+
+        # get all the categories, order by the id
+        categories = MenuCategory.query.filter_by(restaurant_id=restaurant_id).order_by(MenuCategory.id).all()
+
+        # for each category, get all the items in that category
+        response = []
+
+        for category in categories:
+            items = MenuItem.query.filter_by(category_id=category.id).all()
+            items_dicts = [item.dict() for item in items]
+            category_dict = category.dict()
+
+            # add to the items
+            category_dict['items'] = items_dicts
+            response.append(category_dict)
+        
+        return response, 200

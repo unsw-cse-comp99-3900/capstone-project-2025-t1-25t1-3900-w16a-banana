@@ -51,6 +51,9 @@ class Admin(BaseModel):
     # profile page
     url_profile_image = db.Column(db.String(255), nullable=False, default="uploads/admin.png")
 
+    # role
+    role = db.Column(db.String, default="admin")
+
 class Customer(BaseModel):
     """
     Class for Customer DB.
@@ -65,6 +68,7 @@ class Customer(BaseModel):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(10), nullable=False)
+    role = db.Column(db.String, default="customer")
 
     # Address: address, suburb, state, postcode
     address = db.Column(db.String(255), nullable=False)
@@ -80,6 +84,9 @@ class Customer(BaseModel):
 
     # User Register Time
     created_at = db.Column(db.DateTime, default=datetime.now)
+
+    # role
+    role = db.Column(db.String, default="customer")
 
 # driver table
 class Driver(BaseModel):
@@ -120,6 +127,9 @@ class Driver(BaseModel):
 
     # driver login will also create token
     token = db.Column(db.String(255), nullable=True, default=None)
+
+    # role
+    role = db.Column(db.String, default="driver")
 
 # restaurant table
 class Restaurant(BaseModel):
@@ -166,6 +176,9 @@ class Restaurant(BaseModel):
 
     # created at
     created_at = db.Column(db.DateTime, default=datetime.now)
+
+    # role
+    role = db.Column(db.String, default="restaurant")
 
 class MenuCategory(BaseModel):
     """
@@ -261,8 +274,8 @@ class Order(BaseModel):
 
     # the order should have order time, pickup time, delivery time
     order_time = db.Column(db.DateTime, default=datetime.now)
-    pickup_time = db.Column(db.DateTime, nullable=True)
-    delivery_time = db.Column(db.DateTime, nullable=True)
+    pickup_time = db.Column(db.DateTime, nullable=True, default=None)
+    delivery_time = db.Column(db.DateTime, nullable=True, default=None)
 
     # the customer or the restaurant can leave some notes
     customer_notes = db.Column(db.String(255), nullable=True)

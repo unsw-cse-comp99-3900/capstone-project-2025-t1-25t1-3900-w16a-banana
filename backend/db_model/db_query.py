@@ -13,6 +13,7 @@ from db_model import (
     CartItem,
     Chat,
     Order,
+    OrderItem,
     Favourites
 )
 from .db_enum import ChatSupportUserType, OrderStatus
@@ -237,6 +238,36 @@ def get_orders_waiting_driver() -> List[Order]:
         Order.order_status != OrderStatus.CANCELLED
     ).all()
 
+# the order_id is assumed to be valid.
+def get_order_by_order_id(order_id: int):
+    order = Order.query.get(order_id)
+
+    # obtain the restaurant details, into a dictionary, the driver detail, and the customer detail
+    restaurant = Restaurant.query.get(order.restaurant_id)
+    customer = Customer.query.get(order.customer_id)
+    driver = Driver.query.get(order.driver_id) if order.driver_id else None
+
+    # obtain all the items
+    items = OrderItem.query.filter_by(order_id=order_id).all()
+
+    # for each item, also obtain the menu item object
+    formatted_items = []
+    for item in items:
+        result = item.dict()
+        menu_item = MenuItem.query.get(item.menu_id)
+        result['menu_item'] = menu_item.dict() if menu_item else None
+        formatted_items.append(result)
+    
+    # make the result dictionary
+    result = {
+        'order': order.dict(),
+        'restaurant': restaurant.dict(),
+        'customer': customer.dict(),
+        'driver': driver.dict() if driver else None,
+        'items': formatted_items
+    }
+
+    return result
 
 #--------------------------------------------------------#
 #------------Functions related to Menu Items------------#

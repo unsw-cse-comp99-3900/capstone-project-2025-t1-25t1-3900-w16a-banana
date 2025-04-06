@@ -64,7 +64,10 @@ post_order_req = api.model("Order From Cart Request", {
     'state': fields.String(required=True, default='NSW'),
     'postcode': fields.String(required=True),
     'customer_notes': fields.String(required=True, default='2000'),
-    'card_number': fields.String(required=True)
+    'card_number': fields.String(required=True),
+    'order_price': fields.Float(required=True),
+    'delivery_fee': fields.Float(required=True),
+    'total_price': fields.Float(required=True),
 })
 post_order_res = api.model("Order From Cart Response", {
     "id": fields.Integer(),

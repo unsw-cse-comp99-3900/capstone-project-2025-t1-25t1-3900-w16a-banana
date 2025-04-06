@@ -15,7 +15,8 @@ from db_model.db_query import (
     get_customer_by_token,
     filter_cart_items,
     filter_orders,
-    filter_menus
+    filter_menus,
+    get_order_by_order_id
 )
 from routes.customer_order.models import (
     api,
@@ -30,8 +31,49 @@ from routes.customer_order.services import (
     empty_cart_items_from_restaurant,
     make_order,
     format_cart_items,
+    format_cart_items_v2,
     format_cart_items_with_restaurant_filter
 )
+
+@api.route('/cart/restaurant/<int:restaurant_id>')
+class ShopItemsWithRestaurant(Resource):
+    @api.doc(description="Remove all items from the cart from given restaurant")
+    @api.expect(auth_header)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    @api.response(401, "Unauthorised", error_res)
+    def delete(self, restaurant_id: int):
+        """Clear the cart for a given restaurant"""
+
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+        
+        empty_cart_items_from_restaurant(
+            customer_id = customer.id,
+            restaurant_id = restaurant_id
+        )
+
+        return {'message': 'Cart Cleared'}, 200
+
+@api.route('/cart/v2')
+class ShopItemsV2(Resource):
+    """Route: /cart"""
+    @api.expect(auth_header)
+    @api.response(200, "Success")
+    @api.response(400, "Bad Request", error_res)
+    @api.response(401, "Unauthorised", error_res)
+    def get(self):
+        """Get All Items' ID in the shopping cart"""
+        # Check customer token
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        # Get all items in the cart
+        cart_items = filter_cart_items(customer_id = customer.id)
+        items = format_cart_items_v2(cart_items)
+        return items, 200
 
 @api.route('/cart')
 class ShopItems(Resource):
@@ -154,6 +196,7 @@ class OrderItems(Resource):
         """
         Place order for Given Restaurant ID.
         This function also works when there are items from different restaurant.
+        The frontend needs to input the order_price, delivery_fee, and total_price ( = order_price + delivery_fee).
         """
         customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
@@ -202,3 +245,42 @@ class OrderItems(Resource):
         empty_cart_items_from_restaurant(customer.id, data['restaurant_id'])
 
         return new_order.dict(), 200
+
+
+@api.route('/')
+class CustomerOrderV2(Resource):
+    @api.expect(auth_header)
+    @api.response(200, 'Success')
+    @api.response(400, 'Bad Request', error_res)
+    @api.response(401, 'Unauthorised', error_res)
+    def get(self):
+        """Get all orders of a customer, via token"""
+
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        orders = filter_orders(customer_id=customer.id)
+        results = [get_order_by_order_id(order.id) for order in orders]
+        return results, 200
+
+@api.route('/<int:order_id>')
+class CustomerOneOrder(Resource):
+    @api.expect(auth_header)
+    @api.response(200, 'Success')
+    @api.response(400, 'Bad Request', error_res)
+    @api.response(401, 'Unauthorised', error_res)
+    def get(self, order_id: int):
+        """Get a single order for my customer via order_id"""
+
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401)
+
+        orders = filter_orders(customer_id=customer.id, id=order_id)
+        if not orders:
+            return res_error(400, 'Invalid Order ID')
+
+        order = orders[0]
+        results = get_order_by_order_id(order.id)
+        return results, 200

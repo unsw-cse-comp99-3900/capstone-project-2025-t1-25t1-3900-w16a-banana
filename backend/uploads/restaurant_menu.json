@@ -1,0 +1,902 @@
+[
+    {
+        "restaurant_id": 1,
+        "categories": [
+            {
+                "name": "Lasagna",
+                "items": [
+                    {
+                        "name": "Lasagna Special 1",
+                        "description": "Prepared with traditional techniques and full of bold flavor.",
+                        "price": 14.2,
+                        "url_img": "uploads/food/lasagna 1.jpg"
+                    },
+                    {
+                        "name": "Lasagna Delight 2",
+                        "description": "A timeless classic elevated with our unique twist.",
+                        "price": 16.61,
+                        "url_img": "uploads/food/lasagna 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Pizza",
+                "items": [
+                    {
+                        "name": "Pizza Special 1",
+                        "description": "A crowd-pleaser with a perfect balance of textures and taste.",
+                        "price": 10.31,
+                        "url_img": "uploads/food/pizza 1.jpg"
+                    },
+                    {
+                        "name": "Pizza Delight 2",
+                        "description": "A rich and hearty dish made to satisfy any craving.",
+                        "price": 12.01,
+                        "url_img": "uploads/food/pizza 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Mac And Cheese",
+                "items": [
+                    {
+                        "name": "Mac And Cheese Special 1",
+                        "description": "Made with love and the freshest local ingredients.",
+                        "price": 17.78,
+                        "url_img": "uploads/food/mac and cheese 1.jpg"
+                    },
+                    {
+                        "name": "Mac And Cheese Delight 2",
+                        "description": "Layered with flavor and finished with a touch of elegance.",
+                        "price": 12.45,
+                        "url_img": "uploads/food/mac and cheese 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Wrap",
+                "items": [
+                    {
+                        "name": "Wrap Special 1",
+                        "description": "A rich and hearty dish made to satisfy any craving.",
+                        "price": 17.93,
+                        "url_img": "uploads/food/wrap 1.jpg"
+                    },
+                    {
+                        "name": "Wrap Delight 2",
+                        "description": "Prepared with traditional techniques and full of bold flavor.",
+                        "price": 11.75,
+                        "url_img": "uploads/food/wrap 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Pho",
+                "items": [
+                    {
+                        "name": "Pho Special 1",
+                        "description": "Perfect for a quick bite or a hearty meal, full of goodness.",
+                        "price": 10.62,
+                        "url_img": "uploads/food/pho 1.jpg"
+                    },
+                    {
+                        "name": "Pho Delight 2",
+                        "description": "Comfort food at its finest, creamy, crispy, and delicious.",
+                        "price": 15.92,
+                        "url_img": "uploads/food/pho 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 2,
+        "categories": [
+            {
+                "name": "Croissant",
+                "items": [
+                    {
+                        "name": "Croissant Special 1",
+                        "description": "A timeless classic elevated with our unique twist.",
+                        "price": 18.02,
+                        "url_img": "uploads/food/croissant 1.jpg"
+                    },
+                    {
+                        "name": "Croissant Delight 2",
+                        "description": "A timeless classic elevated with our unique twist.",
+                        "price": 12.06,
+                        "url_img": "uploads/food/croissant 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Ramen",
+                "items": [
+                    {
+                        "name": "Ramen Special 1",
+                        "description": "Perfect for a quick bite or a hearty meal, full of goodness.",
+                        "price": 9.18,
+                        "url_img": "uploads/food/ramen 1.jpg"
+                    },
+                    {
+                        "name": "Ramen Delight 2",
+                        "description": "A rich and hearty dish made to satisfy any craving.",
+                        "price": 16.44,
+                        "url_img": "uploads/food/ramen 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Spring Rolls",
+                "items": [
+                    {
+                        "name": "Spring Rolls Special 1",
+                        "description": "A mouthwatering blend of spices and fresh ingredients served hot.",
+                        "price": 16.85,
+                        "url_img": "uploads/food/spring rolls 1.jpg"
+                    },
+                    {
+                        "name": "Spring Rolls Delight 2",
+                        "description": "Prepared with traditional techniques and full of bold flavor.",
+                        "price": 12.93,
+                        "url_img": "uploads/food/spring rolls 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Tacos",
+                "items": [
+                    {
+                        "name": "Tacos Special 1",
+                        "description": "A timeless classic elevated with our unique twist.",
+                        "price": 11.96,
+                        "url_img": "uploads/food/tacos 1.jpg"
+                    },
+                    {
+                        "name": "Tacos Delight 2",
+                        "description": "Delicately cooked and garnished with herbs and sauces.",
+                        "price": 10.99,
+                        "url_img": "uploads/food/tacos 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Hot Dog",
+                "items": [
+                    {
+                        "name": "Hot Dog Special 1",
+                        "description": "Delicately cooked and garnished with herbs and sauces.",
+                        "price": 15.16,
+                        "url_img": "uploads/food/hot dog 1.jpg"
+                    },
+                    {
+                        "name": "Hot Dog Delight 2",
+                        "description": "Perfect for a quick bite or a hearty meal, full of goodness.",
+                        "price": 14.06,
+                        "url_img": "uploads/food/hot dog 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 3,
+        "categories": [
+            {
+                "name": "Chow Mein",
+                "items": [
+                    {
+                        "name": "Chow Mein Item 1",
+                        "description": "Rich, creamy, and decadently delicious.",
+                        "price": 13.44,
+                        "url_img": "uploads/food/chow mein 1.jpg"
+                    },
+                    {
+                        "name": "Chow Mein Item 2",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 6.87,
+                        "url_img": "uploads/food/chow mein 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Pizza",
+                "items": [
+                    {
+                        "name": "Pizza Item 1",
+                        "description": "A delightful burst of spices and aromas in every bite.",
+                        "price": 15.11,
+                        "url_img": "uploads/food/pizza 1.jpg"
+                    },
+                    {
+                        "name": "Pizza Item 2",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 16.22,
+                        "url_img": "uploads/food/pizza 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Burger",
+                "items": [
+                    {
+                        "name": "Burger Item 1",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 13.39,
+                        "url_img": "uploads/food/burger 1.jpg"
+                    },
+                    {
+                        "name": "Burger Item 2",
+                        "description": "Sizzling hot and bursting with flavor, just like home.",
+                        "price": 16.79,
+                        "url_img": "uploads/food/burger 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Ramen",
+                "items": [
+                    {
+                        "name": "Ramen Item 1",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 20.18,
+                        "url_img": "uploads/food/ramen 1.jpg"
+                    },
+                    {
+                        "name": "Ramen Item 2",
+                        "description": "Comfort food at its finest, prepared to perfection.",
+                        "price": 18.96,
+                        "url_img": "uploads/food/ramen 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Falafel",
+                "items": [
+                    {
+                        "name": "Falafel Item 1",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 10.56,
+                        "url_img": "uploads/food/falafel 1.jpg"
+                    },
+                    {
+                        "name": "Falafel Item 2",
+                        "description": "A delightful burst of spices and aromas in every bite.",
+                        "price": 24.14,
+                        "url_img": "uploads/food/falafel 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 4,
+        "categories": [
+            {
+                "name": "Sushi",
+                "items": [
+                    {
+                        "name": "Sushi Item 1",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 7.04,
+                        "url_img": "uploads/food/sushi 1.jpg"
+                    },
+                    {
+                        "name": "Sushi Item 2",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 6.93,
+                        "url_img": "uploads/food/sushi 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Rice",
+                "items": [
+                    {
+                        "name": "Rice Item 1",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 17.07,
+                        "url_img": "uploads/food/rice 1.jpg"
+                    },
+                    {
+                        "name": "Rice Item 2",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 19.59,
+                        "url_img": "uploads/food/rice 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Pasta",
+                "items": [
+                    {
+                        "name": "Pasta Item 1",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 7.5,
+                        "url_img": "uploads/food/pasta 1.jpg"
+                    },
+                    {
+                        "name": "Pasta Item 2",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 6.58,
+                        "url_img": "uploads/food/pasta 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Grilled Cheese",
+                "items": [
+                    {
+                        "name": "Grilled Cheese Item 1",
+                        "description": "Perfectly grilled and seasoned to satisfy any craving.",
+                        "price": 21.59,
+                        "url_img": "uploads/food/grilled cheese 1.jpg"
+                    },
+                    {
+                        "name": "Grilled Cheese Item 2",
+                        "description": "Rich, creamy, and decadently delicious.",
+                        "price": 22.71,
+                        "url_img": "uploads/food/grilled cheese 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Idly",
+                "items": [
+                    {
+                        "name": "Idly Item 1",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 16.55,
+                        "url_img": "uploads/food/idly 1.jpg"
+                    },
+                    {
+                        "name": "Idly Item 2",
+                        "description": "Crispy on the outside, juicy on the inside\u2014served with house sauce.",
+                        "price": 5.92,
+                        "url_img": "uploads/food/idly 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 5,
+        "categories": [
+            {
+                "name": "Bacon",
+                "items": [
+                    {
+                        "name": "Bacon Item 1",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 12.11,
+                        "url_img": "uploads/food/bacon 1.jpg"
+                    },
+                    {
+                        "name": "Bacon Item 2",
+                        "description": "Perfectly grilled and seasoned to satisfy any craving.",
+                        "price": 19.04,
+                        "url_img": "uploads/food/bacon 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Donuts",
+                "items": [
+                    {
+                        "name": "Donuts Item 1",
+                        "description": "Crispy on the outside, juicy on the inside\u2014served with house sauce.",
+                        "price": 17.18,
+                        "url_img": "uploads/food/donuts 1.jpg"
+                    },
+                    {
+                        "name": "Donuts Item 2",
+                        "description": "Comfort food at its finest, prepared to perfection.",
+                        "price": 15.68,
+                        "url_img": "uploads/food/donuts 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Noodles",
+                "items": [
+                    {
+                        "name": "Noodles Item 1",
+                        "description": "A delightful burst of spices and aromas in every bite.",
+                        "price": 8.27,
+                        "url_img": "uploads/food/noodles 1.jpg"
+                    },
+                    {
+                        "name": "Noodles Item 2",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 10.4,
+                        "url_img": "uploads/food/noodles 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Udon",
+                "items": [
+                    {
+                        "name": "Udon Item 1",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 9.39,
+                        "url_img": "uploads/food/udon 1.jpg"
+                    },
+                    {
+                        "name": "Udon Item 2",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 21.86,
+                        "url_img": "uploads/food/udon 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Sandwich",
+                "items": [
+                    {
+                        "name": "Sandwich Item 1",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 9.58,
+                        "url_img": "uploads/food/sandwich 1.jpg"
+                    },
+                    {
+                        "name": "Sandwich Item 2",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 21.1,
+                        "url_img": "uploads/food/sandwich 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 6,
+        "categories": [
+            {
+                "name": "Mac And Cheese",
+                "items": [
+                    {
+                        "name": "Mac And Cheese Item 1",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 10.35,
+                        "url_img": "uploads/food/mac and cheese 1.jpg"
+                    },
+                    {
+                        "name": "Mac And Cheese Item 2",
+                        "description": "A delightful burst of spices and aromas in every bite.",
+                        "price": 23.26,
+                        "url_img": "uploads/food/mac and cheese 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Curry",
+                "items": [
+                    {
+                        "name": "Curry Item 1",
+                        "description": "Rich, creamy, and decadently delicious.",
+                        "price": 22.53,
+                        "url_img": "uploads/food/curry 1.jpg"
+                    },
+                    {
+                        "name": "Curry Item 2",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 9.25,
+                        "url_img": "uploads/food/curry 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Quiche",
+                "items": [
+                    {
+                        "name": "Quiche Item 1",
+                        "description": "Sizzling hot and bursting with flavor, just like home.",
+                        "price": 12.91,
+                        "url_img": "uploads/food/quiche 1.jpg"
+                    },
+                    {
+                        "name": "Quiche Item 2",
+                        "description": "Sizzling hot and bursting with flavor, just like home.",
+                        "price": 7.86,
+                        "url_img": "uploads/food/quiche 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Lasagna",
+                "items": [
+                    {
+                        "name": "Lasagna Item 1",
+                        "description": "Comfort food at its finest, prepared to perfection.",
+                        "price": 9.93,
+                        "url_img": "uploads/food/lasagna 1.jpg"
+                    },
+                    {
+                        "name": "Lasagna Item 2",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 15.78,
+                        "url_img": "uploads/food/lasagna 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Croissant",
+                "items": [
+                    {
+                        "name": "Croissant Item 1",
+                        "description": "Rich, creamy, and decadently delicious.",
+                        "price": 13.57,
+                        "url_img": "uploads/food/croissant 1.jpg"
+                    },
+                    {
+                        "name": "Croissant Item 2",
+                        "description": "Rich, creamy, and decadently delicious.",
+                        "price": 12.99,
+                        "url_img": "uploads/food/croissant 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 7,
+        "categories": [
+            {
+                "name": "Shawarma",
+                "items": [
+                    {
+                        "name": "Shawarma Item 1",
+                        "description": "Comfort food at its finest, prepared to perfection.",
+                        "price": 20.84,
+                        "url_img": "uploads/food/shawarma 1.jpg"
+                    },
+                    {
+                        "name": "Shawarma Item 2",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 16.93,
+                        "url_img": "uploads/food/shawarma 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Samosa",
+                "items": [
+                    {
+                        "name": "Samosa Item 1",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 12.63,
+                        "url_img": "uploads/food/samosa 1.jpg"
+                    },
+                    {
+                        "name": "Samosa Item 2",
+                        "description": "Sizzling hot and bursting with flavor, just like home.",
+                        "price": 15.58,
+                        "url_img": "uploads/food/samosa 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Hot Dog",
+                "items": [
+                    {
+                        "name": "Hot Dog Item 1",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 22.22,
+                        "url_img": "uploads/food/hot dog 1.jpg"
+                    },
+                    {
+                        "name": "Hot Dog Item 2",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 18.61,
+                        "url_img": "uploads/food/hot dog 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Waffles",
+                "items": [
+                    {
+                        "name": "Waffles Item 1",
+                        "description": "Crispy on the outside, juicy on the inside\u2014served with house sauce.",
+                        "price": 18.63,
+                        "url_img": "uploads/food/waffles 1.jpg"
+                    },
+                    {
+                        "name": "Waffles Item 2",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 20.02,
+                        "url_img": "uploads/food/waffles 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Dessert",
+                "items": [
+                    {
+                        "name": "Dessert Item 1",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 7.23,
+                        "url_img": "uploads/food/dessert 1.jpg"
+                    },
+                    {
+                        "name": "Dessert Item 2",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 8.16,
+                        "url_img": "uploads/food/dessert 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 8,
+        "categories": [
+            {
+                "name": "Masala Dosa",
+                "items": [
+                    {
+                        "name": "Masala Dosa Item 1",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 24.08,
+                        "url_img": "uploads/food/masala dosa 1.jpg"
+                    },
+                    {
+                        "name": "Masala Dosa Item 2",
+                        "description": "Perfectly grilled and seasoned to satisfy any craving.",
+                        "price": 24.44,
+                        "url_img": "uploads/food/masala dosa 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Butter Chicken",
+                "items": [
+                    {
+                        "name": "Butter Chicken Item 1",
+                        "description": "Comfort food at its finest, prepared to perfection.",
+                        "price": 15.15,
+                        "url_img": "uploads/food/butter chicken 1.jpg"
+                    },
+                    {
+                        "name": "Butter Chicken Item 2",
+                        "description": "Crispy on the outside, juicy on the inside\u2014served with house sauce.",
+                        "price": 22.41,
+                        "url_img": "uploads/food/butter chicken 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Dosa",
+                "items": [
+                    {
+                        "name": "Dosa Item 1",
+                        "description": "Perfectly grilled and seasoned to satisfy any craving.",
+                        "price": 21.83,
+                        "url_img": "uploads/food/dosa 1.jpg"
+                    },
+                    {
+                        "name": "Dosa Item 2",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 17.18,
+                        "url_img": "uploads/food/dosa 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Sausage",
+                "items": [
+                    {
+                        "name": "Sausage Item 1",
+                        "description": "Comfort food at its finest, prepared to perfection.",
+                        "price": 12.48,
+                        "url_img": "uploads/food/sausage 1.jpg"
+                    },
+                    {
+                        "name": "Sausage Item 2",
+                        "description": "Comfort food at its finest, prepared to perfection.",
+                        "price": 15.79,
+                        "url_img": "uploads/food/sausage 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Egg Rolls",
+                "items": [
+                    {
+                        "name": "Egg Rolls Item 1",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 23.37,
+                        "url_img": "uploads/food/egg rolls 1.jpg"
+                    },
+                    {
+                        "name": "Egg Rolls Item 2",
+                        "description": "Rich, creamy, and decadently delicious.",
+                        "price": 11.48,
+                        "url_img": "uploads/food/egg rolls 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 9,
+        "categories": [
+            {
+                "name": "Biryani",
+                "items": [
+                    {
+                        "name": "Biryani Item 1",
+                        "description": "Sizzling hot and bursting with flavor, just like home.",
+                        "price": 21.32,
+                        "url_img": "uploads/food/biryani 1.jpg"
+                    },
+                    {
+                        "name": "Biryani Item 2",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 20.32,
+                        "url_img": "uploads/food/biryani 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Spaghetti",
+                "items": [
+                    {
+                        "name": "Spaghetti Item 1",
+                        "description": "Comfort food at its finest, prepared to perfection.",
+                        "price": 18.2,
+                        "url_img": "uploads/food/spaghetti 1.jpg"
+                    },
+                    {
+                        "name": "Spaghetti Item 2",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 8.3,
+                        "url_img": "uploads/food/spaghetti 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Meatballs",
+                "items": [
+                    {
+                        "name": "Meatballs Item 1",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 22.45,
+                        "url_img": "uploads/food/meatballs 1.jpg"
+                    },
+                    {
+                        "name": "Meatballs Item 2",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 24.29,
+                        "url_img": "uploads/food/meatballs 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Pancakes",
+                "items": [
+                    {
+                        "name": "Pancakes Item 1",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 20.11,
+                        "url_img": "uploads/food/pancakes 1.jpg"
+                    },
+                    {
+                        "name": "Pancakes Item 2",
+                        "description": "A delightful burst of spices and aromas in every bite.",
+                        "price": 19.26,
+                        "url_img": "uploads/food/pancakes 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Chicken Wings",
+                "items": [
+                    {
+                        "name": "Chicken Wings Item 1",
+                        "description": "Served with a side of nostalgia and modern flair.",
+                        "price": 24.9,
+                        "url_img": "uploads/food/chicken wings 1.jpg"
+                    },
+                    {
+                        "name": "Chicken Wings Item 2",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 13.76,
+                        "url_img": "uploads/food/chicken wings 2.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "restaurant_id": 10,
+        "categories": [
+            {
+                "name": "Tiramisu",
+                "items": [
+                    {
+                        "name": "Tiramisu Item 1",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 14.03,
+                        "url_img": "uploads/food/tiramisu 1.jpg"
+                    },
+                    {
+                        "name": "Tiramisu Item 2",
+                        "description": "A delightful burst of spices and aromas in every bite.",
+                        "price": 9.49,
+                        "url_img": "uploads/food/tiramisu 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Hamburger",
+                "items": [
+                    {
+                        "name": "Hamburger Item 1",
+                        "description": "A cheesy, saucy classic that never disappoints.",
+                        "price": 5.42,
+                        "url_img": "uploads/food/hamburger 1.jpg"
+                    },
+                    {
+                        "name": "Hamburger Item 2",
+                        "description": "Handcrafted with care and culinary passion.",
+                        "price": 9.6,
+                        "url_img": "uploads/food/hamburger 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Paneer Tikka",
+                "items": [
+                    {
+                        "name": "Paneer Tikka Item 1",
+                        "description": "A delightful burst of spices and aromas in every bite.",
+                        "price": 5.14,
+                        "url_img": "uploads/food/paneer tikka 1.jpg"
+                    },
+                    {
+                        "name": "Paneer Tikka Item 2",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 9.58,
+                        "url_img": "uploads/food/paneer tikka 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Tacos",
+                "items": [
+                    {
+                        "name": "Tacos Item 1",
+                        "description": "A mouthwatering dish made with fresh ingredients and bold flavors.",
+                        "price": 22.19,
+                        "url_img": "uploads/food/tacos 1.jpg"
+                    },
+                    {
+                        "name": "Tacos Item 2",
+                        "description": "Crispy on the outside, juicy on the inside\u2014served with house sauce.",
+                        "price": 15.28,
+                        "url_img": "uploads/food/tacos 2.jpg"
+                    }
+                ]
+            },
+            {
+                "name": "Cheesecake",
+                "items": [
+                    {
+                        "name": "Cheesecake Item 1",
+                        "description": "Perfectly grilled and seasoned to satisfy any craving.",
+                        "price": 18.38,
+                        "url_img": "uploads/food/cheesecake 1.jpg"
+                    },
+                    {
+                        "name": "Cheesecake Item 2",
+                        "description": "A delightful burst of spices and aromas in every bite.",
+                        "price": 15.78,
+                        "url_img": "uploads/food/cheesecake 2.jpg"
+                    }
+                ]
+            }
+        ]
+    }
+]

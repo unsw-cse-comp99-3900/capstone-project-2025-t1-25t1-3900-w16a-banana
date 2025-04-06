@@ -93,7 +93,7 @@ export default function CustomerSignup() {
       </View>
 
       {/* Personal Info Section */}
-      <Text variant="titleMedium" style={{ marginBottom: 10 }}>Personal Information</Text>
+      <Text variant="titleMedium" style={{ marginBottom: 5 }}>Personal Information</Text>
       <PersonalInfoForm form={form} setForm={setForm} userType="customer" />
 
       {/* Address Section */}

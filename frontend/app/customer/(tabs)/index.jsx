@@ -1,29 +1,25 @@
 import React from "react";
-import { View, Text, Image, ScrollView, Dimensions } from "react-native";
-import { TextInput, Button } from "react-native-paper";
+import { View, Image, Dimensions } from "react-native";
+import { Button, Text } from "react-native-paper";
 import ReanimatedCarousel from "react-native-reanimated-carousel";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import MyScrollView from "../../../components/MyScrollView";
+import { router } from "expo-router";
+import RestaurantList from "../../../components/RestaurantList";
+import useUserLocation from "../../../hooks/useUserLocation";
 
 const { width } = Dimensions.get("window");
 
-// Currently use some default images. 
+// carousel uses some default images
 const carouselImages = [
   require("../../../assets/images/restaurant_img1.jpg"),
   require("../../../assets/images/restaurant_img2.jpg"),
   require("../../../assets/images/restaurant_img3.jpg"),
 ];
 
-const cuisines = [
-  { name: "Chinese", icon: "food" },
-  { name: "Indian", icon: "food-variant" },
-  { name: "French", icon: "silverware-fork-knife" },
-  { name: "Japanese", icon: "rice" },
-];
-
 export default function Home() {
-  const router = useRouter();
+  // use the hook to obtain the location
+  const { location, locationDetails } = useUserLocation();
+  console.log("Location:", location);
 
   // Reanimated carousel renderer
   const renderCarouselItem = ({ item }) => {
@@ -37,14 +33,11 @@ export default function Home() {
 
   return (
     <MyScrollView>
-      {/* Search Bar */}
-      <TextInput
-        mode="outlined"
-        placeholder="Search"
-        left={<TextInput.Icon icon="magnify" />}
-        style={{ marginBottom: 16, backgroundColor: "#FFF" }}
-      />
-
+      {locationDetails && (
+        <Text style={{ textAlign: "center", marginBottom: 10 }} variant="bodyLarge">
+          📍 Your location: {locationDetails.suburb}, {locationDetails.postcode}, {locationDetails.state}
+        </Text>
+      )}
       {/* Quick Access Buttons */}
       <View
         style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 16 }}
@@ -79,31 +72,19 @@ export default function Home() {
           height={150}
           autoPlay
           data={carouselImages}
-          scrollAnimationDuration={1000}
+          scrollAnimationDuration={5500}
           renderItem={renderCarouselItem}
           style={{ borderRadius: 10 }}
           loop
         />
       </View>
 
-      {/* Cuisine Section */}
-      <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Cuisine</Text>
-        <MaterialCommunityIcons name="chevron-right" size={24} color="black" />
-      </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
-        {cuisines.map((cuisine, index) => (
-          <View key={index} style={{ alignItems: "center", marginRight: 16 }}>
-            <MaterialCommunityIcons name={cuisine.icon} size={40} />
-            <Text>{cuisine.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
       {/* Placeholder for Restaurant List */}
-      <View style={{ marginTop: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Restaurants</Text>
-        <Text style={{ color: "gray" }}>Coming soon...</Text>
+      <View>
+        <RestaurantList 
+          userLocation={location} 
+          showTextFilter={true}
+        />
       </View>
     </MyScrollView>
   );
