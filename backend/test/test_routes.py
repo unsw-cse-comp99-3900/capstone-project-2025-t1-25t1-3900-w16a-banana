@@ -5,7 +5,8 @@ from .test_data.admin import (
     admin1, admin_same_email, admin_weak_password
 )
 from .test_data.restaurant import (
-    restaurant1, restaurant2, restaurant_fail_same_email
+    restaurant1, restaurant2, restaurant_fail_same_email,
+    restaurant_wrong_state
 )
 from .test_data.customer import  (
     customer1, customer2, customer_same_email, customer_weak_password
@@ -15,7 +16,6 @@ from .test_data.driver import (
 )
 
 resources = Path(__file__).parent/ "resources"
-
 
 def test_01_admin_register_login(client):
     """Test for Admin Register and Login"""
@@ -51,8 +51,6 @@ def test_01_customer_register_login(client):
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
-
-#Test for restaurant register
 def test_01_restaurant_register_login(client):
     """Test for Restaurant Register and Login"""
     # Check if the register was successful
@@ -60,17 +58,17 @@ def test_01_restaurant_register_login(client):
     assert response.status_code == 200
     response = restaurant2.register(client)
     assert response.status_code == 200
-
     # Same email register fails
     response = restaurant_fail_same_email.register(client)
     assert response.status_code == 400
-
+    # Wrong State should fail
+    response = restaurant_wrong_state.register(client)
+    assert response.status_code == 400
     # Login should be successful. Get the token
     response = restaurant1.login(client)
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
-# Test for driver register and login
 def test_01_driver_register_login(client):
     """Test for Driver Register and Login"""
     # Ordinary Register
@@ -89,31 +87,39 @@ def test_01_driver_register_login(client):
     assert response.status_code == 200
     assert 'token' in response.get_json()
 
-# Test to see pending restaurants
-def test_02_check_pending_restaurant(client):
+def test_02_approve_reject_pending_restaurant(client):
     """Test for Admin Cheking Pending Application and Approve it"""
     # Get all pending applications of the restaurant
     response = admin1.get_pending_application(client, 'restaurant')
-
-    # Check the response
     assert response.status_code == 200
-    assert response.get_json()[0]['email'] == restaurant1.email
-    assert response.get_json()[0]['registration_status'] == 'PENDING'
-
-    # Approve 
+    pendings = response.get_json()
+    assert len(pendings) == 2
+    assert pendings[0]['email'] == restaurant1.email
+    assert pendings[0]['registration_status'] == 'PENDING'
+    # Approve restaurant1
     response = admin1.pending_application_action(
         client, 'restaurant', restaurant1.get_id(), 'approve'
     )
     assert response.status_code == 200
+    assert restaurant1.get_me(client).get_json()['registration_status']\
+    == 'APPROVED'
+    # Reject restaurant2
+    restaurant2.login(client)
+    assert pendings[1]['email'] == restaurant2.email
+    response = admin1.pending_application_action(
+        client, 'restaurant', restaurant2.get_id(), 'reject'
+    )
+    assert response.status_code == 200
+    assert restaurant2.get_me(client).get_json()['registration_status']\
+    == 'REJECTED'
 
 def test_03_restaurant_menu(client):
     """Test for Restaurant Category and Menu Creation"""
     # Create new menu category
     response = restaurant1.category_create(client, 'category1')
     assert response.status_code == 200
-
     cat1_data = response.get_json()
-
+    assert restaurant1.category_get(client, cat1_data['id']).get_json()['name'] == 'category1'
     # Update Name
     response = restaurant1.category_update(
         client,
@@ -121,8 +127,8 @@ def test_03_restaurant_menu(client):
         'category_1'
     )
     assert response.status_code == 200
-
-    # Create new
+    assert restaurant1.category_get(client, cat1_data['id']).get_json()['name'] == 'category_1'
+    # Create category with name that is now free to use
     response = restaurant1.category_create(client, 'category1')
     assert response.status_code == 200
     # Update to duplicate name fails
@@ -132,13 +138,21 @@ def test_03_restaurant_menu(client):
         'category_1'
     )
     assert response.status_code == 400
-
     # Create new menu item
     response = restaurant1.item_create(
         client, 'menu1', 'description', 10.0, True,
         (resources / "test.png").open("rb"), cat1_data['id']
     )
     assert response.status_code == 200
+    # Check if it is really created
+    response = restaurant1.items_get_in_category(client, cat1_data['id'])
+    assert response.status_code == 200
+    assert len(response.get_json()) == 1
+    created_menu = response.get_json()[0]
+    assert created_menu['name'] == 'menu1'
+    assert created_menu['description'] == 'description'
+    assert created_menu['price'] == 10.0
+    assert created_menu['is_available'] is True
 
 def test_04_customer_order(client):
     """Test for Customer Adding Item to Cart and Placing Order"""

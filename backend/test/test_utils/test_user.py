@@ -6,6 +6,7 @@ class UserTest:
     This will be parent for Admin, Customer, Driver, Restaurant
     Features:
         - login
+        - get_me
         - chat_send
         - chat_get
         - chat_get_all
@@ -44,6 +45,13 @@ class UserTest:
     def get_headers(self):
         """Get header of itself"""
         return self.headers
+
+    def get_me(self, client):
+        """GET /auth/me"""
+        return client.get(
+            '/auth/me',
+            headers = self.headers
+        )
 
     def chat_send(self, client, user_type: str, user_id: int, message: str):
         """POST /chat/send/{user_type}/{user_id}"""

@@ -1,4 +1,5 @@
 """Test Restaurant Object"""
+from typing import Optional
 from .test_user import UserTest
 
 class RestaurantTest(UserTest):
@@ -57,6 +58,13 @@ class RestaurantTest(UserTest):
                 'image2': self.image2,
                 'image3': self.image3
             }
+        )
+
+    def category_get(self, client, category_id: int):
+        """GET /restaurant-menu/category/{category_id}"""
+        return client.get(
+            f'/restaurant-menu/category/{category_id}',
+            headers = self.headers
         )
 
     def categories_get(self, client):
@@ -136,11 +144,66 @@ class RestaurantTest(UserTest):
             self.menu_items.append(res.get_json())
         return res
 
-    # TODO: Function for item update
+    def item_update(
+        self,
+        client,
+        menu_id: int,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        price: Optional[float] = None,
+        is_available: Optional[bool] = None,
+        img: Optional[bytes] = None
+    ):
+        """PUT /restaurant-menu/item/{menu_id}"""
+        data = {}
+        if img is not None:
+            data['img'] = img
+
+        query = {}
+        if name is not None:
+            query['name'] = name
+        if description is not None:
+            query['description'] = description
+        if price is not None:
+            query['price'] = price
+        if is_available is not None:
+            query['is_available'] = 'true' if is_available else 'false'
+
+        res = client.put(
+            f'/restaurant-menu/item/{menu_id}',
+            headers=self.headers,
+            content_type='multipart/form-data',
+            data=data,
+            query_string=query
+        )
+
+        if res.status_code == 200:
+            menu = [menu for menu in self.menu_items if menu['id'] == menu_id][0]
+            if name is not None:
+                menu['name'] = name
+            if description is not None:
+                menu['description'] = description
+            if price is not None:
+                menu['price'] = price
+            if is_available is not None:
+                menu['is_available'] = is_available
+            if img is not None:
+                menu['img'] = img
+
+        return res
+
+
     def items_get(self, client):
         """GET /restaurant-menu/items"""
         return client.get(
             '/restaurant-menu/items',
+            headers = self.headers,
+        )
+
+    def items_get_in_category(self, client, category_id: int):
+        """GET /restaurant-menu/items/{category_id}"""
+        return client.get(
+            f'/restaurant-menu/items/{category_id}',
             headers = self.headers,
         )
 
