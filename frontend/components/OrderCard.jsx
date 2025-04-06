@@ -342,7 +342,7 @@ export default function OrderCard({ entry }) {
         {/* view the details: this button is always there. */}
         <Button
           mode="text"
-          onPress={() => alert("TODO")}
+          onPress={() => router.push(`/${contextProfile?.role}/view/order/${order.id}`)}
         >
           Details
         </Button>
@@ -387,7 +387,7 @@ export default function OrderCard({ entry }) {
           </Button>
         )}
         {/* for the driver, when the order is ready_for_pickup, show the pickup button for the driver */}
-        {contextProfile?.role === "driver" && order.order_status === "READY_FOR_PICKUP" && (
+        {contextProfile?.role === "driver" && order.driver_id !== null && order.order_status === "READY_FOR_PICKUP" && (
           <Button
             mode="elevated"
             compact
@@ -397,7 +397,7 @@ export default function OrderCard({ entry }) {
           </Button>
         )}
         {/* for the driver, when the order is picked_up, show the delivered button for the driver */}
-        {contextProfile?.role === "driver" && order.order_status === "PICKED_UP" && (
+        {contextProfile?.role === "driver" && order.driver_id !== null && order.order_status === "PICKED_UP" && (
           <Button
             mode="elevated"
             compact

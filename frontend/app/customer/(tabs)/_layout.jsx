@@ -13,6 +13,7 @@ const tabs = [
   { name: "EditProfile", title: "Edit Profile", icon: "map-marker", visible: false },
   { name: "view/restaurant/[restaurantId]", title: "Restaurant", icon: "map-marker", visible: false },
   { name: "view/driver/[driverId]", title: "Driver", icon: "map-marker", visible: false },
+  { name: "view/order/[orderId]", title: "Order", icon: "map-marker", visible: false },
   { name: "checkout/[restaurantId]", title: "Checkout", icon: "map-marker", visible: false },
 ];
 
