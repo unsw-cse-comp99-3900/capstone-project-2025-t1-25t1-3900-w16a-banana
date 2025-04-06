@@ -1,7 +1,8 @@
 """General Search APIs"""
 from flask_restx import Resource
 from utils.response import res_error
-from db_model import Restaurant, MenuItem, MenuCategory
+from db_model import Restaurant, MenuItem, MenuCategory, Order
+from db_model.db_query import get_order_by_order_id
 from routes.search.models import (
     api,
     search_menu_req_parser,
@@ -46,3 +47,17 @@ class SearchRestaurant(Resource):
 
         restaurants = query.all()
         return [restaurant.dict() for restaurant in restaurants], 200
+
+@api.route('/order/<int:order_id>')
+class SearchOrderGeneral(Resource):
+    """Route: /search/order/<int:order_id>"""
+    @api.response(200, 'Success, return the full order details, including restaurant, menu item, customer, and driver details')
+    def get(self, order_id):
+        """Get the Order details"""
+        # Get the search filter
+        order = Order.query.get(order_id)
+        if not order:
+            return res_error("Order not found", 404)
+
+        result = get_order_by_order_id(order_id)
+        return result, 200

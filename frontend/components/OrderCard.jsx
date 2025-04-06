@@ -14,26 +14,9 @@ import { router } from "expo-router";
 import { calculateDistance, fetchLocationDetailFromAddress } from "../utils/location";
 import OrderPathOverview from "./OrderPathOverview";
 import axios from "axios";
+import { STATUS_COLOR_MAP, STATUS_TEXT_MAP } from "../utils/order";
 
-// colors for different statuses
-const statusColorMap = {
-  PENDING: "#FFA500",
-  RESTAURANT_ACCEPTED: "#2196F3",
-  READY_FOR_PICKUP: "#00BCD4",
-  PICKED_UP: "#9977d4",
-  DELIVERED: "#4CAF50",
-  CANCELLED: "#f7776e",
-};
-
-const statusTextMap = {
-  PENDING: "Pending",
-  RESTAURANT_ACCEPTED: "Restaurant Accepted",
-  READY_FOR_PICKUP: "Ready for Pickup",
-  PICKED_UP: "On the Way",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};
-
+// some GIF
 const statusGIFMap = {
   PENDING: PendingGIF,
   RESTAURANT_ACCEPTED: ApprovedGIF,
@@ -58,8 +41,6 @@ export default function OrderCard({ entry }) {
   const subtotal = order.order_price;
   const delivery = order.delivery_fee;
   const total = order.total_price;
-
-  const formattedDate = new Date(order.order_time).toLocaleString();
 
   // for the driver, display the pickup address to the delivery address
   const restaurantAddress = {
@@ -198,7 +179,7 @@ export default function OrderCard({ entry }) {
           variant="labelMedium"
           style={{
             fontWeight: "bold",
-            backgroundColor: statusColorMap[order.order_status],
+            backgroundColor: STATUS_COLOR_MAP[order.order_status],
             color: "#fff",
             width: "fit-content",
             textTransform: "uppercase",
@@ -207,7 +188,7 @@ export default function OrderCard({ entry }) {
             borderRadius: 8,
           }}
         >
-          #{capitalize.words(statusTextMap[order.order_status])}
+          #{capitalize.words(STATUS_TEXT_MAP[order.order_status])}
         </Text>
       </View>
 
@@ -314,24 +295,26 @@ export default function OrderCard({ entry }) {
         </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text variant="bodySmall" style={{ color: "#666" }}>Order Time:</Text>
-          <Text variant="bodySmall" style={{ color: "#666" }}>{formattedDate}</Text>
+          <Text variant="bodySmall" style={{ color: "#666" }}>Order Created At:</Text>
+          <Text variant="bodySmall" style={{ color: "#666" }}>
+            {order.order_time}
+          </Text>
         </View>
 
         {order.pickup_time && (
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text variant="bodySmall" style={{ color: "#666" }}>Pickup Ready At:</Text>
+            <Text variant="bodySmall" style={{ color: "#666" }}>Driver Picked Up At:</Text>
             <Text variant="bodySmall" style={{ color: "#666" }}>
-              {new Date(order.pickup_time).toLocaleString()}
+              {order.pickup_time}
             </Text>
           </View>
         )}
 
         {order.delivery_time && (
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text variant="bodySmall" style={{ color: "#666" }}>Delivered At:</Text>
+            <Text variant="bodySmall" style={{ color: "#666" }}>Finish Delivery At:</Text>
             <Text variant="bodySmall" style={{ color: "#666" }}>
-              {new Date(order.delivery_time).toLocaleString()}
+              {order.delivery_time}
             </Text>
           </View>
         )}
@@ -342,7 +325,7 @@ export default function OrderCard({ entry }) {
         {/* view the details: this button is always there. */}
         <Button
           mode="text"
-          onPress={() => alert("TODO")}
+          onPress={() => router.push(`/${contextProfile?.role}/view/order/${order.id}`)}
         >
           Details
         </Button>
@@ -387,7 +370,7 @@ export default function OrderCard({ entry }) {
           </Button>
         )}
         {/* for the driver, when the order is ready_for_pickup, show the pickup button for the driver */}
-        {contextProfile?.role === "driver" && order.order_status === "READY_FOR_PICKUP" && (
+        {contextProfile?.role === "driver" && order.driver_id !== null && order.order_status === "READY_FOR_PICKUP" && (
           <Button
             mode="elevated"
             compact
@@ -397,7 +380,7 @@ export default function OrderCard({ entry }) {
           </Button>
         )}
         {/* for the driver, when the order is picked_up, show the delivered button for the driver */}
-        {contextProfile?.role === "driver" && order.order_status === "PICKED_UP" && (
+        {contextProfile?.role === "driver" && order.driver_id !== null && order.order_status === "PICKED_UP" && (
           <Button
             mode="elevated"
             compact
