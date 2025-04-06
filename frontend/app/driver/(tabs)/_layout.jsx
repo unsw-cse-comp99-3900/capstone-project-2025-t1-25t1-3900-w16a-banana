@@ -3,12 +3,13 @@ import useAuth from "../../../hooks/useAuth";
 
 // normal tabs, when the driver's registration_status is not pending
 const tabs = [
-  { name: "index", title: "Home", icon: "home", visible: true },
+  // let the driver sees the order page first, no need for index page.
   { name: "orders", title: "Orders", icon: "clipboard-list", visible: true },
   { name: "history", title: "History", icon: "history", visible: true },
   { name: "notifications", title: "Notifications", icon: "bell", visible: true },
   { name: "profile", title: "Profile", icon: "account", visible: true },
-  // Hidden tabs
+  // Hidden tabs: no need to show index anymore,
+  { name: "index", title: "Home", icon: "home", visible: false },
   { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
 ];
 

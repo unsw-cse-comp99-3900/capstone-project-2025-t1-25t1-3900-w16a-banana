@@ -46,11 +46,13 @@ export default function TabLayout() {
 
   // Tabs shown when registration is still pending
   const pendingTabs = [
-    { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
+    // only show menu and profile pages
     { name: "menu", title: "Home", icon: "home", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
+    // Hidden tabs
     { name: "notifications", title: "Notifications", icon: "bell", visible: false },
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
+    { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
   ];
 
   const tabsToShow =
