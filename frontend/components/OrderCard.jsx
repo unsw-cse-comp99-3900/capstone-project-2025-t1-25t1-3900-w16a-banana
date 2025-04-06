@@ -67,12 +67,12 @@ export default function OrderCard({ entry }) {
   };
 
   // restaurant: accept or reject the order,
-  // action = "accept" or "reject"
-  const restaurantAcceptRejectOrder = (action) => {
+  // action = "accept" or "reject", "ready"
+  const restaurantAcceptRejectReadyOrder = (action) => {
     // showDialog to confirm the action
     showDialog({
       title: `Order Action Confirmation`,
-      message: `Are you sure you want to ${action} this order?`,
+      message: action === "ready" ? "Is this order ready for pickup?" : `Are you sure you want to ${action} this order?`,
       confirmText: "Yes",
       cancelText: "No",
       onConfirm: async () => {
@@ -81,7 +81,12 @@ export default function OrderCard({ entry }) {
     
         try {
           await axios.post(url, {}, config);
-          showToast(`Order ${action === "accept" ? "accepted" : "rejected"}`, "success");
+
+          if (action === "ready") {
+            showToast("Order is ready for pickup", "success");
+          } else {
+            showToast(`Order ${action === "accept" ? "accepted" : "rejected"}`, "success");
+          }
         } catch (error) {
           console.error(error);
           showToast(`Failed to ${action} order`, "error");
@@ -108,6 +113,28 @@ export default function OrderCard({ entry }) {
         } catch (error) {
           console.error(error);
           showToast("Failed to accept order", "error");
+        }
+      }
+    });
+  };
+
+  const driverPickupOrder = () => {
+    // confirm the action
+    showDialog({
+      title: "Pickup Order Confirmation",
+      message: "Have you picked up the order?",
+      confirmText: "Yes",
+      cancelText: "No",
+      onConfirm: async () => {
+        const url = `${BACKEND}/driver-order/order/pickup/${order.id}`;
+        const config = { headers: { Authorization: contextProfile.token } };
+    
+        try {
+          await axios.post(url, {}, config);
+          showToast("Order picked up", "success");
+        } catch (error) {
+          console.error(error);
+          showToast("Failed to confirm pickup", "error");
         }
       }
     });
@@ -173,7 +200,7 @@ export default function OrderCard({ entry }) {
               borderRadius: 8,
             }}
           >
-            {`#${capitalize.words(order.order_status.replace("_", " "))}`}
+            {`#${capitalize.words(order.order_status.replace(/_/g, " "))}`}
           </Text>
         </View>
         {/* right: to show the GIF */}
@@ -265,14 +292,14 @@ export default function OrderCard({ entry }) {
               textColor="red"
               mode="elevated"
               compact
-              onPress={() => restaurantAcceptRejectOrder("reject")}
+              onPress={() => restaurantAcceptRejectReadyOrder("reject")}
             >
               Cancel
             </Button>
             <Button
               mode="elevated"
               compact
-              onPress={() => restaurantAcceptRejectOrder("accept")}
+              onPress={() => restaurantAcceptRejectReadyOrder("accept")}
             >
               Approve
             </Button>
@@ -286,6 +313,26 @@ export default function OrderCard({ entry }) {
             onPress={driverAcceptOrder}
           >
             Accept
+          </Button>
+        )}
+        {/* for the restaurant, when the order is restaurant_accepted, show the ready for pickup button */}
+        {contextProfile?.role === "restaurant" && order.order_status === "RESTAURANT_ACCEPTED" && (
+          <Button
+            mode="elevated"
+            compact
+            onPress={() => restaurantAcceptRejectReadyOrder("ready")}
+          >
+            Pickup Ready
+          </Button>
+        )}
+        {/* for the driver, when the order is ready_for_pickup, show the pickup button for the driver */}
+        {contextProfile?.role === "driver" && order.order_status === "READY_FOR_PICKUP" && (
+          <Button
+            mode="elevated"
+            compact
+            onPress={driverPickupOrder}
+          >
+            Confirm Pickup
           </Button>
         )}
       </View>
