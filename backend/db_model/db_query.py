@@ -238,6 +238,42 @@ def get_orders_waiting_driver() -> List[Order]:
         Order.order_status != OrderStatus.CANCELLED
     ).all()
 
+def get_orders_of_driver_from_order_type(driver_id: int, order_type: str) -> List[Order]:
+    """order_type: new, in_progress, delivering, completed, all"""
+
+    if order_type == 'new':
+        return Order.query.filter(
+            Order.driver_id.is_(None),
+            Order.order_status != OrderStatus.CANCELLED
+        ).all()
+    elif order_type == 'in_progress':
+        # this order belongs to this driver,
+        # order status: accepted (in cooking), ready_for_pickup (waiting for driver)
+        return Order.query.filter(
+            Order.driver_id == driver_id,
+            Order.order_status.in_([
+                OrderStatus.ACCEPTED,
+                OrderStatus.READY_FOR_PICKUP,
+            ])
+        ).all()
+    elif order_type == 'delivering':
+        return Order.query.filter(
+            Order.driver_id == driver_id,
+            Order.order_status == OrderStatus.PICKED_UP
+        ).all()
+    elif order_type == 'completed':
+        return Order.query.filter(
+            Order.driver_id == driver_id,
+            Order.order_status == OrderStatus.DELIVERED
+        ).all()
+    elif order_type == 'all':
+        return Order.query.filter(
+            Order.driver_id == driver_id
+        ).all()
+    else:
+        # invalid order type
+        return []
+    
 # the order_id is assumed to be valid.
 def get_order_by_order_id(order_id: int):
     order = Order.query.get(order_id)
