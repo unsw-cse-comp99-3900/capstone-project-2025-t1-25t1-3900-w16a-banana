@@ -9,6 +9,7 @@ import useAuth from '../hooks/useAuth';
 import { STATUS_CONTENT } from '../utils/order';
 import capitalize from 'capitalize';
 import OrderDetailsPageStatus from './OrderDetailsPageStatus';
+import OrderPathOverviewMap from './OrderPathOverviewMap';
 
 export default function OrderDetailsPage({ orderId }) {
   const { contextProfile } = useAuth();
@@ -44,6 +45,26 @@ export default function OrderDetailsPage({ orderId }) {
   const subtotal = order.order_price;
   const gst = (order.total_price / 11).toFixed(2);
 
+  // if the driver is viewing this page, and if the order has not been assigned a driver yet, 
+  // then show the OrderPathOverviewMap component, it marks the driver location, restaurant location, and delivery location
+  const isShowOrderPathOverviewMap = contextProfile?.role === "driver" && (!order.driver_id) 
+      && (order.order_status === "RESTAURANT_ACCEPTED" || order.order_status === "READY_FOR_PICKUP");
+
+  // compose the restaurant address, and the order address
+  const restaurantAddress = {
+    address: restaurant.address,
+    suburb: restaurant.suburb,
+    state: restaurant.state,
+    postcode: restaurant.postcode,
+  };
+
+  const orderAddress = {
+    address: order.address,
+    suburb: order.suburb,
+    state: order.state,
+    postcode: order.postcode,
+  };
+
   return (
     <MyScrollView>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -72,6 +93,14 @@ export default function OrderDetailsPage({ orderId }) {
       
       {/* when the order status is not delivered or cancelled */}
       <OrderDetailsPageStatus order={order} />
+
+      {/* if the condition meets, show the order view map for the driver */}
+      {isShowOrderPathOverviewMap && (
+        <OrderPathOverviewMap
+          restaurantAddress={restaurantAddress}
+          deliveryAddress={orderAddress}
+        />
+      )}
 
       {/* Restaurant Info: when the contextProfile is not the restaurant, show the restaurant info */}
       {contextProfile?.role !== "restaurant" && (
