@@ -10,6 +10,7 @@ import { STATUS_CONTENT } from '../utils/order';
 import capitalize from 'capitalize';
 import OrderDetailsPageStatus from './OrderDetailsPageStatus';
 import OrderPathOverviewMap from './OrderPathOverviewMap';
+import OrderPathDriverToRestaurantMap from './OrderPathDriverToRestaurantMap';
 
 export default function OrderDetailsPage({ orderId }) {
   const { contextProfile } = useAuth();
@@ -48,6 +49,12 @@ export default function OrderDetailsPage({ orderId }) {
   // if the driver is viewing this page, and if the order has not been assigned a driver yet, 
   // then show the OrderPathOverviewMap component, it marks the driver location, restaurant location, and delivery location
   const isShowOrderPathOverviewMap = contextProfile?.role === "driver" && (!order.driver_id) 
+      && (order.order_status === "RESTAURANT_ACCEPTED" || order.order_status === "READY_FOR_PICKUP");
+
+  // if the order belongs to the driver, and the order status is RESTAURANT_ACCEPTED or READY_FOR_PICKUP,
+  // the driver sees the map with the route between the driver location and the restaurant location
+  const isShowOrderPathDriverToRestaurantMap = contextProfile?.role === "driver"
+      && order.driver_id === contextProfile.id
       && (order.order_status === "RESTAURANT_ACCEPTED" || order.order_status === "READY_FOR_PICKUP");
 
   // compose the restaurant address, and the order address
@@ -100,6 +107,11 @@ export default function OrderDetailsPage({ orderId }) {
           restaurantAddress={restaurantAddress}
           deliveryAddress={orderAddress}
         />
+      )}
+
+      {/* if the condition meets, show the path between driver to restaurant */}
+      {isShowOrderPathDriverToRestaurantMap && (
+        <OrderPathDriverToRestaurantMap restaurantAddress={restaurantAddress} />
       )}
 
       {/* Restaurant Info: when the contextProfile is not the restaurant, show the restaurant info */}
