@@ -143,7 +143,12 @@ export default function OrderDetailsPage({ orderId }) {
               icon="open-in-new"
               size={16}
               iconColor="#888"
-              onPress={() => router.push(`/${contextProfile.role}/view/restaurant/${restaurant.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: `/${contextProfile.role}/view/restaurant/${restaurant.id}`,
+                  params: { restaurantId: restaurant.id, from: `/${contextProfile.role}/view/order/${order.id}` },
+                })
+              }}
               style={{
                 padding: 0,
                 margin: 0,

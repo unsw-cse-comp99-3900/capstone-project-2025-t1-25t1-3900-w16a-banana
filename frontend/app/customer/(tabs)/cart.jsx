@@ -1,20 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, ActivityIndicator, ScrollView } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import axios from "axios";
 import CartPerRestaurant from "../../../components/CartPerRestaurant";
 import { BACKEND } from "../../../constants/backend";
-import useToast from "../../../hooks/useToast";
 import useAuth from "../../../hooks/useAuth";
-import useDialog from "../../../hooks/useDialog";
 import MyScrollView from "../../../components/MyScrollView";
 import { Text, Icon } from "react-native-paper";
 import { useFocusEffect } from "expo-router";
 
 export default function Cart() {
-  const { showToast } = useToast();
   const { contextProfile } = useAuth();
-  const { showDialog } = useDialog();
-
 
   const [cartData, setCartData] = useState([]);
   const [loading, setLoading] = useState(true);

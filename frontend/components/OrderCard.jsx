@@ -200,7 +200,12 @@ export default function OrderCard({ entry }) {
         {/* When the user is a customer, sees the restaurant avatar + restaurant name, pressable */}
         {contextProfile?.role === "customer" && (
           <Pressable
-            onPress={() => router.push(`/${contextProfile.role}/view/restaurant/${restaurant.id}`)}
+            onPress={() => {
+              router.push({
+                pathname: `/${contextProfile.role}/view/restaurant/${restaurant.id}`,
+                params: { restaurantId: restaurant.id, from: `${contextProfile.role}/orders` },
+              })
+            }}
             style={{ 
               flexDirection: "row", 
               alignItems: "center", 

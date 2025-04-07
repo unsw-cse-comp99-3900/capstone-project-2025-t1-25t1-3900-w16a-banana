@@ -90,7 +90,12 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
           <IconButton
             icon="chevron-right"
             size={20}
-            onPress={() => router.push(`/customer/view/restaurant/${restaurant.restaurant_id}`)}
+            onPress={() => {
+              router.push({
+                pathname: `/customer/view/restaurant/${restaurant.restaurant_id}`,
+                params: { restaurantId: restaurant.restaurant_id, from: "/customer/cart" },
+              })
+            }}
           />
         </View>
       </View>

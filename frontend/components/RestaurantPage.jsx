@@ -12,6 +12,9 @@ export default function RestaurantPage({ restaurantId }) {
   const [loading, setLoading] = useState(true);
   const width = Dimensions.get("window").width;
 
+  // check the from params
+  const { from } = useLocalSearchParams();
+
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
@@ -58,7 +61,7 @@ export default function RestaurantPage({ restaurantId }) {
           size={28}
           iconColor="white"
           containerColor="rgba(0,0,0,0.4)"
-          onPress={() => router.back()}
+          onPress={() => from ? router.replace(from) : router.back()}
         />
       </View>
       {/* Carousel */}
