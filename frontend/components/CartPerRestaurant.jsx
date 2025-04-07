@@ -138,11 +138,11 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
           </View>
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <Text variant="titleSmall">Delivery Fee:</Text>
-            <Text variant="titleSmall">${DELIVERY_FEE.toFixed(2)}</Text>
+            <Text variant="titleSmall" style={{ color: "#666" }}>TBD</Text>
           </View>
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text variant="titleSmall" style={{ fontWeight: "bold" }}>Total:</Text>
-            <Text variant="titleSmall" style={{ fontWeight: "bold" }}>${total.toFixed(2)}</Text>
+            <Text variant="titleSmall">Total:</Text>
+            <Text variant="titleSmall" style={{ color: "#666" }}>TBD</Text>
           </View>
         </View>
 

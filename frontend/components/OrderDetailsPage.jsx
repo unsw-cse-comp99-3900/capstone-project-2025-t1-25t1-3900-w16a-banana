@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Image } from 'react-native';
 import { Text, Divider, IconButton } from 'react-native-paper';
 import MyScrollView from './MyScrollView';
@@ -6,21 +6,11 @@ import axios from 'axios';
 import { router, useFocusEffect } from 'expo-router';
 import { BACKEND } from '../constants/backend';
 import useAuth from '../hooks/useAuth';
-import ApprovedGIF from "../assets/images/approved.gif";
-import DeliveryGIF from "../assets/images/delivery.gif";
-import PendingGIF from "../assets/images/pending.gif";
-import PickupGIF from "../assets/images/pickup.gif";
-import DeliveredGIF from "../assets/images/delivered.gif";
-import { STATUS_COLOR_MAP, STATUS_TEXT_MAP } from '../utils/order';
+import { STATUS_CONTENT } from '../utils/order';
 import capitalize from 'capitalize';
-
-const statusGIFMap = {
-  PENDING: PendingGIF,
-  RESTAURANT_ACCEPTED: ApprovedGIF,
-  READY_FOR_PICKUP: PickupGIF,
-  PICKED_UP: DeliveryGIF,
-  DELIVERED: DeliveredGIF,
-};
+import OrderDetailsPageStatus from './OrderDetailsPageStatus';
+import OrderPathMapWithRoute from './OrderPathMapWithRoute';
+import OrderPathOverviewMap from './OrderPathOverviewMap';
 
 export default function OrderDetailsPage({ orderId }) {
   const { contextProfile } = useAuth();
@@ -56,6 +46,38 @@ export default function OrderDetailsPage({ orderId }) {
   const subtotal = order.order_price;
   const gst = (order.total_price / 11).toFixed(2);
 
+  // if the driver is viewing this page, and if the order has not been assigned a driver yet, 
+  // then show the OrderPathOverviewMap component, it marks the driver location, restaurant location, and delivery location
+  const isShowOrderPathOverviewMap = contextProfile?.role === "driver" && (!order.driver_id) 
+      && (order.order_status === "RESTAURANT_ACCEPTED" || order.order_status === "READY_FOR_PICKUP");
+
+  // if the order belongs to the driver, and the order status is RESTAURANT_ACCEPTED or READY_FOR_PICKUP,
+  // the driver sees the map with the route between the driver location and the restaurant location
+  const isShowOrderPathDriverToRestaurantMap = contextProfile?.role === "driver"
+      && order.driver_id === contextProfile.id
+      && (order.order_status === "RESTAURANT_ACCEPTED" || order.order_status === "READY_FOR_PICKUP");
+
+  // if the order belongs to the driver, and the order status is PICKED_UP,
+  // then the driver sees the map with the route between the restaurant location and the delivery location
+  const isShowOrderPathRestaurantToCustomer = contextProfile?.role === "driver"
+      && order.driver_id === contextProfile.id
+      && order.order_status === "PICKED_UP";
+
+  // compose the restaurant address, and the order address
+  const restaurantAddress = {
+    address: restaurant.address,
+    suburb: restaurant.suburb,
+    state: restaurant.state,
+    postcode: restaurant.postcode,
+  };
+
+  const orderAddress = {
+    address: order.address,
+    suburb: order.suburb,
+    state: order.state,
+    postcode: order.postcode,
+  };
+
   return (
     <MyScrollView>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -66,10 +88,10 @@ export default function OrderDetailsPage({ orderId }) {
           </Text>
         </View>
         <Text
-          variant="labelLarge"
+          variant="labelMedium"
           style={{
             fontWeight: "bold",
-            backgroundColor: STATUS_COLOR_MAP[order.order_status],
+            backgroundColor: STATUS_CONTENT[order.order_status].color,
             color: "#fff",
             width: "fit-content",
             textTransform: "uppercase",
@@ -78,63 +100,61 @@ export default function OrderDetailsPage({ orderId }) {
             borderRadius: 8,
           }}
         >
-          #{capitalize.words(STATUS_TEXT_MAP[order.order_status])}
+          #{capitalize.words(STATUS_CONTENT[order.order_status].title)}
         </Text>
       </View>
       
       {/* when the order status is not delivered or cancelled */}
-      {order.order_status !== "DELIVERED" && order.order_status !== "CANCELLED" && (
-        <View>
-          <Text variant="titleMedium" style={{ marginBottom: 4 }}>Order Status</Text>
-          {(() => {
-            const steps = [
-              { key: "PENDING", label: "Pending" },
-              { key: "RESTAURANT_ACCEPTED", label: "Cooking" },
-              { key: "READY_FOR_PICKUP", label: "Ready for Pickup" },
-              { key: "PICKED_UP", label: "Picked Up" },
-              { key: "DELIVERED", label: "Delivered" },
-            ];
+      <OrderDetailsPageStatus order={order} />
 
-            const currentIndex = steps.findIndex(s => s.key === order.order_status);
-            const remainingSteps = steps.slice(currentIndex);
+      {/* if the condition meets, show the order view map for the driver */}
+      {isShowOrderPathOverviewMap && (
+        <OrderPathOverviewMap
+          restaurantAddress={restaurantAddress}
+          deliveryAddress={orderAddress}
+        />
+      )}
 
-            return (
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                {remainingSteps.map((step, index) => (
-                  <React.Fragment key={step.key}>
-                    <View style={{ alignItems: "center", gap: 4 }}>
-                      <Image
-                        source={statusGIFMap[step.key]}
-                        style={{ width: 40, height: 40 }}
-                      />
-                      <Text variant="labelMedium"
-                        style={{
-                          fontWeight: currentIndex === index + 1 ? "bold" : "normal",
-                        }}
-                      >
-                        {step.label}
-                      </Text>
-                    </View>
-                    {index !== remainingSteps.length - 1 && (
-                      <IconButton icon="arrow-right-bold" size={20} iconColor="#888" />
-                    )}
-                  </React.Fragment>
-                ))}
-              </View>
-            );
-          })()}
-          <Divider style={{ marginBottom: 8, marginTop: 16 }} />
-        </View>
+      {/* if the condition meets, show the path between driver to restaurant */}
+      {isShowOrderPathDriverToRestaurantMap && (
+        <OrderPathMapWithRoute
+          restaurantAddress={restaurantAddress}
+          deliveryAddress={orderAddress}
+          mode="driver-to-restaurant"
+        />
+      )}
+
+      {/* if the condition meets, show the path between restaurant to customer */}
+      {isShowOrderPathRestaurantToCustomer && (
+        <OrderPathMapWithRoute
+          restaurantAddress={restaurantAddress}
+          deliveryAddress={orderAddress}
+          mode="restaurant-to-customer"
+        />
       )}
 
       {/* Restaurant Info: when the contextProfile is not the restaurant, show the restaurant info */}
       {contextProfile?.role !== "restaurant" && (
         <View>
-          <Text variant="titleMedium" style={{ marginBottom: 4 }}>Restaurant</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, gap: 12, justifyContent: 'space-between' }}>
+          {/* restaurant gives a link */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+            <Text variant="titleMedium">Restaurant</Text>
+            <IconButton
+              icon="open-in-new"
+              size={16}
+              iconColor="#888"
+              onPress={() => router.push(`/${contextProfile.role}/view/restaurant/${restaurant.id}`)}
+              style={{
+                padding: 0,
+                margin: 0,
+              }}
+            />
+          </View>
+          {/* restaurant name, phone, address */}
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10, gap: 12, justifyContent: 'space-between' }}>
             <Image
               source={{ uri: `${BACKEND}/${restaurant.url_img1}` }}
-              style={{ width: 60, height: 60, borderRadius: "25%" }}
+              style={{ width: 50, height: 50, borderRadius: "8%", marginTop: 4 }}
             />
             <View style={{ gap: 4, flex: 1 }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -174,6 +194,15 @@ export default function OrderDetailsPage({ orderId }) {
           <Text style={{ color: '#666' }}>x {quantity}</Text>
         </View>
       ))}
+      {/* customer special notes if possible */}
+      <View style={{ marginBottom: 0 }}>
+        <Text variant="titleMedium" style={{ marginBottom: 4 }}>Customer Notes</Text>
+        {order.customer_notes ? (
+          <Text variant="bodyMedium" style={{ color: '#666' }}>{order.customer_notes}</Text>
+        ) : (
+          <Text variant="bodyMedium" style={{ color: '#666' }}>No special notes</Text>
+        )}
+      </View>
       <Divider style={{ marginVertical: 8 }} />
 
       {/* Price Info */}

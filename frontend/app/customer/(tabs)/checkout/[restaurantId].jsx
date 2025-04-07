@@ -305,8 +305,8 @@ export default function CheckoutPage() {
           <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
             Total:
           </Text>
-          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
-            ${total.toFixed(2)}
+          <Text variant="titleMedium" style={{ fontWeight: deliveryFee ? "bold" : "normal" }}>
+            {deliveryFee ? `$${total.toFixed(2)}` : "TBD"}
           </Text>
         </View>
         {/* GST = total / 11 */}
@@ -315,7 +315,7 @@ export default function CheckoutPage() {
             Incl GST:
           </Text>
           <Text variant="titleMedium" style={{ color: "#666" }}>
-            ${(total / 11).toFixed(2)}
+            {deliveryFee ? `$${(total / 11).toFixed(2)}` : "TBD"}
           </Text>
         </View>
       </View>
