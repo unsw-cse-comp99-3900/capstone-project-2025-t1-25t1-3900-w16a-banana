@@ -15,7 +15,7 @@ export const STATUS_LIST = [
 
 export const STATUS_CONTENT = {
   "PENDING": {
-    title: "Pending",
+    title: "Confirming Order",
     gif: PendingGIF,
     color: "#FFA500",
   },

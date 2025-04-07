@@ -54,7 +54,7 @@ export default function OrderDetailsPage({ orderId }) {
           </Text>
         </View>
         <Text
-          variant="labelLarge"
+          variant="labelMedium"
           style={{
             fontWeight: "bold",
             backgroundColor: STATUS_CONTENT[order.order_status].color,
@@ -76,11 +76,25 @@ export default function OrderDetailsPage({ orderId }) {
       {/* Restaurant Info: when the contextProfile is not the restaurant, show the restaurant info */}
       {contextProfile?.role !== "restaurant" && (
         <View>
-          <Text variant="titleMedium" style={{ marginBottom: 4 }}>Restaurant</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, gap: 12, justifyContent: 'space-between' }}>
+          {/* restaurant gives a link */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+            <Text variant="titleMedium">Restaurant</Text>
+            <IconButton
+              icon="open-in-new"
+              size={16}
+              iconColor="#888"
+              onPress={() => router.push(`/${contextProfile.role}/view/restaurant/${restaurant.id}`)}
+              style={{
+                padding: 0,
+                margin: 0,
+              }}
+            />
+          </View>
+          {/* restaurant name, phone, address */}
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10, gap: 12, justifyContent: 'space-between' }}>
             <Image
               source={{ uri: `${BACKEND}/${restaurant.url_img1}` }}
-              style={{ width: 60, height: 60, borderRadius: "25%" }}
+              style={{ width: 50, height: 50, borderRadius: "8%", marginTop: 4 }}
             />
             <View style={{ gap: 4, flex: 1 }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -120,6 +134,15 @@ export default function OrderDetailsPage({ orderId }) {
           <Text style={{ color: '#666' }}>x {quantity}</Text>
         </View>
       ))}
+      {/* customer special notes if possible */}
+      <View style={{ marginBottom: 0 }}>
+        <Text variant="titleMedium" style={{ marginBottom: 4 }}>Customer Notes</Text>
+        {order.customer_notes ? (
+          <Text variant="bodyMedium" style={{ color: '#666' }}>{order.customer_notes}</Text>
+        ) : (
+          <Text variant="bodyMedium" style={{ color: '#666' }}>No special notes</Text>
+        )}
+      </View>
       <Divider style={{ marginVertical: 8 }} />
 
       {/* Price Info */}

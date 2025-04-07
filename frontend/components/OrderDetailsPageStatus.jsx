@@ -14,7 +14,7 @@ export default function OrderDetailsPageStatus({ order }) {
   }
 
   return (
-    <View style={{ marginBottom: 8 }}>
+    <View style={{ marginBottom: 4 }}>
       <Text variant="titleMedium" style={{ marginBottom: 8 }}>
         Order Status
       </Text>
