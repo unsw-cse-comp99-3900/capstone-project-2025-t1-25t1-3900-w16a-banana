@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Text, ActivityIndicator, Icon } from 'react-native-paper';
-import { BACKEND } from '../../../constants/backend';
+import { BACKEND, TIME_INTERVAL } from '../../../constants/backend';
 import useAuth from '../../../hooks/useAuth';
 import useToast from '../../../hooks/useToast';
 import axios from 'axios';
@@ -16,13 +16,13 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
 
-  // use effect to keep fetching every 10 seconds
+  // use effect to keep fetching every seconds
   useEffect(() => {
     if (!contextProfile?.token) return;
     fetchOrders();
 
-    // keep doing it every 10 seconds
-    const interval = setInterval(fetchOrders, 10000);
+    // keep doing it every seconds
+    const interval = setInterval(fetchOrders, TIME_INTERVAL);
     return () => clearInterval(interval);
   }, [contextProfile]);
 

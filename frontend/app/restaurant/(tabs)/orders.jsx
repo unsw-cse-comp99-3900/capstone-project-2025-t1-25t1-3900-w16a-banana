@@ -5,7 +5,7 @@ import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
 import useToast from "../../../hooks/useToast";
 import OrderCard from "../../../components/OrderCard";
-import { BACKEND } from "../../../constants/backend";
+import { BACKEND, TIME_INTERVAL } from "../../../constants/backend";
 import { useFocusEffect } from "expo-router";
 
 const TABS = {
@@ -58,7 +58,7 @@ export default function RestaurantOrdersScreen() {
       fetchAllOrders();
 
       // refresh every 10 seconds
-      const interval = setInterval(fetchAllOrders, 10000);
+      const interval = setInterval(fetchAllOrders, TIME_INTERVAL);
 
       // cleanup function
       return () => clearInterval(interval);

@@ -4,7 +4,7 @@ import { Text, Divider, IconButton } from 'react-native-paper';
 import MyScrollView from './MyScrollView';
 import axios from 'axios';
 import { router, useFocusEffect } from 'expo-router';
-import { BACKEND } from '../constants/backend';
+import { BACKEND, TIME_INTERVAL } from '../constants/backend';
 import useAuth from '../hooks/useAuth';
 import { STATUS_CONTENT } from '../utils/order';
 import capitalize from 'capitalize';
@@ -29,7 +29,7 @@ export default function OrderDetailsPage({ orderId }) {
   useFocusEffect(
     useCallback(() => {
       fetchOrder();
-      const interval = setInterval(fetchOrder, 10000);
+      const interval = setInterval(fetchOrder, TIME_INTERVAL);
       return () => clearInterval(interval);
     }, [orderId])
   );

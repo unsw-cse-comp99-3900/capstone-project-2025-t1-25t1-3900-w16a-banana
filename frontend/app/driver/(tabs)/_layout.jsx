@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import BottomTabs from "../../../components/BottomTabs";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
-import { BACKEND } from "../../../constants/backend";
+import { BACKEND, TIME_INTERVAL } from "../../../constants/backend";
 
 export default function TabLayout() {
   const { contextProfile } = useAuth();
@@ -25,9 +25,9 @@ export default function TabLayout() {
       }
     };
 
-    // set initial fetch, and re-poll every 10 seconds
+    // set initial fetch, and re-poll every seconds
     fetchNewOrders();
-    const interval = setInterval(fetchNewOrders, 10000); 
+    const interval = setInterval(fetchNewOrders, TIME_INTERVAL); 
     return () => clearInterval(interval);
   }, [contextProfile, isPendingDriver]);
 
