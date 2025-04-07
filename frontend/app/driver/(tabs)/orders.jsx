@@ -11,7 +11,7 @@ import { useFocusEffect } from "expo-router";
 import useAuth from "../../../hooks/useAuth";
 import useToast from "../../../hooks/useToast";
 import OrderCard from "../../../components/OrderCard";
-import { BACKEND } from "../../../constants/backend";
+import { BACKEND, TIME_INTERVAL } from "../../../constants/backend";
 
 const TABS = {
   new: { label: "New Orders" },
@@ -58,7 +58,7 @@ export default function DriverOrdersScreen() {
     useCallback(() => {
       fetchAllOrders();
 
-      const interval = setInterval(fetchAllOrders, 10000);
+      const interval = setInterval(fetchAllOrders, TIME_INTERVAL);
       return () => clearInterval(interval);
     }, [contextProfile])
   );

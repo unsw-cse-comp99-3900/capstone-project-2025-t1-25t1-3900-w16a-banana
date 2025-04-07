@@ -36,7 +36,7 @@ export const STATUS_CONTENT = {
   },
   "DELIVERED": {
     title: "Delivered",
-    gif: null,
+    gif: DeliveredGIF,
     color: "#4CAF50",
   },
   "CANCELLED": {
