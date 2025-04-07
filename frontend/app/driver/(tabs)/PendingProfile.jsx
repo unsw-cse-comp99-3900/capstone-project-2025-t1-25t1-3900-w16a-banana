@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import useAuth from "../../../hooks/useAuth";
 
-export default function Home() {
+export default function PendingProfile() {
   const { contextProfile, isContextLoading } = useAuth();
   console.log(contextProfile);
 

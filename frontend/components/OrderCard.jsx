@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Image, Pressable } from "react-native";
-import { Text, List, Chip, Button, Icon } from "react-native-paper";
+import { Text, List, Button } from "react-native-paper";
 import { BACKEND } from "../constants/backend";
 import capitalize from "capitalize";
 import ApprovedGIF from "../assets/images/approved.gif";
@@ -11,18 +11,9 @@ import useAuth from "../hooks/useAuth";
 import useToast from "../hooks/useToast";
 import useDialog from "../hooks/useDialog";
 import { router } from "expo-router";
-import { calculateDistance, fetchLocationDetailFromAddress } from "../utils/location";
 import OrderPathOverview from "./OrderPathOverview";
 import axios from "axios";
-import { STATUS_COLOR_MAP, STATUS_TEXT_MAP } from "../utils/order";
-
-// some GIF
-const statusGIFMap = {
-  PENDING: PendingGIF,
-  RESTAURANT_ACCEPTED: ApprovedGIF,
-  READY_FOR_PICKUP: PickupGIF,
-  PICKED_UP: DeliveryGIF,
-};
+import { STATUS_CONTENT } from "../utils/order";
 
 // This component shows a simplified view for one order. 
 // It is used for 3 user roles: customer, restaurant, and driver.
@@ -179,7 +170,7 @@ export default function OrderCard({ entry }) {
           variant="labelMedium"
           style={{
             fontWeight: "bold",
-            backgroundColor: STATUS_COLOR_MAP[order.order_status],
+            backgroundColor: STATUS_CONTENT[order.order_status].color,
             color: "#fff",
             width: "fit-content",
             textTransform: "uppercase",
@@ -188,7 +179,7 @@ export default function OrderCard({ entry }) {
             borderRadius: 8,
           }}
         >
-          #{capitalize.words(STATUS_TEXT_MAP[order.order_status])}
+          #{capitalize.words(STATUS_CONTENT[order.order_status].title)}
         </Text>
       </View>
 
@@ -246,7 +237,7 @@ export default function OrderCard({ entry }) {
         {/* right: to show the GIF, when the order status is not delivered or cancelled */}
         {order.order_status !== "DELIVERED" && order.order_status !== "CANCELLED" && (
           <Image
-            source={statusGIFMap[order.order_status]}
+            source={STATUS_CONTENT[order.order_status].gif}
             style={{ width: 60, height: 60 }}
             resizeMode="cover"
           />
