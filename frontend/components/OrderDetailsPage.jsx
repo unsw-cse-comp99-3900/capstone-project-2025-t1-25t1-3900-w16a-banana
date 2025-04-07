@@ -9,8 +9,8 @@ import useAuth from '../hooks/useAuth';
 import { STATUS_CONTENT } from '../utils/order';
 import capitalize from 'capitalize';
 import OrderDetailsPageStatus from './OrderDetailsPageStatus';
+import OrderPathMapWithRoute from './OrderPathMapWithRoute';
 import OrderPathOverviewMap from './OrderPathOverviewMap';
-import OrderPathDriverToRestaurantMap from './OrderPathDriverToRestaurantMap';
 
 export default function OrderDetailsPage({ orderId }) {
   const { contextProfile } = useAuth();
@@ -56,6 +56,12 @@ export default function OrderDetailsPage({ orderId }) {
   const isShowOrderPathDriverToRestaurantMap = contextProfile?.role === "driver"
       && order.driver_id === contextProfile.id
       && (order.order_status === "RESTAURANT_ACCEPTED" || order.order_status === "READY_FOR_PICKUP");
+
+  // if the order belongs to the driver, and the order status is PICKED_UP,
+  // then the driver sees the map with the route between the restaurant location and the delivery location
+  const isShowOrderPathRestaurantToCustomer = contextProfile?.role === "driver"
+      && order.driver_id === contextProfile.id
+      && order.order_status === "PICKED_UP";
 
   // compose the restaurant address, and the order address
   const restaurantAddress = {
@@ -111,7 +117,20 @@ export default function OrderDetailsPage({ orderId }) {
 
       {/* if the condition meets, show the path between driver to restaurant */}
       {isShowOrderPathDriverToRestaurantMap && (
-        <OrderPathDriverToRestaurantMap restaurantAddress={restaurantAddress} />
+        <OrderPathMapWithRoute
+          restaurantAddress={restaurantAddress}
+          deliveryAddress={orderAddress}
+          mode="driver-to-restaurant"
+        />
+      )}
+
+      {/* if the condition meets, show the path between restaurant to customer */}
+      {isShowOrderPathRestaurantToCustomer && (
+        <OrderPathMapWithRoute
+          restaurantAddress={restaurantAddress}
+          deliveryAddress={orderAddress}
+          mode="restaurant-to-customer"
+        />
       )}
 
       {/* Restaurant Info: when the contextProfile is not the restaurant, show the restaurant info */}

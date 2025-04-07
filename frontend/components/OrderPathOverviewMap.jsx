@@ -57,6 +57,10 @@ export default function OrderPathOverviewMap({ restaurantAddress, deliveryAddres
         }} 
         center={center} 
         zoom={11}
+        options={{
+          mapTypeControl: false,
+          streetViewControl: false,
+        }}
       >
         <Marker
           position={{ lat: driverLocation.lat, lng: driverLocation.lng }}
