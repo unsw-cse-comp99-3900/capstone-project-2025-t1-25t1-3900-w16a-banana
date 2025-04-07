@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from '@react-google-maps/api';
-import { View } from 'react-native';
-import { Text, Button, Divider, ActivityIndicator } from 'react-native-paper';
-import { fetchLocationDetailFromAddress } from '../utils/location';
-import { GOOGLE_API_KEY } from '../constants/map';
-import useUserLocation from '../hooks/useUserLocation';
+import React, { useEffect, useState } from "react";
+import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
+import { View } from "react-native";
+import { Text, Button, Divider, ActivityIndicator } from "react-native-paper";
+import { fetchLocationDetailFromAddress } from "../utils/location";
+import { GOOGLE_API_KEY } from "../constants/map";
+import useUserLocation from "../hooks/useUserLocation";
 
 const icons = {
-  driver: 'https://maps.google.com/mapfiles/kml/shapes/cabs.png',
-  restaurant: 'https://maps.google.com/mapfiles/kml/shapes/dining.png',
-  delivery: 'https://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png',
+  driver: "https://maps.google.com/mapfiles/kml/shapes/cabs.png",
+  restaurant: "https://maps.google.com/mapfiles/kml/shapes/dining.png",
+  delivery: "https://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png",
 };
 
-export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddress, mode = 'driver-to-restaurant' }) {
+export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddress, mode = "driver-to-restaurant" }) {
   const { location: driverLocation } = useUserLocation();
   const [restaurantLoc, setRestaurantLoc] = useState(null);
   const [deliveryLoc, setDeliveryLoc] = useState(null);
@@ -22,7 +22,7 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
     googleMapsApiKey: GOOGLE_API_KEY,
   });
 
-  const isDriverToRestaurant = mode === 'driver-to-restaurant';
+  const isDriverToRestaurant = mode === "driver-to-restaurant";
 
   useEffect(() => {
     const fetchCoords = async () => {
@@ -44,10 +44,10 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
-          if (status === 'OK') {
+          if (status === "OK") {
             setDirections(result);
           } else {
-            console.error('Failed to get directions:', status);
+            console.error("Failed to get directions:", status);
           }
         }
       );
@@ -75,10 +75,10 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
 
   const handleOpenInGoogleMaps = () => {
     const url = `https://www.google.com/maps/dir/?api=1&origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&travelmode=driving`;
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   };
 
-  const title = isDriverToRestaurant ? 'Route to Restaurant' : 'Route to Delivery Address';
+  const title = isDriverToRestaurant ? "Route to Restaurant" : "Route to Delivery Address";
 
   return (
     <View style={{ marginTop: 6 }}>
@@ -86,10 +86,10 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
 
       <GoogleMap
         mapContainerStyle={{
-          height: '450px',
-          width: '100%',
-          borderRadius: '12px',
-          border: '1px solid #ccc',
+          height: "450px",
+          width: "100%",
+          borderRadius: "12px",
+          border: "1px solid #ccc",
         }}
         center={center}
         zoom={11}
@@ -118,14 +118,14 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
         {directions && <DirectionsRenderer directions={directions} />}
       </GoogleMap>
 
-      <View style={{ display: 'flex', alignItems: 'center', marginTop: 13 }}>
+      <View style={{ display: "flex", alignItems: "center", marginTop: 13 }}>
         <Button
           compact
           mode="outlined"
           icon="navigation"
           onPress={handleOpenInGoogleMaps}
           style={{
-            width: 'fit-content',
+            width: "fit-content",
           }}
         >
           Show in Google Maps

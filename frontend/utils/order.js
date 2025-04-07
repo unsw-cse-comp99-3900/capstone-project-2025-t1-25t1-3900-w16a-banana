@@ -44,5 +44,5 @@ export const STATUS_CONTENT = {
     gif: null,
     color: "#f7776e",
   },
-}
+};
 

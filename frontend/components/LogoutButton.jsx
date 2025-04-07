@@ -1,8 +1,8 @@
-import React from 'react';
-import { Button } from 'react-native-paper';
-import useAuth from '../hooks/useAuth';
-import { useRouter } from 'expo-router';
-import useToast from '../hooks/useToast';
+import React from "react";
+import { Button } from "react-native-paper";
+import useAuth from "../hooks/useAuth";
+import { useRouter } from "expo-router";
+import useToast from "../hooks/useToast";
 
 export default function LogoutButton() {
   const { logout } = useAuth();

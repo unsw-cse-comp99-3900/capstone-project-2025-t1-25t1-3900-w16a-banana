@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import useDialog from "./useDialog";
 import useToast from "./useToast";
 import { fetchLocationDetailFromCoordinate } from "../utils/location";
-import useAuth from "./useAuth";
 
 // fallback location: UNSW campus coordinates
 const UNSW_LOCATION = { lat: -33.9173, lng: 151.2313 };

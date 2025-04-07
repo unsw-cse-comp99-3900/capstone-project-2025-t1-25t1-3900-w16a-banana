@@ -40,7 +40,7 @@ export default function CheckoutPage() {
     suburb: "",
     state: "",
     postcode: "",
-  }
+  };
 
   const [form, setForm] = useState(initialForm);
 

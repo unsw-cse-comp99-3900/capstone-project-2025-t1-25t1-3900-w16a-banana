@@ -86,7 +86,7 @@ export default function RestaurantOrdersScreen() {
     "pending": pendingOrders.length,
     "accepted": acceptedOrders.length,
     "ready_for_pickup": pickupOrders.length,
-  }
+  };
 
   return (
     <ScrollView style={{ paddingTop: 14, paddingBottom: 20 }}>

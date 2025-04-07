@@ -16,5 +16,5 @@ export default function MyScrollView({ children }) {
         {children}
       </ScrollView>
     </KeyboardAvoidingView>
-  )
+  );
 }

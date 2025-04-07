@@ -1,16 +1,16 @@
-import React, { useState, useCallback } from 'react';
-import { View, Image } from 'react-native';
-import { Text, Divider, IconButton } from 'react-native-paper';
-import MyScrollView from './MyScrollView';
-import axios from 'axios';
-import { router, useFocusEffect } from 'expo-router';
-import { BACKEND, TIME_INTERVAL } from '../constants/backend';
-import useAuth from '../hooks/useAuth';
-import { STATUS_CONTENT } from '../utils/order';
-import capitalize from 'capitalize';
-import OrderDetailsPageStatus from './OrderDetailsPageStatus';
-import OrderPathMapWithRoute from './OrderPathMapWithRoute';
-import OrderPathOverviewMap from './OrderPathOverviewMap';
+import React, { useState, useCallback } from "react";
+import { View, Image } from "react-native";
+import { Text, Divider, IconButton } from "react-native-paper";
+import MyScrollView from "./MyScrollView";
+import axios from "axios";
+import { router, useFocusEffect } from "expo-router";
+import { BACKEND, TIME_INTERVAL } from "../constants/backend";
+import useAuth from "../hooks/useAuth";
+import { STATUS_CONTENT } from "../utils/order";
+import capitalize from "capitalize";
+import OrderDetailsPageStatus from "./OrderDetailsPageStatus";
+import OrderPathMapWithRoute from "./OrderPathMapWithRoute";
+import OrderPathOverviewMap from "./OrderPathOverviewMap";
 
 export default function OrderDetailsPage({ orderId }) {
   const { contextProfile } = useAuth();
@@ -22,7 +22,7 @@ export default function OrderDetailsPage({ orderId }) {
       const res = await axios.get(`${BACKEND}/search/order/${orderId}`);
       setOrderData(res.data);
     } catch (err) {
-      console.error('Failed to fetch order details:', err);
+      console.error("Failed to fetch order details:", err);
     }
   };
 
@@ -147,7 +147,7 @@ export default function OrderDetailsPage({ orderId }) {
                 router.push({
                   pathname: `/${contextProfile.role}/view/restaurant/${restaurant.id}`,
                   params: { restaurantId: restaurant.id, from: `/${contextProfile.role}/view/order/${order.id}` },
-                })
+                });
               }}
               style={{
                 padding: 0,
@@ -156,7 +156,7 @@ export default function OrderDetailsPage({ orderId }) {
             />
           </View>
           {/* restaurant name, phone, address */}
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10, gap: 12, justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: 10, gap: 12, justifyContent: "space-between" }}>
             <Image
               source={{ uri: `${BACKEND}/${restaurant.url_img1}` }}
               style={{ width: 50, height: 50, borderRadius: "8%", marginTop: 4 }}
@@ -185,27 +185,27 @@ export default function OrderDetailsPage({ orderId }) {
       {/* Items */}
       <Text variant="titleMedium" style={{ marginBottom: 8 }}>Order Items</Text>
       {items.map(({ id, quantity, price, menu_item }) => (
-        <View key={id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, justifyContent: 'space-between' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <View key={id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 10, justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
             <Image
               source={{ uri: `${BACKEND}/${menu_item.url_img}` }}
               style={{ width: 40, height: 40, borderRadius: 4 }}
             />
             <View style={{ flex: 1 }}>
               <Text>{menu_item.name}</Text>
-              <Text style={{ color: '#666' }}>${price.toFixed(2)}</Text>
+              <Text style={{ color: "#666" }}>${price.toFixed(2)}</Text>
             </View>
           </View>
-          <Text style={{ color: '#666' }}>x {quantity}</Text>
+          <Text style={{ color: "#666" }}>x {quantity}</Text>
         </View>
       ))}
       {/* customer special notes if possible */}
       <View style={{ marginBottom: 0 }}>
         <Text variant="titleMedium" style={{ marginBottom: 4 }}>Customer Notes</Text>
         {order.customer_notes ? (
-          <Text variant="bodyMedium" style={{ color: '#666' }}>{order.customer_notes}</Text>
+          <Text variant="bodyMedium" style={{ color: "#666" }}>{order.customer_notes}</Text>
         ) : (
-          <Text variant="bodyMedium" style={{ color: '#666' }}>No special notes</Text>
+          <Text variant="bodyMedium" style={{ color: "#666" }}>No special notes</Text>
         )}
       </View>
       <Divider style={{ marginVertical: 8 }} />
@@ -213,21 +213,21 @@ export default function OrderDetailsPage({ orderId }) {
       {/* Price Info */}
       <View style={{ flexDirection: "column", gap: 4}}>
         <Text variant="titleMedium">Price Summary</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text variant="bodyMedium">Subtotal</Text>
           <Text variant="bodyMedium">${subtotal.toFixed(2)}</Text>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text variant="bodyMedium">Delivery Fee</Text>
           <Text variant="bodyMedium">${order.delivery_fee.toFixed(2)}</Text>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text variant="bodyMedium">Total</Text>
-          <Text variant="bodyMedium" style={{ fontWeight: 'bold' }}>${order.total_price.toFixed(2)}</Text>
+          <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>${order.total_price.toFixed(2)}</Text>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text variant="bodyMedium" style={{ color: '#666' }}>Incl GST</Text>
-          <Text variant="bodyMedium" style={{ color: '#666' }}>${gst}</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text variant="bodyMedium" style={{ color: "#666" }}>Incl GST</Text>
+          <Text variant="bodyMedium" style={{ color: "#666" }}>${gst}</Text>
         </View>
       </View>
       <Divider style={{ marginVertical: 8 }} />

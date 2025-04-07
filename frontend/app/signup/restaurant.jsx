@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, ScrollView, View, Platform } from "react-native";
+import { View } from "react-native";
 import { useRouter } from "expo-router";
 import { Button, Text, IconButton, TextInput, HelperText } from "react-native-paper";
 import useToast from "../../hooks/useToast";

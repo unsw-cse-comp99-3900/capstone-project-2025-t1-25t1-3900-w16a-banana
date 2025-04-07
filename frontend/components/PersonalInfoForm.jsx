@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { TextInput, Text, HelperText } from "react-native-paper";
+import { TextInput, HelperText } from "react-native-paper";
 import { isMobilePhone, isStrongPassword } from "validator";
 import isEmail from "validator/lib/isEmail";
 

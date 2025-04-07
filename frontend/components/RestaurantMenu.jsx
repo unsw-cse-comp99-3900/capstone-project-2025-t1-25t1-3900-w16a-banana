@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { ScrollView, View } from "react-native";
-import { ActivityIndicator, Text, List, Button, IconButton } from "react-native-paper";
+import { ActivityIndicator, Text, List, Button } from "react-native-paper";
 import axios from "axios";
 import capitalize from "capitalize";
 import { BACKEND } from "../constants/backend";
 import useToast from "../hooks/useToast";
 import useAuth from "../hooks/useAuth";
 import { router, useFocusEffect } from "expo-router";
-import ZoomableImage from "./ZoomableImage";
 import RestaurantMenuItem from "./RestaurantMenuItem";
 
 export default function RestaurantMenu({ restaurantId }) {
@@ -29,7 +28,7 @@ export default function RestaurantMenu({ restaurantId }) {
     try {
       const response = await axios.get(url);
       setMenuCategories(response.data);
-    } catch (error) {
+    } catch {
       showToast("Failed to fetch restaurant menu", "error");
     } finally {
       setLoading(false);
@@ -79,6 +78,7 @@ export default function RestaurantMenu({ restaurantId }) {
       await axios.put(`${BACKEND}/customer-order/cart`, payload, { headers });
       fetchCart();
     } catch (err) {
+      console.log(err);
       showToast("Failed to update cart", "error");
     }
   };
@@ -158,8 +158,6 @@ export default function RestaurantMenu({ restaurantId }) {
             >
               {itemCount > 0 ? (
                 category.items.map((item) => {
-                  const quantity = getCartQuantity(item.id);
-
                   return (
                     <List.Item
                       key={item.id}

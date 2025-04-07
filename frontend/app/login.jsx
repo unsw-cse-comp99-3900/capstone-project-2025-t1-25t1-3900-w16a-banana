@@ -45,7 +45,7 @@ export default function Login() {
       email: form.email,
       password: form.password,
       user_type: form.userType,
-    }
+    };
     
     try {
       const response = await axios.post(url, data);

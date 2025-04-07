@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { View, ScrollView } from 'react-native';
-import { Text, ActivityIndicator, Icon } from 'react-native-paper';
-import { BACKEND, TIME_INTERVAL } from '../../../constants/backend';
-import useAuth from '../../../hooks/useAuth';
-import useToast from '../../../hooks/useToast';
-import axios from 'axios';
-import OrderCard from '../../../components/OrderCard';
-import groupOrdersByDate from '../../../utils/group';
-import MyScrollView from '../../../components/MyScrollView';
+import React, { useEffect, useState, useMemo } from "react";
+import { View, ScrollView } from "react-native";
+import { Text, ActivityIndicator, Icon } from "react-native-paper";
+import { BACKEND, TIME_INTERVAL } from "../../../constants/backend";
+import useAuth from "../../../hooks/useAuth";
+import useToast from "../../../hooks/useToast";
+import axios from "axios";
+import OrderCard from "../../../components/OrderCard";
+import groupOrdersByDate from "../../../utils/group";
+import MyScrollView from "../../../components/MyScrollView";
 
 export default function Orders() {
   const { contextProfile } = useAuth();
@@ -34,7 +34,7 @@ export default function Orders() {
       const response = await axios.get(url, config);
       setOrders(response.data);
     } catch (error) {
-      showToast('Failed to fetch orders', 'error');
+      showToast("Failed to fetch orders", "error");
       console.error(error);
     } finally {
       setLoading(false);
@@ -42,7 +42,7 @@ export default function Orders() {
   };
 
   // Filter & sort orders
-  const inProgressStatuses = ['PENDING', 'RESTAURANT_ACCEPTED', 'READY_FOR_PICKUP', 'PICKED_UP'];
+  const inProgressStatuses = ["PENDING", "RESTAURANT_ACCEPTED", "READY_FOR_PICKUP", "PICKED_UP"];
 
   const inProgressOrders = useMemo(() => {
     return orders
@@ -53,7 +53,7 @@ export default function Orders() {
   const pastOrders = useMemo(() => {
     return orders
       .filter((entry) =>
-        ['DELIVERED', 'CANCELLED'].includes(entry.order.order_status)
+        ["DELIVERED", "CANCELLED"].includes(entry.order.order_status)
       )
       .sort((a, b) => new Date(b.order.order_time) - new Date(a.order.order_time));
   }, [orders]);
@@ -64,7 +64,7 @@ export default function Orders() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator />
       </View>
     );
@@ -92,7 +92,7 @@ export default function Orders() {
     <MyScrollView>
       {/* if no orders, then don't show that section */}
       {inProgressOrders.length > 0 && (
-        <View style={{ flexDirection: 'column', marginBottom: 4 }}>
+        <View style={{ flexDirection: "column", marginBottom: 4 }}>
           <Text variant="titleLarge" style={{ marginBottom: 8 }}>
             {`Ongoing Orders (${inProgressOrders.length})`}
           </Text>
@@ -104,12 +104,12 @@ export default function Orders() {
 
       {/* divider exists if two parts are shown */}
       {inProgressOrders.length > 0 && pastOrders.length > 0 && (
-        <View style={{ height: 1, backgroundColor: '#ddd', marginVertical: 8 }} />
+        <View style={{ height: 1, backgroundColor: "#ddd", marginVertical: 8 }} />
       )}
 
       {/* if no orders, then don't show */}
       {pastOrders.length > 0 && (
-        <View style={{ flexDirection: 'column', marginBottom: 4 }}>
+        <View style={{ flexDirection: "column", marginBottom: 4 }}>
           <Text variant="titleLarge" style={{ marginBottom: 8 }}>
             {`Past Orders (${pastOrders.length})`}
           </Text>

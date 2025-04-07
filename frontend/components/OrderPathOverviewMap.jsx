@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
-import { fetchLocationDetailFromAddress } from '../utils/location';
-import useUserLocation from '../hooks/useUserLocation';
-import { ActivityIndicator, View } from 'react-native';
-import { GOOGLE_API_KEY } from '../constants/map';
-import { Divider, Text } from 'react-native-paper';
+import React, { useEffect, useState } from "react";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { fetchLocationDetailFromAddress } from "../utils/location";
+import useUserLocation from "../hooks/useUserLocation";
+import { ActivityIndicator, View } from "react-native";
+import { GOOGLE_API_KEY } from "../constants/map";
+import { Divider, Text } from "react-native-paper";
 
 // differentiate the icons for driver, restaurant, and delivery locations
 const icons = {
-  driver: 'https://maps.google.com/mapfiles/kml/shapes/cabs.png',
-  restaurant: 'https://maps.google.com/mapfiles/kml/shapes/dining.png',
-  delivery: 'https://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png',
+  driver: "https://maps.google.com/mapfiles/kml/shapes/cabs.png",
+  restaurant: "https://maps.google.com/mapfiles/kml/shapes/dining.png",
+  delivery: "https://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png",
 };
 
 export default function OrderPathOverviewMap({ restaurantAddress, deliveryAddress }) {
@@ -51,9 +51,9 @@ export default function OrderPathOverviewMap({ restaurantAddress, deliveryAddres
       </Text>
       <GoogleMap 
         mapContainerStyle={{
-          height: '400px',
-          width: '100%',
-          borderRadius: '12px',
+          height: "400px",
+          width: "100%",
+          borderRadius: "12px",
         }} 
         center={center} 
         zoom={11}
