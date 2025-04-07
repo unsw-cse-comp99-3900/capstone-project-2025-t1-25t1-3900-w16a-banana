@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Text, ActivityIndicator, TouchableRipple, Badge } from "react-native-paper";
 import axios from "axios";

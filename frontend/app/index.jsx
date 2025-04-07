@@ -2,13 +2,14 @@ import React from "react";
 import { View, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { Button, Text } from "react-native-paper";
+import ImageSource from "../assets/images/icon.png";
 
 export default function Index() {
   const router = useRouter();
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f9f9f9", padding: 20 }}>
-      <Image source={require("../assets/images/icon.png")} style={{ width: 120, height: 120, marginBottom: 20 }} />
+      <Image source={ImageSource} style={{ width: 120, height: 120, marginBottom: 20 }} />
       <Text variant="headlineLarge" style={{ fontWeight: "bold", marginBottom: 20 }}>
         SmartEats
       </Text>

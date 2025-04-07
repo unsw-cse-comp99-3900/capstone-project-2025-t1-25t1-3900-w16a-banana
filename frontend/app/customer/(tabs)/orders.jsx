@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
 import { Text, ActivityIndicator, Icon } from "react-native-paper";
 import { BACKEND, TIME_INTERVAL } from "../../../constants/backend";
 import useAuth from "../../../hooks/useAuth";

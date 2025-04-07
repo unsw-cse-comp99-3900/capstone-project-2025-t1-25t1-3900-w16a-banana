@@ -6,15 +6,14 @@ import MyScrollView from "../../../components/MyScrollView";
 import { router } from "expo-router";
 import RestaurantList from "../../../components/RestaurantList";
 import useUserLocation from "../../../hooks/useUserLocation";
+import Img1 from "../../../assets/images/restaurant_img1.jpg";
+import Img2 from "../../../assets/images/restaurant_img2.jpg";
+import Img3 from "../../../assets/images/restaurant_img3.jpg";
 
 const { width } = Dimensions.get("window");
 
 // carousel uses some default images
-const carouselImages = [
-  require("../../../assets/images/restaurant_img1.jpg"),
-  require("../../../assets/images/restaurant_img2.jpg"),
-  require("../../../assets/images/restaurant_img3.jpg"),
-];
+const carouselImages = [Img1, Img2, Img3];
 
 export default function Home() {
   // use the hook to obtain the location

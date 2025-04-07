@@ -84,11 +84,6 @@ export default function CheckoutPage() {
     : 0;
 
   const total = deliveryFee !== null ? subtotal + deliveryFee : subtotal + 0;
-  const gst = total / 11;
-
-  const handleChange = (key, value) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
 
   if (loading || !restaurantCart) {
     return (
@@ -161,7 +156,7 @@ export default function CheckoutPage() {
       };
 
       try {
-        const response = await axios.post(url, payload, config);
+        await axios.post(url, payload, config);
         showToast("Order submitted successfully!", "success");
         router.replace("/customer/orders");
       } catch (error) {
