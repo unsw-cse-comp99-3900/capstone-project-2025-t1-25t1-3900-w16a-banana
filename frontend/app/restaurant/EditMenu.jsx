@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, Image } from "react-native";
+import { View, ScrollView } from "react-native";
 import {
   Text,
   TextInput,
@@ -12,13 +12,11 @@ import { BACKEND } from "../../constants/backend";
 import useAuth from "../../hooks/useAuth";
 import useToast from "../../hooks/useToast";
 import MenuCategoryEdit from "../../components/MenuCategoryEdit";
-import useDialog from "../../hooks/useDialog";
 
 export default function EditMenuPage() {
   const router = useRouter();
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
-  const { showDialog } = useDialog();
 
   // record the restaurantId
   const restaurantId = contextProfile?.id;
@@ -61,7 +59,7 @@ export default function EditMenuPage() {
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {
-      const response = await axios.post(url, payload, config);
+      await axios.post(url, payload, config);
 
       showToast("New category added.", "success");
       setNewCategoryName("");

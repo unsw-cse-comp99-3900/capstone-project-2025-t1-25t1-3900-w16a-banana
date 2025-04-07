@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Text, ActivityIndicator, TouchableRipple, Badge } from "react-native-paper";
 import axios from "axios";
@@ -86,7 +86,7 @@ export default function RestaurantOrdersScreen() {
     "pending": pendingOrders.length,
     "accepted": acceptedOrders.length,
     "ready_for_pickup": pickupOrders.length,
-  }
+  };
 
   return (
     <ScrollView style={{ paddingTop: 14, paddingBottom: 20 }}>

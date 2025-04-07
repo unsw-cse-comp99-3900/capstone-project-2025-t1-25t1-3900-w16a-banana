@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView, Image } from "react-native";
+import React, { useState } from "react";
+import { View } from "react-native";
 import {
   Text,
   TextInput,
-  Button,
-  ActivityIndicator,
+  Button
 } from "react-native-paper";
 import axios from "axios";
 import { BACKEND } from "../constants/backend";
@@ -13,7 +12,7 @@ import useToast from "../hooks/useToast";
 import MenuItemEdit from "./MenuItemEdit";
 import useDialog from "../hooks/useDialog";
 
-export default function MenuCategoryEdit({ category, restaurantId, onRefresh, displayIndex }) {
+export default function MenuCategoryEdit({ category, onRefresh, displayIndex }) {
   const { showToast } = useToast();
   const { showDialog } = useDialog();
   const { contextProfile } = useAuth();
@@ -35,8 +34,8 @@ export default function MenuCategoryEdit({ category, restaurantId, onRefresh, di
     const config = { headers: { Authorizaton: contextProfile.token } }; 
 
     try {
-      const response = await axios.put(url, payload, config);
-      showToast("Category name updated.", "success")
+      await axios.put(url, payload, config);
+      showToast("Category name updated.", "success");
 
       // refresh the whole screen
       onRefresh();
@@ -75,14 +74,14 @@ export default function MenuCategoryEdit({ category, restaurantId, onRefresh, di
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {
-      const response = await axios.delete(url, config);
+      await axios.delete(url, config);
       showToast("Category removed.", "success");
       onRefresh();
     } catch (error) {
       console.error("Failed to remove category:", error);
       showToast("Failed to remove category.", "error");
     }
-  }
+  };
 
   // Add Item
   const addItem = async () => {

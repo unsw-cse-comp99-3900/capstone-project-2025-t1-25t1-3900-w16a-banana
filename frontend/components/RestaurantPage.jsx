@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator, Linking, Pressable, ScrollView, Dimensions, Image } from "react-native";
+import { View, ActivityIndicator, Linking, ScrollView, Dimensions, Image } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import axios from "axios";
 import Carousel from "react-native-reanimated-carousel";
@@ -11,6 +11,9 @@ export default function RestaurantPage({ restaurantId }) {
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const width = Dimensions.get("window").width;
+
+  // check the from params
+  const { from } = useLocalSearchParams();
 
   useEffect(() => {
     const fetchRestaurant = async () => {
@@ -58,7 +61,7 @@ export default function RestaurantPage({ restaurantId }) {
           size={28}
           iconColor="white"
           containerColor="rgba(0,0,0,0.4)"
-          onPress={() => router.back()}
+          onPress={() => from ? router.replace(from) : router.back()}
         />
       </View>
       {/* Carousel */}

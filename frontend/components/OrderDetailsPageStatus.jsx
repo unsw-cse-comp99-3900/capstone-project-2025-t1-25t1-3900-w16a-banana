@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Image } from 'react-native';
-import { Text, IconButton, Divider } from 'react-native-paper';
-import { STATUS_CONTENT, STATUS_LIST } from '../utils/order';
+import React from "react";
+import { View, Image } from "react-native";
+import { Text, IconButton, Divider } from "react-native-paper";
+import { STATUS_CONTENT, STATUS_LIST } from "../utils/order";
 
 export default function OrderDetailsPageStatus({ order }) {
   const currentStepIndex = STATUS_LIST.findIndex(
@@ -9,7 +9,7 @@ export default function OrderDetailsPageStatus({ order }) {
   );
   const nextStepIndex = currentStepIndex + 1;
 
-  if (order.order_status === 'DELIVERED' || order.order_status === 'CANCELLED') {
+  if (order.order_status === "DELIVERED" || order.order_status === "CANCELLED") {
     return null;
   }
 
@@ -19,9 +19,9 @@ export default function OrderDetailsPageStatus({ order }) {
         Order Status
       </Text>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, justifyContent: 'center' }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 16, justifyContent: "center" }}>
         {/* Current Step: top Current text, middle gif, bottom status title */}
-        <View style={{ alignItems: 'center', gap: 2 }}>
+        <View style={{ alignItems: "center", gap: 2 }}>
           <Text
             variant="labelLarge"
             style={{
@@ -45,8 +45,8 @@ export default function OrderDetailsPageStatus({ order }) {
         )}
 
         {/* Next Step */}
-        <View style={{ alignItems: 'center', gap: 2 }}>
-          <Text variant="labelLarge" style={{ color: '#999' }}>
+        <View style={{ alignItems: "center", gap: 2 }}>
+          <Text variant="labelLarge" style={{ color: "#999" }}>
             Next
           </Text>
           <Image
@@ -58,7 +58,7 @@ export default function OrderDetailsPageStatus({ order }) {
               opacity: 0.5,
             }}
           />
-          <Text variant="labelLarge" style={{ color: '#888' }}>
+          <Text variant="labelLarge" style={{ color: "#888" }}>
             {STATUS_CONTENT[STATUS_LIST[nextStepIndex]].title}
           </Text>
         </View>

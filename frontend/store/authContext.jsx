@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import Storage from "./storage";
+import WebsiteStorage from "./storage";
 
 export const AuthContext = createContext();
 
@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const storedProfile = await Storage.getItem("contextProfile");
+        const storedProfile = await WebsiteStorage.getItem("contextProfile");
         if (storedProfile) {
           setContextProfile(JSON.parse(storedProfile));
         }
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (profile) => {
     try {
-      await Storage.setItem("contextProfile", JSON.stringify(profile));
+      await WebsiteStorage.setItem("contextProfile", JSON.stringify(profile));
       setContextProfile(profile);
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await Storage.removeItem("contextProfile");
+      await WebsiteStorage.removeItem("contextProfile");
       setContextProfile(null);
     } catch (error) {
       console.error("Error removing profile:", error);

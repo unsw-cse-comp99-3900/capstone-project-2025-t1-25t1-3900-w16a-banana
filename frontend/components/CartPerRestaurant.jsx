@@ -11,8 +11,6 @@ import { router } from "expo-router";
 import useDialog from "../hooks/useDialog";
 import useToast from "../hooks/useToast";
 
-const DELIVERY_FEE = 10;
-
 // onUpdated is a callback function from the parent component cart.jsx to update the whole page.
 export default function CartPerRestaurant({ restaurant, onUpdated }) {
   const { contextProfile } = useAuth();
@@ -38,8 +36,6 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
     0
   );
 
-  const total = subtotal + DELIVERY_FEE;
-
   const emptyCartAction = () => {
     showDialog({
       title: "Empty Cart Confirmation",
@@ -55,7 +51,7 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {
-      const response = await axios.delete(url, config);
+      await axios.delete(url, config);
       showToast("Items removed from cart", "success");
       onUpdated();
     } catch (err) {
@@ -90,7 +86,12 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
           <IconButton
             icon="chevron-right"
             size={20}
-            onPress={() => router.push(`/customer/view/restaurant/${restaurant.restaurant_id}`)}
+            onPress={() => {
+              router.push({
+                pathname: `/customer/view/restaurant/${restaurant.restaurant_id}`,
+                params: { restaurantId: restaurant.restaurant_id, from: "/customer/cart" },
+              });
+            }}
           />
         </View>
       </View>

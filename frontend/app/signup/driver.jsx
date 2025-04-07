@@ -84,7 +84,7 @@ export default function DriverSignup() {
         headers: {
           Accept: "application/json",
         }
-      }
+      };
 
       // make the API call
       const response = await axios.post(`${BACKEND}/driver/register`, formData, config);

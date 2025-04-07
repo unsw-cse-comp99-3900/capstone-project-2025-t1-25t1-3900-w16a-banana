@@ -3,10 +3,6 @@ import { View, Image, Pressable } from "react-native";
 import { Text, List, Button } from "react-native-paper";
 import { BACKEND } from "../constants/backend";
 import capitalize from "capitalize";
-import ApprovedGIF from "../assets/images/approved.gif";
-import DeliveryGIF from "../assets/images/delivery.gif";
-import PendingGIF from "../assets/images/pending.gif";
-import PickupGIF from "../assets/images/pickup.gif";
 import useAuth from "../hooks/useAuth";
 import useToast from "../hooks/useToast";
 import useDialog from "../hooks/useDialog";
@@ -29,8 +25,6 @@ export default function OrderCard({ entry }) {
 
   const toggleExpanded = () => setExpanded(!expanded);
 
-  const subtotal = order.order_price;
-  const delivery = order.delivery_fee;
   const total = order.total_price;
 
   // for the driver, display the pickup address to the delivery address
@@ -53,7 +47,7 @@ export default function OrderCard({ entry }) {
   const restaurantAcceptRejectReadyOrder = (action) => {
     // showDialog to confirm the action
     showDialog({
-      title: `Order Action Confirmation`,
+      title: "Order Action Confirmation",
       message: action === "ready" ? "Is this order ready for pickup?" : `Are you sure you want to ${action} this order?`,
       confirmText: "Yes",
       cancelText: "No",
@@ -184,7 +178,7 @@ export default function OrderCard({ entry }) {
       </View>
 
       {/* Divider */}
-      <View style={{ height: 1, backgroundColor: '#ddd', marginBottom: 8 }} />
+      <View style={{ height: 1, backgroundColor: "#ddd", marginBottom: 8 }} />
 
       {/* for the driver only, show the overview of the path */}
       {contextProfile?.role === "driver" && (
@@ -200,7 +194,12 @@ export default function OrderCard({ entry }) {
         {/* When the user is a customer, sees the restaurant avatar + restaurant name, pressable */}
         {contextProfile?.role === "customer" && (
           <Pressable
-            onPress={() => router.push(`/${contextProfile.role}/view/restaurant/${restaurant.id}`)}
+            onPress={() => {
+              router.push({
+                pathname: `/${contextProfile.role}/view/restaurant/${restaurant.id}`,
+                params: { restaurantId: restaurant.id, from: `${contextProfile.role}/orders` },
+              });
+            }}
             style={{ 
               flexDirection: "row", 
               alignItems: "center", 

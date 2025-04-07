@@ -35,7 +35,6 @@ export default function EditProfileForm({ userType }) {
         phone: contextProfile?.phone || "",
         password: "",
         confirmPassword: "",
-        username: contextProfile?.username || "",
         address: contextProfile?.address || "",
         suburb: contextProfile?.suburb || "",
         state: contextProfile?.state || "",

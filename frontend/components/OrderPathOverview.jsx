@@ -118,7 +118,7 @@ export default function OrderPathOverview({ restaurantAddress, deliveryAddress, 
           </View>
         )}
       </View>
-      <View style={{ height: 1, backgroundColor: '#ddd', marginBottom: 12 }} />
+      <View style={{ height: 1, backgroundColor: "#ddd", marginBottom: 12 }} />
     </View>
   );
 }

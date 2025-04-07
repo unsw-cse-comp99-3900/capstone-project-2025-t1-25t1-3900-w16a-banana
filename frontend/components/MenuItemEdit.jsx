@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import {
   Text,
@@ -58,7 +58,7 @@ export default function MenuItemEdit({item, categoryId, onRefresh, displayIndex,
       console.error("Failed to update item:", error);
       showToast("Failed to update item.", "error");
     }
-  }
+  };
 
   // post a new item
   const createItemCallAPI = async (formData) => {

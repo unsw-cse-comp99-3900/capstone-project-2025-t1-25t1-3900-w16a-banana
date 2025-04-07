@@ -1,5 +1,4 @@
-import { Tabs } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from "react";
 import BottomTabs from "../../../components/BottomTabs";
 
 const tabs = [

@@ -3,8 +3,6 @@ import { View, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { Card, Text, IconButton } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import useToast from "../../hooks/useToast";
-import useAuth from "../../hooks/useAuth";
 
 export default function SignupSelection() {
   const router = useRouter();
@@ -14,9 +12,6 @@ export default function SignupSelection() {
     { type: "driver", icon: "local-shipping", label: "Driver", description: "Deliver food and earn money." },
     { type: "restaurant", icon: "storefront", label: "Restaurant", description: "Sell food to customers." },
   ];
-
-  const { showToast } = useToast();
-  const { contextProfile } = useAuth();
 
   return (
     <View style={{ flex: 1, padding: 20, backgroundColor: "#f9f9f9" }}>
@@ -34,7 +29,7 @@ export default function SignupSelection() {
       {/* 3 cards to pick the signup user type */}
       {options.map((option) => (
         <TouchableOpacity key={option.type} onPress={() => {
-          router.push(`/signup/${option.type}`)
+          router.push(`/signup/${option.type}`);
         }}>
           <Card style={{ padding: 20, marginBottom: 35, alignItems: "start" }}>
             <MaterialIcons name={option.icon} size={40} color="#007bff" />

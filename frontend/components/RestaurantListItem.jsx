@@ -44,7 +44,12 @@ export default function RestaurantListItem({ restaurant }) {
         <View style={{ marginTop: 10, alignItems: "flex-end" }}>
           <Button
             mode="text"
-            onPress={() => router.push(`/customer/view/restaurant/${restaurant.id}`)}
+            onPress={() => {
+              router.push({
+                pathname: `/customer/view/restaurant/${restaurant.id}`,
+                params: { restaurantId: restaurant.id, from: "/customer" },
+              });
+            }}
           >
             View
           </Button>

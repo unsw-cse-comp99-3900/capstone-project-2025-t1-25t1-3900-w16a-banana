@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 // A wrapper for storage on both app and web platforms.
 // On the web platform, use the sessionStorage by default, 
 // so different web tabs will not conflict with each other. 
-export default Storage = {
+const WebsiteStorage = {
   async setItem(key, value) {
     if (Platform.OS === "web") {
       sessionStorage.setItem(key, value);
@@ -29,3 +29,5 @@ export default Storage = {
     }
   },
 };
+
+export default WebsiteStorage;
