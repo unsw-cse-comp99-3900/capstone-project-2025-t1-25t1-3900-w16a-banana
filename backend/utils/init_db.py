@@ -18,11 +18,16 @@ from db_model import *
 # all passwords are Abcd1234!
 # customers: username, email, phone, address, suburb, state, postcode
 default_customers = [
-    ("John Doe", "john@example.com", "0412345678", "123 Main St", "Sydney", "NSW", "2000"),
-    ("Jane Smith", "jane@example.com", "0498765432", "456 Elm St", "Sydney", "NSW", "2010"),
-    ("Michael Brown", "michael@example.com", "0423456789", "789 Pine St", "Kensington", "NSW", "2011"),
-    ("Emily Jones", "emily@example.com", "0456789012", "321 Oak St", "Kingsford", "NSW", "2012"),
-    ("David White", "david@example.com", "0478901234", "654 Maple St", "Maroubra", "NSW", "2013"),
+    ("John Doe", "john@example.com", "0412345678", "1 Anzac Parade", "Kensington", "NSW", "2010"),
+    ("Jane Smith", "jane@example.com", "0498765432", "123 Main Street", "Blacktown", "NSW", "2148"),
+    ("Michael Brown", "michael@example.com", "0423456789", "10 Avoca Street", "Randwick", "NSW", "2031"),
+    ("Emily Jones", "emily@example.com", "0456789012", "10 Alison Road", "Randwick", "NSW", "2031"),
+    ("David White", "david@example.com", "0478901234", "1 Burwood Road", "Burwood", "NSW", "2134"),
+    ("Samantha Green", "samantha@example.com", "0465123789", "1 Gipps St", "Concord", "NSW", "2137"),
+    ("Nathan Turner", "nathan@example.com", "0491123456", "88 Oxford St", "Paddington", "NSW", "2021"),
+    ("Isabella Lee", "isabella@example.com", "0432789456", "99 Crown St", "Darlinghurst", "NSW", "2010"),
+    ("Liam Scott", "liam@example.com", "0456234890", "22 George St", "Parramatta", "NSW", "2150"),
+    ("Chloe Taylor", "chloe@example.com", "0487345612", "15 Bourke St", "Woolloomooloo", "NSW", "2011"),
 ]
 
 # drivers: email, phone, first_name, last_name, license_number, car_plate
@@ -157,8 +162,8 @@ def initialize_database():
                     db.session.add(new_item)
                     db.session.commit()
 
-        # each customer has 20 orders by default
-        # the date ranges from 2025-03-01 to 2025-04-05
+        # each customer has 50 orders by default
+        # the date ranges from 2025-03-23 to 2025-04-07
         # time ranges from 10:00 to 20:00.
         # for simplicity, pickup time is set to 30 minutes after the order creation time.
         # and delivery time is set to 30 minutes after pickup time.
@@ -172,8 +177,8 @@ def initialize_database():
         all_orders = []
 
         for customer in customers:
-            # create 20 orders for each customer
-            for _ in range(20):
+            # create 50 orders for each customer
+            for _ in range(50):
                 # random pick one restaurant and one driver
                 restaurant = random.choice(restaurants)
                 driver = random.choice(drivers)
@@ -189,7 +194,7 @@ def initialize_database():
                 total_price = order_price + delivery_fee 
 
                 # create the order time
-                order_time = datetime(2025, 3, 1) + timedelta(days=random.randint(0, 35), hours=random.randint(10, 20))
+                order_time = datetime(2025, 3, 23) + timedelta(days=random.randint(0, 16), hours=random.randint(10, 20))
                 pickup_time = order_time + timedelta(minutes=30)
                 delivery_time = pickup_time + timedelta(minutes=30)
                 
@@ -269,7 +274,8 @@ def initialize_database():
                 db.session.add(order_item)
                 db.session.commit()
 
-        print("Default data inserted successfully.")
 
 if __name__ == "__main__":
+    print("Initializing database, please wait...")
     initialize_database()
+    print("Database initialized successfully.")
