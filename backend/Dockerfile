@@ -12,8 +12,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the backend code into the container
 COPY . .
 
+# Initialize the database so the docker container always starts with a clean state
+RUN python utils/init_db.py
+
 # Expose Flask app port
 EXPOSE 11000
 
-# Use Python script as entrypoint
-ENTRYPOINT ["python", "entrypoint.py"]
+# Start the Flask app
+CMD ["python", "app.py"]
