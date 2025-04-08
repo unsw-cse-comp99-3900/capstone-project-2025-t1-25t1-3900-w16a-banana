@@ -4,7 +4,6 @@ import useAuth from "../../../hooks/useAuth";
 
 export default function PendingProfile() {
   const { contextProfile, isContextLoading } = useAuth();
-  console.log(contextProfile);
 
   if (isContextLoading || !contextProfile) {
     return (

@@ -5,7 +5,6 @@ import { BACKEND } from "../constants/backend";
 
 export default function ZoomableImage({ imageUrl, title = "Image View", height = 150, borderRadius = 10, marginBottom = 10, width="100%" }) {
   const router = useRouter();
-  console.log(imageUrl);
 
   // make sure the image is real
   if (!imageUrl) return null;

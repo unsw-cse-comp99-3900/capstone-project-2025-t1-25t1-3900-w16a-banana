@@ -50,7 +50,7 @@ export default function Login() {
     try {
       const response = await axios.post(url, data);
       const responseData = response.data;
-      console.log(responseData);
+
       showToast("Login successful", "success");
       login(responseData);
       router.navigate(`/${form.userType}`);

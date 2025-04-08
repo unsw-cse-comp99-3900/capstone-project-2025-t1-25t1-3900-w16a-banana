@@ -7,7 +7,6 @@ import { Text } from "react-native-paper";
 
 export default function Home() {
   const { contextProfile, isContextLoading } = useAuth();
-  console.log(contextProfile);
 
   if (isContextLoading || !contextProfile) {
     return (

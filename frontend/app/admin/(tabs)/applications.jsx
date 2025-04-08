@@ -27,9 +27,6 @@ export default function Applications() {
         headers: { Authorization: contextProfile.token },
       });
 
-      console.log("Restaurant Applications:", restaurantRes.data);
-      console.log("Driver Applications:", driverRes.data);
-
       setRestaurantApplications(restaurantRes.data);
       setDriverApplications(driverRes.data);
     } catch (error) {

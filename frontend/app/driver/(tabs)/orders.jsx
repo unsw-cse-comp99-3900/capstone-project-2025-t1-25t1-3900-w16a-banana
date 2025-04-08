@@ -44,8 +44,6 @@ export default function DriverOrdersScreen() {
       setNewOrders(newRes.data || []);
       setToPickupOrders(pickupRes.data || []);
       setDeliveringOrders(deliveringRes.data || []);
-
-      console.log("line 48", pickupRes.data);
     } catch (err) {
       console.error(err);
       showToast("Failed to fetch driver orders", "error");
