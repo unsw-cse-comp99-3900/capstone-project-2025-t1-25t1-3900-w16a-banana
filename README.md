@@ -18,33 +18,44 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
     Open **Docker Desktop** on your machine.
 
-3. (Only for Windows) The backend has a shell script [backend/entrypoint.sh](./backend/entrypoint.sh) that may be converted to CRLF line endings when on Windows. So we need to convert it to LF line endings before running the docker service. We also need to `chmod +x` on the file to make sure it can run.
+3. **Build and start all services**
 
-    ```sh
-    # open a git bash terminal(!!) at the project root folder.
-
-    dos2unix backend/entrypoint.sh
-    
-    # the terminal will show:
-    # dos2unix: converting file backend/entrypoint.sh to Unix format ...
-    # then apply the chmod +x line:
-
-    chmod +x backend/entrypoint.sh
-
-    # this command will not return any results.
-    ```
-
-4. **Build and start all services**
+    Open a terminal and run the `docker-compose` command to build and start the services.
 
     ```sh
     docker-compose up --force-recreate --build
     ```
 
-    Visit [http://localhost:19006](http://localhost:19006) to use the app.
+    Visit the following urls:
+
+    | Platform | URL |
+    |----------|-----|
+    | Frontend (**main app**) | [http://localhost:19006](http://localhost:19006) |
+    | Backend (API Documentation) | [http://localhost:11000](http://localhost:11000) |
+
+4. We recommend using the Google Chrome browser. In order to use the app screen, press `ctrl + shift + i` to open the developer tools. Then click on the toogle device toolbar icon (or press `ctrl + shift + m`) to switch to mobile view. You can also use the simulator in the Expo DevTools.
+
+    We recommend using the `iphone-12-pro-max` device in the simulator.
+
+    <img src="./docs/readme_images/iphone-device-developer-option.png" alt="iphone device screen" width="300" height="450">
 
 5. Default data
 
     The project has default data for all user types. Please view [demo-materials/README.md](./demo-materials/README.md) for more information. And we have also prepared some images for you to upload during using the app. They are in the [demo-materials folder](./demo-materials/).
+
+6. When you login as a `customer` or `driver`, please turn on the location service in the Chrome browser. Otherwise, the app will not be able to demo the full functionality.
+
+    <!-- | Image | Description |
+    |-------|-------------|
+    | <img src="./docs/readme_images/location dialog.png" alt="location dialog" height="400"> | When the location service is off, the app will show a dialog window to ask for opening the location |
+    | <img src="./docs/readme_images/turn on location in chrome.png" alt="turn on location in chrome" height="400"> | Please click the icon next to the URL and open the location service |
+    | <img src="docs\readme_images\location turn on customer effect.png" alt="location turn on customer effect" height="400"> | After the location service is turned on, the app will show the location of the customer relative to each restaurant. | -->
+
+    | Image | Description |
+    |-------|-------------|
+    | ![location dialog](./docs/readme_images/location_dialog.png) | When the location service is off, the app will show a dialog window to ask for opening the location |
+    | ![turn on location in chrome](./docs/readme_images/location_turn_on_in_chrome.png) | Please click the icon next to the URL and open the location service |
+    | ![location turn on customer effect](./docs/readme_images/location_turned_on_in_customer.png) | After the location service is turned on, the app will show the location of the customer relative to each restaurant. And the suburb where the customer is currently at is also shown on the top of the page |
 
 ## 3. Backend Setup & Testing
 ## 3-1A. Setup Server (Local)
