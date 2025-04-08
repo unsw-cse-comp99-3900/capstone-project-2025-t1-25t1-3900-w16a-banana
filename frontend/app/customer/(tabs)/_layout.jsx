@@ -4,8 +4,8 @@ import BottomTabs from "../../../components/BottomTabs";
 const tabs = [
   { name: "index", title: "Home", icon: "home", visible: true },
   { name: "cart", title: "Cart", icon: "cart", visible: true },
-  { name: "orders", title: "Orders", icon: "history", visible: true },
-  { name: "notifications", title: "Notifications", icon: "bell", visible: true },
+  { name: "orders", title: "Active Orders", icon: "clipboard-text", visible: true },
+  { name: "OrderHistory", title: "Order History", icon: "history", visible: true },
   { name: "profile", title: "Profile", icon: "account", visible: true },
   // hide favourites from the tab bar
   { name: "favourites", title: "Favourites", icon: "heart", visible: false },

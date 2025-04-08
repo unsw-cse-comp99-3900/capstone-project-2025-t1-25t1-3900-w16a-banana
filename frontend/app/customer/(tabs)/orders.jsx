@@ -6,7 +6,6 @@ import useAuth from "../../../hooks/useAuth";
 import useToast from "../../../hooks/useToast";
 import axios from "axios";
 import OrderCard from "../../../components/OrderCard";
-import groupOrdersByDate from "../../../utils/group";
 import MyScrollView from "../../../components/MyScrollView";
 
 export default function Orders() {
@@ -50,18 +49,6 @@ export default function Orders() {
       .sort((a, b) => new Date(b.order.order_time) - new Date(a.order.order_time));
   }, [orders]);
 
-  const pastOrders = useMemo(() => {
-    return orders
-      .filter((entry) =>
-        ["DELIVERED", "CANCELLED"].includes(entry.order.order_status)
-      )
-      .sort((a, b) => new Date(b.order.order_time) - new Date(a.order.order_time));
-  }, [orders]);
-
-  const groupedPastOrders = useMemo(() => {
-    return groupOrdersByDate(pastOrders);
-  }, [pastOrders]);
-
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -70,12 +57,12 @@ export default function Orders() {
     );
   }
 
-  if (!loading && orders.length === 0) {
+  if (!loading && inProgressOrders.length === 0) {
     return (
       <MyScrollView>
         <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12 }}>
           <Text variant="titleLarge">
-            Orders
+            Active Orders
           </Text>
         </View>
         <View style={{ alignItems: "center", marginTop: 40 }}>
@@ -98,30 +85,6 @@ export default function Orders() {
           </Text>
           {inProgressOrders.map((entry) => (
             <OrderCard key={entry.order.id} entry={entry} />
-          ))}
-        </View>
-      )}
-
-      {/* divider exists if two parts are shown */}
-      {inProgressOrders.length > 0 && pastOrders.length > 0 && (
-        <View style={{ height: 1, backgroundColor: "#ddd", marginVertical: 8 }} />
-      )}
-
-      {/* if no orders, then don't show */}
-      {pastOrders.length > 0 && (
-        <View style={{ flexDirection: "column", marginBottom: 4 }}>
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
-            {`Past Orders (${pastOrders.length})`}
-          </Text>
-          {groupedPastOrders.map(({ date, entries }) => (
-            <View key={date} style={{ marginBottom: 16 }}>
-              <Text variant="titleMedium" style={{ marginBottom: 4 }}>
-                {date}
-              </Text>
-              {entries.map((entry) => (
-                <OrderCard key={entry.order.id} entry={entry} />
-              ))}
-            </View>
           ))}
         </View>
       )}

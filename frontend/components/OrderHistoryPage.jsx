@@ -27,7 +27,7 @@ export default function OrderHistoryPage() {
   );
 
   const fetchOrders = async () => {
-    const url = `${BACKEND}/${contextProfile.role}-order/all`;
+    const url = contextProfile.role === "customer" ? `${BACKEND}/customer-order/` : `${BACKEND}/${contextProfile.role}-order/all`;
     const config = {
       headers: { Authorization: contextProfile.token },
     };
@@ -43,11 +43,10 @@ export default function OrderHistoryPage() {
     }
   };
 
+  // get the orders in that day, and sort them ascending via the order_time (same as sort with order id)
   const filteredOrders = useMemo(() => {
     return orders
-      .filter((entry) =>
-        entry.order.order_time.startsWith(selectedDate)
-      )
+      .filter((entry) => entry.order.order_time.startsWith(selectedDate))
       .sort((a, b) => new Date(a.order.order_time) - new Date(b.order.order_time));
   }, [orders, selectedDate]);
 

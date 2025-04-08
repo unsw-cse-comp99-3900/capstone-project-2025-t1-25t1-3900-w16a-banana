@@ -17,6 +17,7 @@ export default function OrderPathOverview({ restaurantAddress, deliveryAddress, 
   const [distance3, setDistance3] = useState(null); // driver -> customer
 
   const showTwoDistance = orderStatus === "RESTAURANT_ACCEPTED" || orderStatus === "READY_FOR_PICKUP";
+  console.log("showTwoDistance", showTwoDistance);
 
   useEffect(() => {
     const getDistance = async () => {
@@ -39,7 +40,11 @@ export default function OrderPathOverview({ restaurantAddress, deliveryAddress, 
     getDistance();
   }, [driverLocation]);
 
+  // during loading, do not show anything
   if (!driverLocation || !restaurantLocation || !deliveryLocation) return null;
+
+  // if the order status is delivered or cancelled, do not show anything
+  if (orderStatus === "DELIVERED" || orderStatus === "CANCELLED") return null;
 
   // If the order
   return (
