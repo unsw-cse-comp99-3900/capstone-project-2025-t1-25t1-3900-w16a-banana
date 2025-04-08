@@ -57,91 +57,33 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
     | ![turn on location in chrome](./docs/readme_images/location_turn_on_in_chrome.png) | Please click the icon next to the URL and open the location service |
     | ![location turn on customer effect](./docs/readme_images/location_turned_on_in_customer.png) | After the location service is turned on, the app will show the location of the customer relative to each restaurant. And the suburb where the customer is currently at is also shown on the top of the page |
 
-## 3. Backend Setup & Testing
-## 3-1A. Setup Server (Local)
-To set up the **backend** server, follow these steps:
+## 3. Backend Setup (Local Development)
 
-1. **Navigate to the backend directory**
-   ```sh
-   cd backend
-   ```
+For more details, please refer to the [Backend Readme](./backend/README.md).
 
-2. **Install dependencies**
-   ```sh
-   pip install -r requirements.txt  # Use pip3 if on macOS
-   ```
+The backend is built using the `Flask RestX` framework, with a SQLite database. For local development, you can run the backend server using Python. We recommend using a virtual environment to manage dependencies.
 
-3. **Run the Flask server**
-   ```sh
-   python app.py  # Use python3 if necessary
-   ```
+| Step | Mac/Linux | Windows |
+|------|-----------|---------|
+| Open a terminal at the project root folder | `cd backend` | `cd backend` |
+| Create a virtual environment | `python3 -m venv venv` | `python -m venv venv` |
+| Activate the virtual environment | `source venv/bin/activate` | `venv\Scripts\activate` |
+| Install dependencies | `pip3 install -r requirements.txt` | `pip install -r requirements.txt` |
+| Initialize the database | `python3 utils/init_db.py` | `python utils/init_db.py` |
+| Run the Flask server | `python3 app.py` | `python app.py` |
 
-## 3-1B. Setup Server (Local / For Linux/WSL)
-To set up the **backend** folder, follow these steps:
+Visit [http://localhost:11000](http://localhost:11000) to view the API documentation.
 
-1. **Navigate to the backend directory**
-   ```sh
-   cd backend
-   ```
+The backend tests are written using the `pytest` framework. You can run the tests using the command,
 
-2. **Creating virtual environment**
-   ```sh
-   python3 -m venv venv # install venv if required
-   ```
-
-3. **Activate the virtual environment**
-   - Start from here if you already created virtual envrionment.
-   ```sh
-   source venv/bin/activate
-   ```
-
-4. **Install dependencies**
-   ```sh
-   pip install -r requirements.txt
-   ```
-
-5. **Run the Flask server**
-   ```sh
-   python app.py
-   ```
-
-## 3-2A. Backend Test (pytest & Docker)
-1. **Make sure that the docker for backend is running**
-   ```sh
-   docker-compose up --force-recreate --build
-   ```
-2. **Run the pytest from the docker environment (On Differenet shell)**
-   ```sh
-   docker exec -it backend pytest # backend is the container name.
-   ```
-
-## 3-2B. Backend Test (pytest & Local Server)
-1. **Ensure that backend server is running.**
-
-2. **Move to backend folder**
-   ```sh
-   cd backend
-   ```
-
-3. **Run pytest**
-   ```sh
-   pytest
-   ```
-
-## 3-3. Backend Database Setup (Optional)
- - Run this when you get error from DB. For example, when you made changes to DB Schema.
- - **Reset all tables**
-   ```sh
-   python3 backend/utils/init_db.py
-   ```
-__________________________________________
-
-The **Swagger API Documentation** will be available at:  
-📍 `http://localhost:11000/`
-
-__________________________________________
+| Step | Mac/Linux | Windows |
+|------|-----------|---------|
+| Open a terminal at the project root folder | `cd backend` | `cd backend` |
+| Run the tests | `pytest` | `pytest` |
 
 ## 4. Frontend Setup (Local Development)
+
+For more details, please refer to the [Frontend Readme](./frontend/README.md).
 
 The frontend includes some mobile apps using React Native and Expo. 
 
