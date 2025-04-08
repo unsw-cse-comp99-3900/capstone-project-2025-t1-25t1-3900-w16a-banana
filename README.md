@@ -35,9 +35,9 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
 4. We recommend using the Google Chrome browser. In order to use the app screen, press `ctrl + shift + i` to open the developer tools. Then click on the toogle device toolbar icon (or press `ctrl + shift + m`) to switch to mobile view. You can also use the simulator in the Expo DevTools.
 
-    We recommend using the `iphone-12-pro-max` device in the simulator.
+    We recommend using the `iphone-12-pro` device in the simulator.
 
-    <img src="./docs/readme_images/iphone-device-developer-option.png" alt="iphone device screen" width="300" height="450">
+    <img src="./docs/readme_images/chrome-mobile-version.gif" alt="chrome mobile view" height="500"/>
 
 5. Default data
 
@@ -45,21 +45,15 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
 6. When you login as a `customer` or `driver`, please turn on the location service in the Chrome browser. Otherwise, the app will not be able to demo the full functionality.
 
-    <!-- | Image | Description |
-    |-------|-------------|
-    | <img src="./docs/readme_images/location dialog.png" alt="location dialog" height="400"> | When the location service is off, the app will show a dialog window to ask for opening the location |
-    | <img src="./docs/readme_images/turn on location in chrome.png" alt="turn on location in chrome" height="400"> | Please click the icon next to the URL and open the location service |
-    | <img src="docs\readme_images\location turn on customer effect.png" alt="location turn on customer effect" height="400"> | After the location service is turned on, the app will show the location of the customer relative to each restaurant. | -->
+    1. When the location service is off, the app will show a dialog window to ask for opening the location.
+    2. Please click on the icon next to the URL and turn on the location service.
+    3. Then if you are at the customer account page, the app will show the distance of the customer relative to each restaurant. And the suburb where the customer is currently at is also shown on the top of the page.
 
-    | Image | Description |
-    |-------|-------------|
-    | ![location dialog](./docs/readme_images/location_dialog.png) | When the location service is off, the app will show a dialog window to ask for opening the location |
-    | ![turn on location in chrome](./docs/readme_images/location_turn_on_in_chrome.png) | Please click the icon next to the URL and open the location service |
-    | ![location turn on customer effect](./docs/readme_images/location_turned_on_in_customer.png) | After the location service is turned on, the app will show the location of the customer relative to each restaurant. And the suburb where the customer is currently at is also shown on the top of the page |
+    <img src="./docs/readme_images/chrome-turn-on-location.gif" alt="chrome location service" height="500"/>
 
 ## 3. Backend Setup (Local Development)
 
-For more details, please refer to the [Backend Readme](./backend/README.md).
+For more details, please refer to the [Backend README.md](./backend/README.md).
 
 The backend is built using the `Flask RestX` framework, with a SQLite database. For local development, you can run the backend server using Python. We recommend using a virtual environment to manage dependencies.
 
@@ -83,7 +77,7 @@ The backend tests are written using the `pytest` framework. You can run the test
 
 ## 4. Frontend Setup (Local Development)
 
-For more details, please refer to the [Frontend Readme](./frontend/README.md).
+For more details, please refer to the [Frontend README.md](./frontend/README.md).
 
 The frontend includes some mobile apps using React Native and Expo. 
 
