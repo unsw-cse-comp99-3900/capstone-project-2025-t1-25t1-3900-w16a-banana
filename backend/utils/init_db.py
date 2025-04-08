@@ -1,7 +1,11 @@
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
+import random
+
+# fix seed
+random.seed(39006666)
 
 # find the app
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -50,6 +54,17 @@ def initialize_database():
         # drop all tables, and create againn
         db.drop_all()
         db.create_all()
+
+        # add one default admin
+        admin = Admin(
+            email="admin@example.com",
+            password="Abcd1234!",
+            first_name="Tom",
+            last_name="Smith",
+        )
+
+        db.session.add(admin)
+        db.session.commit()
 
         # insert default data
         for username, email, phone, address, suburb, state, postcode in default_customers:
@@ -142,16 +157,117 @@ def initialize_database():
                     db.session.add(new_item)
                     db.session.commit()
 
-        # add one default admin
-        admin = Admin(
-            email="admin@example.com",
-            password="Abcd1234!",
-            first_name="Tom",
-            last_name="Smith",
-        )
+        # each customer has 20 orders by default
+        # the date ranges from 2025-03-01 to 2025-04-05
+        # time ranges from 10:00 to 20:00.
+        # for simplicity, pickup time is set to 30 minutes after the order creation time.
+        # and delivery time is set to 30 minutes after pickup time.
+        # all address are default to the customer account address
+        customers = Customer.query.all()
+        restaurants = Restaurant.query.all()
+        drivers = Driver.query.all()
 
-        db.session.add(admin)
-        db.session.commit()
+        # this list will store all the new orders. 
+        # and after finishing creation, we will commit the orders along the time line.
+        all_orders = []
+
+        for customer in customers:
+            # create 20 orders for each customer
+            for _ in range(20):
+                # random pick one restaurant and one driver
+                restaurant = random.choice(restaurants)
+                driver = random.choice(drivers)
+
+                # select all the menu items from this restaurant, 
+                # and randomly pick 2 - 5 items, each item has quantity x 1
+                items = MenuItem.query.join(MenuCategory).filter(MenuCategory.restaurant_id == restaurant.id).all()
+                items = random.sample(items, random.randint(2, 5))
+
+                # sum up the price
+                order_price = sum([item.price for item in items])
+                delivery_fee = random.choice([5, 10, 15, 20])
+                total_price = order_price + delivery_fee 
+
+                # create the order time
+                order_time = datetime(2025, 3, 1) + timedelta(days=random.randint(0, 35), hours=random.randint(10, 20))
+                pickup_time = order_time + timedelta(minutes=30)
+                delivery_time = pickup_time + timedelta(minutes=30)
+                
+                # create a new order dict
+                new_order_dict = {
+                    "customer_id": customer.id,
+                    "driver_id": driver.id,
+                    "restaurant_id": restaurant.id,
+                    "order_status": OrderStatus.DELIVERED,
+                    "address": customer.address,
+                    "suburb": customer.suburb,
+                    "state": customer.state,
+                    "postcode": customer.postcode,
+                    "order_price": order_price,
+                    "delivery_fee": delivery_fee,
+                    "total_price": total_price,
+                    "order_time": order_time,
+                    "pickup_time": pickup_time,
+                    "delivery_time": delivery_time,
+                    "customer_notes": "Please leave the food at the door.",
+                    "restaurant_notes": "Please enjoy your meal.",
+                    "card_number": "1111222233334444",
+                }
+
+                # add the "items" key
+                new_order_dict_items = []
+
+                for item in items:
+                    new_order_dict_items.append({
+                        "menu_id": item.id,
+                        "price": item.price,
+                        "quantity": 1,
+                    })
+
+                # add the items to the order
+                new_order_dict["items"] = new_order_dict_items
+                all_orders.append(new_order_dict)
+            
+        # sort all the orders based on the order time ascending
+        all_orders.sort(key=lambda x: x["order_time"])
+
+        # create the order records in the database
+        for order_dict in all_orders:
+            # create a new order
+            new_order = Order(
+                customer_id=order_dict["customer_id"],
+                driver_id=order_dict["driver_id"],
+                restaurant_id=order_dict["restaurant_id"],
+                order_status=order_dict["order_status"],
+                address=order_dict["address"],
+                suburb=order_dict["suburb"],
+                state=order_dict["state"],
+                postcode=order_dict["postcode"],
+                order_price=order_dict["order_price"],
+                delivery_fee=order_dict["delivery_fee"],
+                total_price=order_dict["total_price"],
+                order_time=order_dict["order_time"],
+                pickup_time=order_dict["pickup_time"],
+                delivery_time=order_dict["delivery_time"],
+                customer_notes=order_dict["customer_notes"],
+                restaurant_notes=order_dict["restaurant_notes"],
+                card_number=order_dict["card_number"],
+            )
+
+            db.session.add(new_order)
+            db.session.commit()
+
+            # add the items to the order
+            for item in order_dict["items"]:
+                order_item = OrderItem(
+                    menu_id=item["menu_id"],
+                    price=item["price"],
+                    quantity=item["quantity"],
+                    order_id=new_order.id,
+                )
+
+                db.session.add(order_item)
+                db.session.commit()
 
         print("Default data inserted successfully.")
 
