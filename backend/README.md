@@ -1,14 +1,19 @@
 # Backend
 
-## Installation
+## 1. Installation and Running the Backend Server
 
-1. `pip install -r requirements.txt` or `pip3 install -r requirements.txt`
+| Step | Mac/Linux | Windows |
+|------|-----------|---------|
+| Open a terminal at the project root folder | `cd backend` | `cd backend` |
+| Create a virtual environment | `python3 -m venv venv` | `python -m venv venv` |
+| Activate the virtual environment | `source venv/bin/activate` | `venv\Scripts\activate` |
+| Install dependencies | `pip3 install -r requirements.txt` | `pip install -r requirements.txt` |
+| Initialize the database | `python3 utils/init_db.py` | `python utils/init_db.py` |
+| Run the Flask server | `python3 app.py` | `python app.py` |
 
-2. `python app.py` or `python3 app.py`
+Visit [http://localhost:11000](http://localhost:11000) to view the API documentation.
 
-Then open the [http://localhost:11000](http://localhost:11000) in your browser.
-
-## Current Features
+## 2. Current Features
 
 General - for everyone after login
 * view profile
@@ -35,17 +40,48 @@ Customer:
 * update profile (does not require admin approval)
 * Add/Delete/Update item to the cart
 
-
 Developer
 * View all menus using API Call
 * View all users using API Call
 
-## View the database
+## 3. View the database
 
 The database is the file [project.db](./project.db). For viewing the sqlite database, use some online sqlite viewer, or the [SQLiteStudio](https://sqlitestudio.pl/). It has both windows and mac versions. 
 
 The tables are defined in the [utils/init_db.py](./utils/init_db.py) file. And if you need to modify the tables, make sure apply the **reset the database** step below. 
 
-## Reset the database
+## 4. Backend Test (pytest & Local Server)
 
-At the **backend folder**, open a terminal and run `python utils/init_db.py` or `python3 utils/init_db.py`.
+The backend tests are written using the `pytest` framework. You can run the tests using the command,
+
+| Step | Mac/Linux | Windows |
+|------|-----------|---------|
+| Open a terminal at the project root folder | `cd backend` | `cd backend` |
+| Run the tests | `pytest` | `pytest` |
+
+## 5. Backend Docker
+
+`Dockerfile` is provided to run the backend server in a docker container.
+
+1. Please open the `Docker Desktop` application. 
+
+2. Open a terminal at the project root folder and run the following command
+
+    ```sh
+    cd backend      # if the terminal is not ready in the backend folder
+    docker-compose up --force-recreate --build
+    ```
+
+3. (Optional) Run the pytest from the docker environment (On Different shell)
+
+    ```sh
+    cd backend      # if the terminal is not ready in the backend folder
+    docker exec -it backend pytest # backend is the container name.
+    ```
+
+## 6. Reset the Database During Development
+
+| Step | Mac/Linux | Windows |
+|------|-----------|---------|
+| Open a terminal at the project root folder | `cd backend` | `cd backend` |
+| Run the initialization file | `python3 utils/init_db.py` | `python utils/init_db.py` |
