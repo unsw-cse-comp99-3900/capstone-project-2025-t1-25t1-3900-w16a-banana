@@ -3,7 +3,7 @@ FROM python:3.9
 FROM python:3.9
 
 # Set working directory
-WORKDIR /app
+WORKDIR /app/backend
 
 # Install dependencies
 COPY requirements.txt .

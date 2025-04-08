@@ -9,7 +9,7 @@ services:
       - "11000:11000"
     # Mount the local uploads folder to the container
     volumes:
-      - ./backend/uploads:/app/uploads
+      - ./backend/uploads:/app/backend/uploads
     
   frontend:
     container_name: frontend
