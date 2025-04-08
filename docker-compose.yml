@@ -7,9 +7,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "11000:11000"
-    # Mount persistent local storage volume for check if file is uploaded in docker environment
+    # Mount the local uploads folder to the container
     volumes:
-      - ./backend/uploads:/app/backend/uploads
+      - ./backend/uploads:/app/uploads
     
   frontend:
     container_name: frontend

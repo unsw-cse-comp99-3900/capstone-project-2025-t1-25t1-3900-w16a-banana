@@ -1,17 +1,19 @@
 FROM python:3.9
 
-# here use /app/backend, so later can distinguish from /app/frontend, etc. 
-WORKDIR /app/backend
+FROM python:3.9
 
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
 COPY requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the rest of the backend code into the container
 COPY . .
 
+# Expose Flask app port
 EXPOSE 11000
 
-COPY entrypoint.sh /app/backend/entrypoint.sh
-RUN chmod +x /app/backend/entrypoint.sh
-
-ENTRYPOINT ["/app/backend/entrypoint.sh"]
+# Use Python script as entrypoint
+ENTRYPOINT ["python", "entrypoint.py"]
