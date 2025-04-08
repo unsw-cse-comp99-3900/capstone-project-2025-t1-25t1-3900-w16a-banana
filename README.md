@@ -37,7 +37,7 @@ With the growing demand for on-demand food delivery, restaurants are seeking eff
 
     We recommend using the `iphone-12-pro` device in the simulator.
 
-    <img src="./docs/readme_images/chrome-mobile-version.gif" alt="chrome mobile view" height="500"/>
+    <img src="./docs/readme_images/chrome-mobile-version.gif" alt="chrome mobile view" width="85%" height="auto"/>
 
 5. Default data
 

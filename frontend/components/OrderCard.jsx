@@ -14,7 +14,6 @@ import { STATUS_CONTENT } from "../utils/order";
 // This component shows a simplified view for one order. 
 // It is used for 3 user roles: customer, restaurant, and driver.
 export default function OrderCard({ entry }) {
-  console.log(entry);
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
   const { showDialog } = useDialog();

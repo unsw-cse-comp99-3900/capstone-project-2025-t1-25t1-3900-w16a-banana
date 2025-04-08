@@ -27,7 +27,6 @@ export default function Profile() {
       try {
         const response = await axios.get(fullUrl);
         setProfile(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
       } finally {

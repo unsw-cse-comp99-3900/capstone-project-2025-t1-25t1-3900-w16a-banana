@@ -18,7 +18,6 @@ const carouselImages = [Img1, Img2, Img3];
 export default function Home() {
   // use the hook to obtain the location
   const { location, locationDetails } = useUserLocation();
-  console.log("Location:", location);
 
   // Reanimated carousel renderer
   const renderCarouselItem = ({ item }) => {

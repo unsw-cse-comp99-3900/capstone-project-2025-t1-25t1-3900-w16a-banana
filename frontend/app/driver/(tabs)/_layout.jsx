@@ -38,8 +38,7 @@ export default function TabLayout() {
       icon: hasNewOrders ? "clipboard-alert" : "clipboard-list",
       visible: true,
     },
-    { name: "history", title: "History", icon: "history", visible: true },
-    { name: "notifications", title: "Notifications", icon: "bell", visible: true },
+    { name: "OrderHistory", title: "Order History", icon: "history", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
     // hidden tabs
     { name: "PendingProfile", title: "Home", icon: "home", visible: false },
@@ -52,9 +51,8 @@ export default function TabLayout() {
     { name: "PendingProfile", title: "Home", icon: "home", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
     // hidden tabs
-    { name: "history", title: "History", icon: "history", visible: false },
+    { name: "OrderHistory", title: "Order History", icon: "history", visible: true },
     { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
-    { name: "notifications", title: "Notifications", icon: "bell", visible: false },
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
     { name: "view/restaurant/[restaurantId]", title: "Restaurant", icon: "store", visible: false },
     { name: "view/order/[orderId]", title: "Order", icon: "map-marker", visible: false },

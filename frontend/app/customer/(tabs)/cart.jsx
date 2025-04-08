@@ -20,7 +20,6 @@ export default function Cart() {
 
     try {
       const response = await axios.get(url, config);
-      console.log(response.data);
       setCartData(response.data);
     } catch (error) {
       console.error("Error fetching cart:", error);

@@ -37,8 +37,8 @@ export default function TabLayout() {
       icon: hasNewOrders ? "clipboard-alert" : "clipboard-list",
       visible: true,
     },
+    { name: "OrderHistory", title: "Order History", icon: "history", visible: true },
     { name: "menu", title: "Menu", icon: "menu", visible: true },
-    { name: "notifications", title: "Notifications", icon: "bell", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
     // Hidden tab
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
@@ -51,7 +51,7 @@ export default function TabLayout() {
     { name: "menu", title: "Home", icon: "home", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
     // Hidden tabs
-    { name: "notifications", title: "Notifications", icon: "bell", visible: false },
+    { name: "OrderHistory", title: "Order History", icon: "history", visible: false },
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
     { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
     { name: "view/order/[orderId]", title: "Order", icon: "map-marker", visible: false },

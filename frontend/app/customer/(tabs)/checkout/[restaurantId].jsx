@@ -103,12 +103,10 @@ export default function CheckoutPage() {
 
     // get the {longitude, latitude} from the address
     const userLocation = await fetchLocationDetailFromAddress(form);
-    console.log(userLocation);
 
     // also need the restaurant address
     const restaurantAddress = restaurantCart.address;
     const restaurantLocation = await fetchLocationDetailFromAddress(restaurantAddress);
-    console.log(restaurantLocation);
     
     // now calcualte the distance in km
     const distance = calculateDistance(
