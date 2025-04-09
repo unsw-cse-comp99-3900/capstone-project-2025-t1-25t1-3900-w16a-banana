@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
 import { View } from "react-native";
 import { Text, Button, Divider, ActivityIndicator } from "react-native-paper";
@@ -45,7 +45,10 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
         },
         (result, status) => {
           if (status === "OK") {
-            setDirections(result);
+            // prevent unnecessary re-renders, only set directions when the direction changes
+            if (JSON.stringify(result) !== JSON.stringify(directions)) {
+              setDirections(result);
+            }
           } else {
             console.error("Failed to get directions:", status);
           }
@@ -56,19 +59,25 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
     if (driverLocation || !isDriverToRestaurant) fetchCoords();
   }, [driverLocation, restaurantAddress, deliveryAddress, mode]);
 
-  if (!isLoaded || !restaurantLoc || !deliveryLoc || (isDriverToRestaurant && !driverLocation)) {
-    return <ActivityIndicator style={{ marginTop: 12 }} />;
-  }
+  // wrap the center with useMemo to avoid unnecessary re-renders
+  const center = useMemo(() => {
+    // if these variables are not ready, return null
+    if (!isLoaded || !restaurantLoc || !deliveryLoc || (isDriverToRestaurant && !driverLocation)) {
+      return null;
+    }
 
-  const center = isDriverToRestaurant
-    ? {
+    if (isDriverToRestaurant) {
+      return {
         lat: (driverLocation.lat + restaurantLoc.lat) / 2,
         lng: (driverLocation.lng + restaurantLoc.lng) / 2,
       }
-    : {
+    } else {
+      return {
         lat: (restaurantLoc.lat + deliveryLoc.lat) / 2,
         lng: (restaurantLoc.lng + deliveryLoc.lng) / 2,
-      };
+      }
+    }
+  }, [driverLocation, restaurantLoc, deliveryLoc, isDriverToRestaurant]);
 
   const origin = isDriverToRestaurant ? driverLocation : restaurantLoc;
   const destination = isDriverToRestaurant ? restaurantLoc : deliveryLoc;
@@ -79,6 +88,10 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
   };
 
   const title = isDriverToRestaurant ? "Route to Restaurant" : "Route to Delivery Address";
+
+  if (!isLoaded || !restaurantLoc || !deliveryLoc || (isDriverToRestaurant && !driverLocation)) {
+    return <ActivityIndicator style={{ marginTop: 12 }} />;
+  }
 
   return (
     <View style={{ marginTop: 6 }}>
