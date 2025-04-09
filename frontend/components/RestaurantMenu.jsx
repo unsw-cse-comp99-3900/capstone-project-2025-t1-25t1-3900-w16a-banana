@@ -68,7 +68,7 @@ export default function RestaurantMenu({ restaurantId }) {
       if (isCustomer) {
         fetchCart();
       }
-    }, [contextProfile, isCustomer])
+    }, [contextProfile, isCustomer, restaurantId])
   );
 
   const updateCart = async (menu_id, quantity) => {
