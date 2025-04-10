@@ -37,6 +37,10 @@ class DriverTest(UserTest):
         self.license_image = license_image
         self.registration_paper = registration_paper
 
+    def get_username(self) -> str:
+        """Get Username"""
+        return f'{self.first_name} {self.last_name}'
+
     def register(self, client):
         """POST /driver/register"""
         return client.post(
