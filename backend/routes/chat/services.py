@@ -2,7 +2,6 @@
 from typing import Optional, Union, TypedDict
 from db_model import Admin, Customer, Driver, Restaurant, Chat
 from db_model.db_enum import ChatSupportUserType
-from db_model.db_query import get_user_by_type_and_id
 
 class ChatLog(TypedDict):
     """Type for Chat log"""

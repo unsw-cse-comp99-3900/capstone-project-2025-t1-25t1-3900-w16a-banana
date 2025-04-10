@@ -16,7 +16,7 @@ from routes.chat.models import (
     api,
     message_res,
     send_message_req,
-    chat_model, get_all_chat_res
+    get_all_chat_res
 )
 from routes.chat.services import can_this_user_chat, format_chat, get_username
 
