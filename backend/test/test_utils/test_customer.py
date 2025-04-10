@@ -55,9 +55,9 @@ class CustomerTest(UserTest):
             }
         )
 
-    def get_id(self) -> int:
-        """Get customer ID"""
-        return self.id
+    def get_username(self) -> str:
+        """Get Username"""
+        return self.username
 
     def cart_update(
         self,

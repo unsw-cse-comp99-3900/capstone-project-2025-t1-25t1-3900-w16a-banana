@@ -296,10 +296,9 @@ def test_06_chat(client):
     # Chek if restaurant received
     response = restaurant1.chat_get(client, 'customer', customer1.get_id())
     assert response.status_code == 200
-    chat_logs = response.get_json()
+    chat_logs = response.get_json()[f'CUSTOMER_{customer1.get_id()}_{customer1.get_username()}']
     assert len(chat_logs) == 1
-    assert chat_logs[0]['from_type'] == 'CUSTOMER'
-    assert chat_logs[0]['from_id'] == customer1.get_id()
+    assert chat_logs[0]['message_type'] == 'received'
     assert chat_logs[0]['message'] == 'customer to restaurant'
     # Restaurant send chat
     restaurant1.chat_send(client, 'customer', customer1.get_id(), 'restaurant to customer')
@@ -307,10 +306,11 @@ def test_06_chat(client):
     # Check if customer received
     response = customer1.chat_get(client, 'restaurant', restaurant1.get_id())
     assert response.status_code == 200
-    chat_logs = response.get_json()
+    chat_logs = chat_logs = response.get_json()[
+        f'RESTAURANT_{restaurant1.get_id()}_{restaurant1.get_username()}'
+    ]
     assert len(chat_logs) == 2
-    assert chat_logs[1]['from_type'] == 'RESTAURANT'
-    assert chat_logs[1]['from_id'] == restaurant1.get_id()
+    assert chat_logs[1]['message_type'] == 'received'
     assert chat_logs[1]['message'] == 'restaurant to customer'
     # 2. Chat between customer and driver
     response = customer1.chat_send(
