@@ -38,6 +38,10 @@ class RestaurantTest(UserTest):
         self.menu_categories = []
         self.menu_items = []
 
+    def get_username(self) -> str:
+        """Get Username"""
+        return self.name
+
     def register(self, client):
         """POST /restaurant/register"""
         return client.post(

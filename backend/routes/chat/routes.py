@@ -16,9 +16,9 @@ from routes.chat.models import (
     api,
     message_res,
     send_message_req,
-    chat_model, get_all_chat_res
+    get_all_chat_res
 )
-from routes.chat.services import can_this_user_chat
+from routes.chat.services import can_this_user_chat, format_chat, get_username
 
 @api.route('/get/all')
 class GetAllChat(Resource):
@@ -45,7 +45,10 @@ class GetAllChat(Resource):
 
         chat_logs = {}
         for (other_type, other_id), chats in chat_groups.items():
-            chat_logs[f'{other_type.name}_{other_id}'] = [chat.dict() for chat in chats]
+            other = get_user_by_type_and_id(other_type.name, other_id)
+            other_name = get_username(other)
+            chat_logs[f'{other_type.name}_{other_id}_{other_name}']\
+                = [format_chat(me, chat) for chat in chats]
         return chat_logs, 200
 
 @api.route('/get/<string:user_type>/<int:user_id>')
@@ -60,7 +63,7 @@ class GetAllChat(Resource):
 class GetChatWith(Resource):
     """Route: /get/<string:user_type>/<int:user_id>"""
     @api.expect(auth_header)
-    @api.marshal_list_with(chat_model)
+    @api.response(200, 'Success', get_all_chat_res)
     def get(self, user_type: str, user_id: int):
         """Get the chat of myself with the given user"""
         # Get Myself from Token
@@ -78,19 +81,19 @@ class GetChatWith(Resource):
         if not other_user:
             return res_error(400, 'Given User Not Found')
 
-        other_user_type = can_this_user_chat(other_user)
-        if not other_user_type:
+        other_type = can_this_user_chat(other_user)
+        if not other_type:
             return res_error(400, 'Does not support chat')
 
         # Get all chat messages between two
         chats = get_chats_between_users(
-            user1_type = other_user_type,
+            user1_type = other_type,
             user1_id = other_user.id,
             user2_type = my_type,
             user2_id = me.id
         )
-
-        return [chat.dict() for chat in chats], 200
+        username = f'{other_type.name}_{other_user.id}_{get_username(other_user)}'
+        return {username: [format_chat(me, chat) for chat in chats]}, 200
 
 
 @api.route('/send/<string:user_type>/<int:user_id>')
