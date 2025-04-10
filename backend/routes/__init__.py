@@ -1,8 +1,8 @@
 """Module for All Routes"""
-from flask_restx import Api 
+from flask_restx import Api
 from routes.admin.routes import api as admin_api
 from routes.auth import api as auth_api
-from routes.customer.routes import api as customer_api 
+from routes.customer.routes import api as customer_api
 from routes.customer_order.routes import api as customer_order_api
 from routes.driver.routes import api as driver_api
 from routes.driver_order.routes import api as driver_order_api
@@ -14,6 +14,7 @@ from routes.test import api as test_api
 from routes.profile.routes import api as profile_api
 from routes.chat.routes import api as chat_api
 from routes.report.routes import api as report_api
+from routes.review.routes import api as review_api
 
 api = Api(
     version = "1.0",
@@ -36,3 +37,4 @@ api.add_namespace(test_api)
 api.add_namespace(profile_api)
 api.add_namespace(chat_api)
 api.add_namespace(report_api)
+api.add_namespace(review_api)

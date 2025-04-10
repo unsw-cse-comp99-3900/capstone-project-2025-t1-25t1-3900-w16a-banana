@@ -14,7 +14,9 @@ from db_model import (
     Chat,
     Order,
     OrderItem,
-    Favourites
+    Favourites,
+    RestaurantReview,
+    DriverReview
 )
 from .db_enum import ChatSupportUserType, OrderStatus
 
@@ -457,3 +459,50 @@ def filter_favourites(**kwargs) -> List[Favourites]:
             filters.append(getattr(Favourites, field) == value)
 
     return Favourites.query.filter(and_(*filters)).all()
+
+#--------------------------------------------------------#
+#-----------Functions related to Review-----------#
+#--------------------------------------------------------#
+def filter_restaurant_reviews(**kwargs) -> List[RestaurantReview]:
+    """
+    Dynamically filters restaurant reviews.
+
+    Supported fields:
+        - id
+        - order_id
+        - customer_id
+        - restaurant_id
+        - rating
+    """
+    filters = []
+    for field in ['id', 'order_id', 'customer_id', 'restaurant_id', 'rating']:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(RestaurantReview, field) == value)
+
+    return (
+        RestaurantReview.query.filter(and_(*filters))
+        .order_by(RestaurantReview.updated_at.desc()).all()
+    )
+
+def filter_driver_reviews(**kwargs) -> List[DriverReview]:
+    """
+    Dynamically filters driver reviews.
+
+    Supported fields:
+        - id
+        - order_id
+        - customer_id
+        - driver_id
+        - rating
+    """
+    filters = []
+    for field in ['id', 'order_id', 'customer_id', 'driver_id', 'rating']:
+        value = kwargs.get(field)
+        if value is not None:
+            filters.append(getattr(DriverReview, field) == value)
+
+    return (
+        DriverReview.query.filter(and_(*filters))
+        .order_by(DriverReview.updated_at.desc()).all()
+    )
