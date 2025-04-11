@@ -1,6 +1,6 @@
 """DB Query functions"""
 from collections import defaultdict
-from typing import Optional, List, Union
+from typing import Optional, List, Union, Tuple, Dict
 
 from sqlalchemy import or_, and_
 from db_model import (
@@ -388,7 +388,8 @@ def filter_menu_categories(**kwargs) -> List[MenuCategory]:
 #--------------------------------------------------------#
 #---------------Functions related to Chat---------------#
 #--------------------------------------------------------#
-def get_chats_by_user(user_type: ChatSupportUserType, user_id: int):
+def get_chats_by_user(user_type: ChatSupportUserType, user_id: int)\
+    -> Dict[Tuple[ChatSupportUserType, int], List[Chat]]:
     """
     Get all chats involving the user and group them by the other user involved.
 

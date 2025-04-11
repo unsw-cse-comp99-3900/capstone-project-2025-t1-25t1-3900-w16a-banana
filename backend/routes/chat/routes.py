@@ -18,7 +18,7 @@ from routes.chat.models import (
     send_message_req,
     get_all_chat_res
 )
-from routes.chat.services import can_this_user_chat, format_chat, get_username
+from routes.chat.services import can_this_user_chat, get_username
 
 @api.route('/get/all')
 class GetAllChat(Resource):
@@ -48,7 +48,7 @@ class GetAllChat(Resource):
             other = get_user_by_type_and_id(other_type.name, other_id)
             other_name = get_username(other)
             chat_logs[f'{other_type.name}_{other_id}_{other_name}']\
-                = [format_chat(me, chat) for chat in chats]
+                = [chat.format_chat(me) for chat in chats]
         return chat_logs, 200
 
 @api.route('/get/<string:user_type>/<int:user_id>')
@@ -93,7 +93,7 @@ class GetChatWith(Resource):
             user2_id = me.id
         )
         username = f'{other_type.name}_{other_user.id}_{get_username(other_user)}'
-        return {username: [format_chat(me, chat) for chat in chats]}, 200
+        return {username: [chat.format_chat(me) for chat in chats]}, 200
 
 
 @api.route('/send/<string:user_type>/<int:user_id>')

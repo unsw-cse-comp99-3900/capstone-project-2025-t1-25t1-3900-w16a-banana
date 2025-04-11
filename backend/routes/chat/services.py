@@ -32,20 +32,3 @@ def get_username(user: Union[Admin, Customer, Driver, Restaurant]) -> str:
         return f'{user.first_name} {user.last_name}'
     elif user_type == 'RESTAURANT':
         return user.name
-
-def format_chat(me: Union[Customer, Driver, Restaurant], chat: Chat) -> ChatLog:
-    """Format list of chat into redable format"""
-    my_type = can_this_user_chat(me)
-    my_id = me.id
-    if chat.from_id == my_id and chat.from_type == my_type:
-        return {
-            'message_type': 'sent',
-            'message': chat.message,
-            'time': chat.time.strftime("%Y-%m-%d %H:%M:%S")
-        }
-    else:
-        return {
-                'message_type': 'received',
-                'message': chat.message,
-                'time': chat.time.strftime("%Y-%m-%d %H:%M:%S")
-        }
