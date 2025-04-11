@@ -20,6 +20,8 @@ class BaseModel(db.Model):
             # ignore password
             if col.name == 'password':
                 continue
+            if col.name == 'card_number':
+                val = '****-****-****-****'
             elif (col.name == "created_at"\
                 or col.name == "updated_at"\
                 or 'time' in col.name)\
