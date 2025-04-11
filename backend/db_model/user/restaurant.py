@@ -1,10 +1,10 @@
 """Restaurant DB"""
 from datetime import datetime
-from db_model.base import BaseModel
 from db_model.db_enum import RegistrationStatus, State
 from utils.db import db
+from .user import User
 
-class Restaurant(BaseModel):
+class Restaurant(User):
     """
     Class for Restaurant DB.
     """
@@ -47,10 +47,10 @@ class Restaurant(BaseModel):
     token = db.Column(db.String(255), nullable=True, default=None)
     role = db.Column(db.String, default="restaurant")
 
-    def profile(self):
-        """
-        Return Non-Sensitive Information Only. JSON-Serialisable.
-        """
+    def get_username(self) -> str:
+        return self.name
+
+    def get_profile(self):
         return {
             "id": self.id,
             "name": self.name,

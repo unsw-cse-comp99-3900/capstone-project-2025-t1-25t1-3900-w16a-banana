@@ -1,9 +1,9 @@
 """Admin DB"""
 from datetime import datetime
-from db_model.base import BaseModel
 from utils.db import db
+from .user import User
 
-class Admin(BaseModel):
+class Admin(User):
     """
     Class for Admin DB.
     """
@@ -24,10 +24,10 @@ class Admin(BaseModel):
     token = db.Column(db.String(255), nullable=True, default=None)
     role = db.Column(db.String, default="admin")
 
-    def profile(self):
-        """
-        Return Non-Sensitive Information Only. JSON-Serialisable.
-        """
+    def get_username(self) -> str:
+        return f'{self.first_name} {self.last_name}'
+
+    def get_profile(self):
         return {
             "id": self.id,
             "first_name": self.first_name,

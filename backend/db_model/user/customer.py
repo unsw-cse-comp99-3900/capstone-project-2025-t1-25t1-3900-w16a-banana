@@ -1,10 +1,10 @@
 """Customer DB"""
 from datetime import datetime
-from db_model.base import BaseModel
 from db_model.db_enum import State
 from utils.db import db
+from .user import User
 
-class Customer(BaseModel):
+class Customer(User):
     """
     Class for Customer DB.
     Contains id, username, email, password, phone, address,
@@ -33,10 +33,10 @@ class Customer(BaseModel):
     token = db.Column(db.String(255), nullable=True, default=None)
     role = db.Column(db.String, default="customer")
 
-    def profile(self):
-        """
-        Return Non-Sensitive Information Only. JSON-Serialisable.
-        """
+    def get_username(self) -> str:
+        return self.username
+
+    def get_profile(self):
         return {
             "id": self.id,
             "username": self.username,

@@ -1,10 +1,10 @@
 """Driver DB"""
 from datetime import datetime
-from db_model.base import BaseModel
 from db_model.db_enum import RegistrationStatus
 from utils.db import db
+from .user import User
 
-class Driver(BaseModel):
+class Driver(User):
     """
     Class for Driver DB.
     """
@@ -41,10 +41,10 @@ class Driver(BaseModel):
     token = db.Column(db.String(255), nullable=True, default=None)
     role = db.Column(db.String, default="driver")
 
-    def profile(self):
-        """
-        Return Non-Sensitive Information Only. JSON-Serialisable.
-        """
+    def get_username(self) -> str:
+        return f'{self.first_name} {self.last_name}'
+
+    def get_profile(self):
         return {
             "id": self.id,
             "first_name": self.first_name,
