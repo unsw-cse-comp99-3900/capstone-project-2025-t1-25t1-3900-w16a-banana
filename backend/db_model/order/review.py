@@ -2,16 +2,15 @@
 from datetime import datetime
 from sqlalchemy import CheckConstraint
 from db_model.base import BaseModel
+from db_model import Customer
 from utils.db import db
 
-class DriverReview(BaseModel):
+class BaseReview(BaseModel):
     """
-    Class for Driver Review DB.
-    After the order, the customer can leave one review for the Driver.
-    A Driver can leave one comment under that.
-    A review is allowed to be updated. A review can have 1 image.
+    Abstract base class for reviews.
+    Shared fields: rating, review_text, url_img, reply, updated_at
     """
-    __tablename__ = 'driver_reviews'
+    __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(
@@ -19,55 +18,52 @@ class DriverReview(BaseModel):
         db.ForeignKey('customers.id'),
         nullable=False
     )
+
+    rating = db.Column(db.Integer, nullable=False)
+    review_text = db.Column(db.String(255), nullable=False)
+    url_img = db.Column(db.String(255), nullable=True)
+    reply = db.Column(db.String(255), nullable=True)
+    updated_at = db.Column(db.DateTime, default=datetime.now)
+
+    __table_args__ = (
+        CheckConstraint('rating >= 1 AND rating <= 5', name='check_rating_range'),
+    )
+
+    def format(self):
+        """Format reveiw into understandable format"""
+        customer: Customer = Customer.query.filter_by(id=self.customer_id).first()
+        return {
+            "customer_id": customer.id,
+            "customer_name": customer.get_username(),
+            "customer_profile_img": customer.url_profile_image,
+            "review_id": self.id,
+            "rating": self.rating,
+            "review_text": self.review_text,
+            "review_img": self.url_img,
+            "reply": self.reply,
+            "time": self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+
+class DriverReview(BaseReview):
+    """
+    Review left by customer for a driver.
+    """
+    __tablename__ = 'driver_reviews'
     driver_id = db.Column(
         db.Integer,
         db.ForeignKey('drivers.id'),
         nullable=False
     )
 
-    # the review can have rating 1 - 5, some text, and maximum 1 images
-    rating = db.Column(db.Integer, nullable=False)
-    review_text = db.Column(db.String(255), nullable=False)
-    url_img = db.Column(db.String(255), nullable=True)
-    reply = db.Column(db.String(255), nullable=True)
 
-    # created at and updated at
-    updated_at = db.Column(db.DateTime, default=datetime.now)
-
-    __table_args__ = (
-        CheckConstraint('rating >= 1 AND rating <= 5', name='check_rating_range'),
-    )
-
-class RestaurantReview(BaseModel):
+class RestaurantReview(BaseReview):
     """
-    Class for Restaurant Review DB.
-    After the order, the customer can leave one review for the restaurant.
-    A restaurant can leave one comment under that.
-    A review is allowed to be updated. A review can have 1 image.
+    Review left by customer for a restaurant.
     """
     __tablename__ = 'restaurant_reviews'
-
-    id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(
-        db.Integer,
-        db.ForeignKey('customers.id'),
-        nullable=False
-    )
     restaurant_id = db.Column(
         db.Integer,
         db.ForeignKey('restaurants.id'),
         nullable=False
-    )
-
-    # the review can have rating 1 - 5, some text, and maximum 1 images
-    rating = db.Column(db.Integer, nullable=False)
-    review_text = db.Column(db.String(255), nullable=False)
-    url_img = db.Column(db.String(255), nullable=True)
-    reply = db.Column(db.String(255), nullable=True)
-
-    # created at and updated at
-    updated_at = db.Column(db.DateTime, default=datetime.now)
-
-    __table_args__ = (
-        CheckConstraint('rating >= 1 AND rating <= 5', name='check_rating_range'),
     )
