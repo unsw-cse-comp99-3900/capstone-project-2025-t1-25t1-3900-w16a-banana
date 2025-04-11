@@ -68,7 +68,7 @@ class RateRestaurant(Resource):
                 review_text=''
             )
             db.session.add(review)
-        if args.get('reveiew_text'):
+        if args.get('review_text'):
             review.review_text = args.get('review_text')
         if args.get('img'):
             url_img = save_image(args.get('img'))
@@ -166,18 +166,7 @@ class GetReviews(Resource):
         total = 0
         for review in reviews:
             total += review.rating
-            customer = get_user_by_type_and_id('customer', review.customer_id)
-            review_list.append({
-                'customer_id': customer.id,
-                'customer_name': customer.username,
-                'customer_profile_img': customer.url_profile_image,
-                'review_id': review.id,
-                'rating': review.rating,
-                'review_text': review.review_text,
-                'review_img': review.url_img,
-                'reply': review.reply,
-                'time': review.updated_at.strftime("%Y-%m-%d %H:%M:%S")
-            })
+            review_list.append(review.format())
         return {
             'avg_rating': 0 if len(reviews) == 0 else total / len(reviews),
             'n_reviews': len(reviews),

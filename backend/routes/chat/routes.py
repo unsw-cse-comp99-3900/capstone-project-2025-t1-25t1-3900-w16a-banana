@@ -18,7 +18,7 @@ from routes.chat.models import (
     send_message_req,
     get_all_chat_res
 )
-from routes.chat.services import can_this_user_chat, get_username
+from routes.chat.services import can_this_user_chat
 
 @api.route('/get/all')
 class GetAllChat(Resource):
@@ -46,7 +46,7 @@ class GetAllChat(Resource):
         chat_logs = {}
         for (other_type, other_id), chats in chat_groups.items():
             other = get_user_by_type_and_id(other_type.name, other_id)
-            other_name = get_username(other)
+            other_name = other.get_username()
             chat_logs[f'{other_type.name}_{other_id}_{other_name}']\
                 = [chat.format_chat(me) for chat in chats]
         return chat_logs, 200
@@ -92,7 +92,7 @@ class GetChatWith(Resource):
             user2_type = my_type,
             user2_id = me.id
         )
-        username = f'{other_type.name}_{other_user.id}_{get_username(other_user)}'
+        username = f'{other_type.name}_{other_user.id}_{other_user.get_username()}'
         return {username: [chat.format_chat(me) for chat in chats]}, 200
 
 
