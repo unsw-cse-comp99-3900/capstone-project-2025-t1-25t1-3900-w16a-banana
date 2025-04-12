@@ -3,11 +3,7 @@ from typing import List, TypedDict, Any
 from utils.db import db
 from db_model import CartItem, Order, OrderItem
 from db_model.db_enum import State
-from db_model.db_query import (
-    get_restaurant_by_menu,
-    filter_menus,
-    filter_cart_items
-)
+from db_model.db_query import filter_cart_items
 
 class FormatCartItems(TypedDict):
     """Type for formatted cart item. For API result type annotation."""
@@ -25,9 +21,12 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
     """Format raw cart item model into more understandable format"""
     items = []
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu(cart_item.menu_id)
-        menus = filter_menus(id = cart_item.menu_id)
-        menu = menus[0]
+        cart_format = cart_item.format()
+        if not cart_format:
+            continue
+        menu = cart_format.get('menu')
+        restaurant = cart_format.get('restaurant')
+        quantity = cart_format.get('quantity')
         items.append({
             'menu_id': menu.id,
             'menu_name': menu.name,
@@ -35,23 +34,22 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
             'restaurant_name': restaurant.name,
             'description': menu.description,
             'price': menu.price,
-            'quantity': cart_item.quantity,
-            'total_price': cart_item.quantity * menu.price,
+            'quantity': quantity,
+            'total_price': quantity * menu.price,
             'url_img': menu.url_img
         })
 
     return items
 
 
-def format_cart_items_v2(cart_items):
+def format_cart_items_v2(cart_items: List[CartItem]):
     """Format raw cart items, group under each restaurant"""
 
     result_dict = {}
     for item in cart_items:
-        restaurant = get_restaurant_by_menu(item.menu_id)
-        menus = filter_menus(id = item.menu_id)
-        menu = menus[0]
-        
+        cart_format = item.format()
+        restaurant = cart_format.get('restaurant')
+        menu = cart_format.get('me')
         if restaurant.id not in result_dict:
             result_dict[restaurant.id] = {
                 'restaurant_id': restaurant.id,
@@ -69,7 +67,6 @@ def format_cart_items_v2(cart_items):
             }
 
             result_dict[restaurant.id]["address"] = address
-        
         result_dict[restaurant.id]['items'].append({
             'menu_id': menu.id,
             'menu_name': menu.name,
@@ -95,11 +92,12 @@ def format_cart_items_with_restaurant_filter(
     """
     items = []
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu(cart_item.menu_id)
+        cart_format = cart_item.format()
+        restaurant = cart_format.get('restaurant')
         if restaurant.id != restaurant_id:
             continue
-        menus = filter_menus(id = cart_item.menu_id)
-        menu = menus[0]
+        menu = cart_format.get('menu')
+        quantity = cart_format.get('quantity')
         items.append({
             'menu_id': menu.id,
             'menu_name': menu.name,
@@ -107,8 +105,8 @@ def format_cart_items_with_restaurant_filter(
             'restaurant_name': restaurant.name,
             'description': menu.description,
             'price': menu.price,
-            'quantity': cart_item.quantity,
-            'total_price': cart_item.quantity * menu.price,
+            'quantity': quantity,
+            'total_price': quantity * menu.price,
             'url_img': menu.url_img
         })
 
@@ -164,7 +162,7 @@ def empty_cart_items_from_restaurant(
     """Remove all cart items from customer from given restaurant"""
     cart_items = filter_cart_items(customer_id = customer_id)
     for cart_item in cart_items:
-        restaurant = get_restaurant_by_menu(cart_item.menu_id)
+        restaurant = cart_item.format().get('restaurant')
         if restaurant.id == restaurant_id:
             db.session.delete(cart_item)
     db.session.commit()
