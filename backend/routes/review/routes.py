@@ -10,7 +10,6 @@ from utils.file import save_image
 from db_model import RestaurantReview, DriverReview
 from db_model.db_query import (
     get_customer_by_token, get_driver_by_token, get_restaurant_by_token,
-    get_user_by_type_and_id,
     filter_restaurants, filter_drivers,
     filter_restaurant_reviews, filter_driver_reviews,
     filter_orders
