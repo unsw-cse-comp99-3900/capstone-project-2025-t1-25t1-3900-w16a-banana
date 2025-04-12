@@ -1,3 +1,4 @@
+"""Clean and Initialize DB with some data"""
 import os
 import sys
 from datetime import datetime, timedelta
@@ -10,9 +11,12 @@ random.seed(39006666)
 # find the app
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from app import app
-from utils.db import db
-from db_model import *
+from app import app # pylint: disable=wrong-import-position
+from utils.db import db # pylint: disable=wrong-import-position
+from db_model import ( # pylint: disable=wrong-import-position
+    Admin, Customer, Driver, Restaurant, MenuCategory, MenuItem, Order, OrderItem
+)
+from db_model.db_enum import OrderStatus, RegistrationStatus # pylint: disable=wrong-import-position
 
 # Default data
 # all passwords are Abcd1234!
@@ -20,14 +24,19 @@ from db_model import *
 default_customers = [
     ("John Doe", "john@example.com", "0412345678", "1 Anzac Parade", "Kensington", "NSW", "2010"),
     ("Jane Smith", "jane@example.com", "0498765432", "123 Main Street", "Blacktown", "NSW", "2148"),
-    ("Michael Brown", "michael@example.com", "0423456789", "10 Avoca Street", "Randwick", "NSW", "2031"),
+    ("Michael Brown", "michael@example.com", "0423456789", "10 Avoca Street",
+     "Randwick", "NSW", "2031"),
     ("Emily Jones", "emily@example.com", "0456789012", "10 Alison Road", "Randwick", "NSW", "2031"),
     ("David White", "david@example.com", "0478901234", "1 Burwood Road", "Burwood", "NSW", "2134"),
-    ("Samantha Green", "samantha@example.com", "0465123789", "1 Gipps St", "Concord", "NSW", "2137"),
-    ("Nathan Turner", "nathan@example.com", "0491123456", "88 Oxford St", "Paddington", "NSW", "2021"),
-    ("Isabella Lee", "isabella@example.com", "0432789456", "99 Crown St", "Darlinghurst", "NSW", "2010"),
+    ("Samantha Green", "samantha@example.com", "0465123789", "1 Gipps St",
+     "Concord", "NSW", "2137"),
+    ("Nathan Turner", "nathan@example.com", "0491123456", "88 Oxford St",
+     "Paddington", "NSW", "2021"),
+    ("Isabella Lee", "isabella@example.com", "0432789456", "99 Crown St",
+     "Darlinghurst", "NSW", "2010"),
     ("Liam Scott", "liam@example.com", "0456234890", "22 George St", "Parramatta", "NSW", "2150"),
-    ("Chloe Taylor", "chloe@example.com", "0487345612", "15 Bourke St", "Woolloomooloo", "NSW", "2011"),
+    ("Chloe Taylor", "chloe@example.com", "0487345612", "15 Bourke St",
+     "Woolloomooloo", "NSW", "2011"),
 ]
 
 # drivers: email, phone, first_name, last_name, license_number, car_plate
@@ -42,19 +51,32 @@ driver_data = [
 
 # restaurant: email, phone, name, address, suburb, state, postcode, abn (11 digits), description
 restaurant_data = [
-    ("sydneyeats@example.com", "0411222333", "Sydney Eats", "123 George St", "Sydney", "NSW", "2000", "11111111111", "A popular restaurant in Sydney CBD."),
-    ("harbourgrill@example.com", "0422333444", "Harbour Grill", "456 Pitt St", "Sydney", "NSW", "2000", "22222222222", "Fine dining with a view of the harbour."),
-    ("bondibites@example.com", "0433444555", "Bondi Bites", "789 Campbell Parade", "Bondi Beach", "NSW", "2026", "33333333333", "Casual dining spot near Bondi Beach."),
-    ("newtownnoodles@example.com", "0444555666", "Newtown Noodles", "321 King St", "Newtown", "NSW", "2042", "44444444444", "Authentic Asian noodle house in Newtown."),
-    ("parrapizza@example.com", "0455666777", "Parramatta Pizza", "654 Church St", "Parramatta", "NSW", "2150", "55555555555", "Family-friendly pizza restaurant in Parramatta."),
-    ("glebegrill@example.com", "0466778899", "Glebe Grill", "789 Glebe Point Rd", "Glebe", "NSW", "2037", "66666666666", "Neighborhood favorite for grilled meats and cozy vibes."),
-    ("manlymeals@example.com", "0477889900", "Manly Meals", "123 Beach Rd", "Manly", "NSW", "2095", "77777777777", "Beachside spot known for fresh seafood and healthy bowls."),
-    ("redfernramen@example.com", "0488990011", "Redfern Ramen", "456 Redfern St", "Redfern", "NSW", "2016", "88888888888", "Tiny noodle bar with big flavor."),
-    ("strathfieldspice@example.com", "0499001122", "Strathfield Spice", "321 Albert Rd", "Strathfield", "NSW", "2135", "99999999999", "Modern Indian eatery with a twist on the classics."),
-    ("greenwichgarden@example.com", "0400111222", "Greenwich Garden", "654 Pacific Hwy", "Greenwich", "NSW", "2065", "10101010101", "Vegetarian café with garden seating and seasonal menus."),
+    ("sydneyeats@example.com", "0411222333", "Sydney Eats", "123 George St",
+     "Sydney", "NSW", "2000", "11111111111", "A popular restaurant in Sydney CBD."),
+    ("harbourgrill@example.com", "0422333444", "Harbour Grill", "456 Pitt St",
+     "Sydney", "NSW", "2000", "22222222222", "Fine dining with a view of the harbour."),
+    ("bondibites@example.com", "0433444555", "Bondi Bites", "789 Campbell Parade",
+     "Bondi Beach", "NSW", "2026", "33333333333", "Casual dining spot near Bondi Beach."),
+    ("newtownnoodles@example.com", "0444555666", "Newtown Noodles", "321 King St",
+     "Newtown", "NSW", "2042", "44444444444", "Authentic Asian noodle house in Newtown."),
+    ("parrapizza@example.com", "0455666777", "Parramatta Pizza", "654 Church St", "Parramatta",
+     "NSW", "2150", "55555555555", "Family-friendly pizza restaurant in Parramatta."),
+    ("glebegrill@example.com", "0466778899", "Glebe Grill", "789 Glebe Point Rd", "Glebe",
+     "NSW", "2037", "66666666666", "Neighborhood favorite for grilled meats and cozy vibes."),
+    ("manlymeals@example.com", "0477889900", "Manly Meals", "123 Beach Rd", "Manly",
+     "NSW", "2095", "77777777777", "Beachside spot known for fresh seafood and healthy bowls."),
+    ("redfernramen@example.com", "0488990011", "Redfern Ramen", "456 Redfern St",
+     "Redfern", "NSW", "2016", "88888888888", "Tiny noodle bar with big flavor."),
+    ("strathfieldspice@example.com", "0499001122",
+     "Strathfield Spice", "321 Albert Rd", "Strathfield",
+     "NSW", "2135", "99999999999", "Modern Indian eatery with a twist on the classics."),
+    ("greenwichgarden@example.com", "0400111222",
+     "Greenwich Garden", "654 Pacific Hwy", "Greenwich", "NSW",
+     "2065", "10101010101", "Vegetarian café with garden seating and seasonal menus."),
 ]
 
 def initialize_database():
+    """Clean DB and put some data"""
     with app.app_context():
         # drop all tables, and create againn
         db.drop_all()
@@ -105,11 +127,12 @@ def initialize_database():
             db.session.commit()
 
         # load the uploads/restaurant_menu.json file
-        file = open("uploads/restaurant_menu.json", "r")
+        file = open("uploads/restaurant_menu.json", "r", encoding='utf-8')
         menus = json.load(file)
         file.close()
 
-        for index, (email, phone, name, address, suburb, state, postcode, abn, description) in enumerate(restaurant_data):
+        for index, (email, phone, name, address, suburb,
+                    state, postcode, abn, description) in enumerate(restaurant_data):
             restaurant = Restaurant(
                 email=email,
                 password="Abcd1234!",
@@ -172,7 +195,7 @@ def initialize_database():
         restaurants = Restaurant.query.all()
         drivers = Driver.query.all()
 
-        # this list will store all the new orders. 
+        # this list will store all the new orders.
         # and after finishing creation, we will commit the orders along the time line.
         all_orders = []
 
@@ -183,21 +206,22 @@ def initialize_database():
                 restaurant = random.choice(restaurants)
                 driver = random.choice(drivers)
 
-                # select all the menu items from this restaurant, 
+                # select all the menu items from this restaurant,
                 # and randomly pick 2 - 5 items, each item has quantity x 1
-                items = MenuItem.query.join(MenuCategory).filter(MenuCategory.restaurant_id == restaurant.id).all()
+                items = MenuItem.query.join(MenuCategory)\
+                    .filter(MenuCategory.restaurant_id == restaurant.id).all()
                 items = random.sample(items, random.randint(2, 5))
 
                 # sum up the price
                 order_price = sum([item.price for item in items])
                 delivery_fee = random.choice([5, 10, 15, 20])
-                total_price = order_price + delivery_fee 
+                total_price = order_price + delivery_fee
 
                 # create the order time
-                order_time = datetime(2025, 3, 23) + timedelta(days=random.randint(0, 16), hours=random.randint(10, 20))
+                order_time = datetime(2025, 3, 23)\
+                    + timedelta(days=random.randint(0, 16), hours=random.randint(10, 20))
                 pickup_time = order_time + timedelta(minutes=30)
                 delivery_time = pickup_time + timedelta(minutes=30)
-                
                 # create a new order dict
                 new_order_dict = {
                     "customer_id": customer.id,
@@ -232,7 +256,7 @@ def initialize_database():
                 # add the items to the order
                 new_order_dict["items"] = new_order_dict_items
                 all_orders.append(new_order_dict)
-            
+
         # sort all the orders based on the order time ascending
         all_orders.sort(key=lambda x: x["order_time"])
 
