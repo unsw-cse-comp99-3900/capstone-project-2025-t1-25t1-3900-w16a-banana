@@ -80,18 +80,18 @@ class RateRestaurant(Resource):
 
 @api.route('/driver/<int:driver_id>')
 class RateDriver(Resource):
-    """Route: /driver/<int:driver_id>"""
+    '''Route: /driver/<int:driver_id>'''
     @api.expect(auth_header, rating_req_parser)
     @api.response(200, 'Success')
     @api.response(400, 'Bad Request', message_res)
     @api.response(401, 'Unauthorised', message_res)
     def put(self, driver_id: int):
-        """
+        '''
         Customer Rating Post/Update For Driver.
         Review text and img can be empty.
         One Review for a Driver.
         Must have order history to rate.
-        """
+        '''
         # Look for customer
         customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
@@ -146,11 +146,11 @@ class RateDriver(Resource):
     },
     'user_id': {'type': 'int'}
 })
-class GetReviews(Resource):
-    """Get All Reviews Without Token"""
+class GetReviewsOf(Resource):
+    '''Get All Reviews Of Restaurant/Driver Without Token'''
     @api.response(200, 'Success', get_reviews_reponse)
     def get(self, user_type: str, user_id: int):
-        """Get Reviews"""
+        '''Get All Reviews Of Restaurant/Driver Without Token'''
         if user_type == 'driver':
             if not filter_drivers(id=user_id):
                 return res_error(400, 'Driver ID Invalid')
@@ -182,10 +182,11 @@ class GetReviews(Resource):
     'review_id': {'type': 'int'}
 })
 class ReplyReviews(Resource):
-    """Update/Post Review Reply"""
+    '''Update/Post Review Reply'''
     @api.expect(auth_header, reply_req)
+    @api.response(200, 'Success. Return modified review')
     def put(self, user_type: str, review_id: int):
-        """Update/Post Review"""
+        '''Update/Post Review Reply'''
         reply = request.get_json().get('reply')
         if not reply:
             return res_error(400, 'No Reply Given')
@@ -208,3 +209,71 @@ class ReplyReviews(Resource):
 
         db.session.commit()
         return reviews[0].dict(), 200
+
+@api.route('/delete/<string:review_type>/<int:review_id>')
+@api.doc(params={
+    'review_type': {
+        'description': 'Review Type',
+        'enum': ['driver', 'restaurant'],
+        'type': 'string'
+    },
+    'review_id': {'type': 'int'}
+})
+class DeleteReview(Resource):
+    '''Delete a Review'''
+    @api.expect(auth_header)
+    @api.response(200, 'Successful Deletion', message_res)
+    @api.response(400, 'Invalid Review Type', message_res)
+    @api.response(404, 'Review Not Found', message_res)
+    def delete(self, review_type: str, review_id: int):
+        '''Delete a customer left review'''
+        # Look for customer
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401, 'Customer Not Found')
+        # Find the given review
+        if review_type == 'restaurant':
+            reviews = filter_restaurant_reviews(id=review_id)
+        elif review_type == 'driver':
+            reviews = filter_driver_reviews(id=review_id)
+        else:
+            return res_error(400, 'Invalid Review Type')
+        # Check if the review exists
+        if not reviews:
+            return res_error(404, 'Review Not Found')
+        review = reviews[0]
+
+        # Delete from DB
+        db.session.delete(review)
+        db.session.commit()
+        return {'message': 'Deleted Successfully'}
+
+@api.route('/my/<string:review_type>')
+@api.doc(params={
+    'review_type': {
+        'description': 'Review Type',
+        'enum': ['driver', 'restaurant'],
+        'type': 'string'
+    },
+})
+class GetMyReviewByCustomer(Resource):
+    '''Get all reviews of a given type left by given customer'''
+    @api.expect(auth_header)
+    @api.response(200, 'Successful Deletion', message_res)
+    @api.response(400, 'Invalid Review Type', message_res)
+    @api.response(404, 'Review Not Found', message_res)
+    def get(self, review_type: str):
+        '''Get all reviews of a given type left by given customer'''
+        # Look for customer
+        customer = get_customer_by_token(tokenize(request.headers))
+        if not customer:
+            return res_error(401, 'Customer Not Found')
+        # Find the given review
+        if review_type == 'restaurant':
+            reviews = filter_restaurant_reviews(customer_id=customer.id)
+        elif review_type == 'driver':
+            reviews = filter_driver_reviews(customer_id=customer.id)
+        else:
+            return res_error(400, 'Invalid Review Type')
+
+        return [review.format_with_target_profile() for review in reviews], 200
