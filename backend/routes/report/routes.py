@@ -16,7 +16,10 @@ from routes.report.models import (
     spending_report_model,
     earning_report_model
 )
-from routes.report.services import filter_orders_by_user_and_date_range
+from routes.report.services import (
+    filter_orders_by_user_and_date_range,
+    get_per_day_data
+)
 
 @api.route('/customer')
 class CustomerReport(Resource):
@@ -85,10 +88,21 @@ class DriverReport(Resource):
         for order in orders:
             total_earning += order.delivery_fee
 
-        return {
+        # get per day data
+        per_day_data = get_per_day_data(
+            driver_id=driver.id,
+            start_date=start_date,
+            end_date=end_date
+        )
+
+        # write the response
+        response = {
             'total_order': len(orders),
-            'total_earning': total_earning
-        }, 200
+            'total_earning': round(total_earning, 2),
+            'data': per_day_data
+        }
+
+        return response, 200
 
 @api.route('/restaurant')
 class RestaurantReport(Resource):
@@ -98,7 +112,7 @@ class RestaurantReport(Resource):
     @api.response(400, 'Bad Request')
     @api.response(401, 'Unauthorised')
     def get(self):
-        """Get Spending of a Customer in given date range"""
+        """Get income of a restaurant in given date range"""
         restaurant = get_restaurant_by_token(tokenize(request.headers))
         if not restaurant:
             return res_error(401, 'Invalid Restaurant')
@@ -117,11 +131,23 @@ class RestaurantReport(Resource):
             start_date=start_date,
             end_date=end_date
         )
+
         total_earning = 0
         for order in orders:
             total_earning += order.order_price
 
-        return {
+        # get the per day number of orders and earnings from the orders
+        per_day_data = get_per_day_data(
+            restaurant_id=restaurant.id,
+            start_date=start_date,
+            end_date=end_date
+        )
+
+        # format the result
+        response = {
             'total_order': len(orders),
-            'total_earning': total_earning
-        }, 200
+            'total_earning': round(total_earning, 2),
+            'data': per_day_data,
+        }
+
+        return response, 200

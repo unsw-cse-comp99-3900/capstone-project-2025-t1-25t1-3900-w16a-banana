@@ -44,12 +44,15 @@ def format_cart_items(cart_items: List[CartItem]) -> List[FormatCartItems]:
 
 def format_cart_items_v2(cart_items: List[CartItem]):
     """Format raw cart items, group under each restaurant"""
-
     result_dict = {}
+
+    # iterate each cart item, group by restaurant id
     for item in cart_items:
         cart_format = item.format()
         restaurant = cart_format.get('restaurant')
-        menu = cart_format.get('me')
+        menu = cart_format.get('menu')
+
+        # if the restaurant is not in the result_dict, add it
         if restaurant.id not in result_dict:
             result_dict[restaurant.id] = {
                 'restaurant_id': restaurant.id,
@@ -67,6 +70,8 @@ def format_cart_items_v2(cart_items: List[CartItem]):
             }
 
             result_dict[restaurant.id]["address"] = address
+        
+        # add the menu item to the restaurant
         result_dict[restaurant.id]['items'].append({
             'menu_id': menu.id,
             'menu_name': menu.name,

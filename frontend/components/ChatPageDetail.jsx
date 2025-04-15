@@ -1,16 +1,17 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { View, Linking, ScrollView } from 'react-native';
-import { ActivityIndicator, IconButton, Text, TextInput } from 'react-native-paper';
+import { View, Linking, ScrollView, Pressable } from 'react-native';
+import { ActivityIndicator, Icon, IconButton, Text, TextInput } from 'react-native-paper';
 import useAuth from '../hooks/useAuth';
-import { BACKEND } from '../constants/backend';
+import { BACKEND, TIME_INTERVAL } from '../constants/backend';
 import axios from 'axios';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import useToast from '../hooks/useToast';
 import capitalize from 'capitalize';
 import ChatPageOneChat from './ChatPageOneChat';
+import PressableIcon from './PressableIcon';
 
 export default function ChatPageDetail() {
-  const { userType, userId } = useLocalSearchParams();
+  const { userType, userId, from } = useLocalSearchParams();
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
 
@@ -35,15 +36,17 @@ export default function ChatPageDetail() {
     try {
       const response = await axios.get(url, config);
       const data = response.data;
-      console.log(data);
 
+      // set the data
       setChatUser(data.user);
       setChats(data.chats);
     } catch (error) {
       const msg = error.response?.data?.message || "Error fetching chat data";
       console.error(error);
       showToast(msg, "error");
-      router.back();
+      
+      // if the "from" is defined, go back to "from", otherwise go back
+      from ? router.replace(from) : router.back();
     }
   };
 
@@ -71,9 +74,7 @@ export default function ChatPageDetail() {
       if (!contextProfile) return;
       fetchChat();
   
-      const interval = setInterval(() => {
-        fetchChat();
-      }, 1000);
+      const interval = setInterval(fetchChat, TIME_INTERVAL);
   
       return () => clearInterval(interval);
     }, [userType, userId, contextProfile])
@@ -130,22 +131,36 @@ export default function ChatPageDetail() {
           marginBottom: 12,
         }}
       >
-        <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
+        <IconButton icon="arrow-left" size={24} onPress={() => from ? router.replace(from) : router.back()} />
         <View style={{ flexDirection: "column", alignItems: "center" }}>
           <Text variant="titleMedium">{name}</Text>
           <Text variant="bodyMedium" style={{ color: "#999" }}>
             {capitalize(chatUser.role)}
           </Text>
         </View>
-        <IconButton icon="phone" size={24}
-          onPress={() => {
-            const url = `tel:${chatUser.phone}`;
-            Linking.openURL(url).catch((err) => {
-              console.error("Error opening dialer:", err);
-              showToast("Error opening dialer", "error");
-            });
-          }}
-        />
+        <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
+          {chatUser.role === "restaurant" && (
+            <PressableIcon
+              source="open-in-new"
+              size={24}
+              color="#888"
+              onPress={() => {
+                router.push({
+                  pathname: `/${contextProfile.role}/view/restaurant/${chatUser.id}`,
+                  params: { 
+                    from: `${contextProfile.role}/view/chat?userType=restaurant&userId=${chatUser.id}` 
+                  },
+                });
+              }}
+            />
+          )}
+          <PressableIcon
+            source="phone"
+            size={24}
+            color="#888"
+            onPress={() => Linking.openURL(`tel:${chatUser.phone}`)}
+          />
+        </View>
       </View>
 
       {/* Chats inside the scroll view */}
