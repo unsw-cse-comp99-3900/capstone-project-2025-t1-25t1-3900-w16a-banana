@@ -1,6 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { View, Linking, ScrollView } from 'react-native';
-import { ActivityIndicator, IconButton, Text, TextInput } from 'react-native-paper';
+import { View, Linking, ScrollView, Pressable } from 'react-native';
+import { ActivityIndicator, Icon, IconButton, Text, TextInput } from 'react-native-paper';
 import useAuth from '../hooks/useAuth';
 import { BACKEND } from '../constants/backend';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import useToast from '../hooks/useToast';
 import capitalize from 'capitalize';
 import ChatPageOneChat from './ChatPageOneChat';
+import PressableIcon from './PressableIcon';
 
 export default function ChatPageDetail() {
   const { userType, userId, from } = useLocalSearchParams();
@@ -35,8 +36,8 @@ export default function ChatPageDetail() {
     try {
       const response = await axios.get(url, config);
       const data = response.data;
-      console.log(data);
 
+      // set the data
       setChatUser(data.user);
       setChats(data.chats);
     } catch (error) {
@@ -139,9 +140,29 @@ export default function ChatPageDetail() {
             {capitalize(chatUser.role)}
           </Text>
         </View>
-        <IconButton icon="phone" size={24}
-          onPress={() => Linking.openURL(`tel:${chatUser.phone}`)}
-        />
+        <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
+          {chatUser.role === "restaurant" && (
+            <PressableIcon
+              source="open-in-new"
+              size={24}
+              color="#888"
+              onPress={() => {
+                router.push({
+                  pathname: `/${contextProfile.role}/view/restaurant/${chatUser.id}`,
+                  params: { 
+                    from: `${contextProfile.role}/view/chat?userType=restaurant&userId=${chatUser.id}` 
+                  },
+                });
+              }}
+            />
+          )}
+          <PressableIcon
+            source="phone"
+            size={24}
+            color="#888"
+            onPress={() => Linking.openURL(`tel:${chatUser.phone}`)}
+          />
+        </View>
       </View>
 
       {/* Chats inside the scroll view */}

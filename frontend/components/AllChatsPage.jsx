@@ -40,7 +40,7 @@ export default function AllChatsPage() {
   useEffect(
     useCallback(() => {
       fetchAllChats(); 
-      const interval = setInterval(fetchAllChats, 5000);
+      const interval = setInterval(fetchAllChats, 100000);
 
       return () => clearInterval(interval); 
     }, [contextProfile])

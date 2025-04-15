@@ -7,6 +7,7 @@ import { Icon, IconButton, Text } from "react-native-paper";
 import RestaurantMenu from "./RestaurantMenu";
 import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
+import PressableIcon from "./PressableIcon";
 
 export default function RestaurantPage({ restaurantId }) {
   const [restaurant, setRestaurant] = useState(null);
@@ -102,7 +103,10 @@ export default function RestaurantPage({ restaurantId }) {
           <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
             {restaurant.name}
           </Text>
-          <Pressable
+          <PressableIcon
+            source="chat"
+            size={24}
+            color="#6c757d"
             onPress={() => router.push({
               pathname: `${contextProfile.role}/view/chat`,
               params: {
@@ -111,13 +115,7 @@ export default function RestaurantPage({ restaurantId }) {
                 from: `${contextProfile.role}/view/restaurant/${restaurantId}`,
               }
             })}
-          >
-            <Icon
-              source="chat"
-              size={24}
-              color="#0d6efd"
-            />
-          </Pressable>
+          />
         </View>
 
         {/* Phone Section with call icon */}
@@ -126,13 +124,12 @@ export default function RestaurantPage({ restaurantId }) {
             <Text style={{ fontWeight: "bold" }}>Phone: </Text>
             {restaurant.phone}
           </Text>
-          <Pressable onPress={() => Linking.openURL(`tel:${restaurant.phone}`)}>
-            <Icon
-              source="phone"
-              size={20}
-              color="#0d6efd"
-            />
-          </Pressable>
+          <PressableIcon
+            source="phone"
+            size={20}
+            color="#6c757d"
+            onPress={() => Linking.openURL(`tel:${restaurant.phone}`)}
+          />
         </View>
 
         {/* Address Section */}

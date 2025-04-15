@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { View, Image } from "react-native";
-import { Text, Divider, IconButton } from "react-native-paper";
+import { View, Image, Pressable, Linking } from "react-native";
+import { Text, Divider, IconButton, Icon } from "react-native-paper";
 import MyScrollView from "./MyScrollView";
 import axios from "axios";
 import { router, useFocusEffect } from "expo-router";
@@ -11,6 +11,7 @@ import capitalize from "capitalize";
 import OrderDetailsPageStatus from "./OrderDetailsPageStatus";
 import OrderPathMapWithRoute from "./OrderPathMapWithRoute";
 import OrderPathOverviewMap from "./OrderPathOverviewMap";
+import PressableIcon from "./PressableIcon";
 
 export default function OrderDetailsPage({ orderId }) {
   const { contextProfile } = useAuth();
@@ -139,21 +140,41 @@ export default function OrderDetailsPage({ orderId }) {
           {/* restaurant gives a link */}
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
             <Text variant="titleMedium">Restaurant</Text>
-            <IconButton
-              icon="open-in-new"
-              size={16}
-              iconColor="#888"
-              onPress={() => {
-                router.push({
-                  pathname: `/${contextProfile.role}/view/restaurant/${restaurant.id}`,
-                  params: { restaurantId: restaurant.id, from: `/${contextProfile.role}/view/order/${order.id}` },
-                });
-              }}
-              style={{
-                padding: 0,
-                margin: 0,
-              }}
-            />
+            {/* 3 icons: chat, phone, link */}
+            <View style={{ flexDirection: "row", gap: 24, alignItems: "center" }}>
+              <PressableIcon
+                source="chat"
+                size={20}
+                color="#6c757d"
+                onPress={() => {
+                  router.push({
+                    pathname: `/${contextProfile.role}/view/chat`,
+                    params: {
+                      userType: "restaurant",
+                      userId: restaurant.id,
+                      from: `/${contextProfile.role}/view/order/${order.id}`,
+                    },
+                  });
+                }}
+              />
+              <PressableIcon
+                source="phone"
+                size={20}
+                color="#6c757d"
+                onPress={() => Linking.openURL(`tel:${restaurant.phone}`)}
+              />
+              <PressableIcon
+                source="open-in-new"
+                size={20}
+                color="#6c757d"
+                onPress={() => {
+                  router.push({
+                    pathname: `/${contextProfile.role}/view/restaurant/${restaurant.id}`,
+                    params: { restaurantId: restaurant.id, from: `/${contextProfile.role}/view/order/${order.id}` },
+                  });
+                }}
+              />
+            </View>
           </View>
           {/* restaurant name, phone, address */}
           <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: 10, gap: 12, justifyContent: "space-between" }}>
