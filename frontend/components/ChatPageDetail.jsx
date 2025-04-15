@@ -2,7 +2,7 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { View, Linking, ScrollView, Pressable } from 'react-native';
 import { ActivityIndicator, Icon, IconButton, Text, TextInput } from 'react-native-paper';
 import useAuth from '../hooks/useAuth';
-import { BACKEND } from '../constants/backend';
+import { BACKEND, TIME_INTERVAL } from '../constants/backend';
 import axios from 'axios';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import useToast from '../hooks/useToast';
@@ -74,9 +74,7 @@ export default function ChatPageDetail() {
       if (!contextProfile) return;
       fetchChat();
   
-      const interval = setInterval(() => {
-        fetchChat();
-      }, 1000);
+      const interval = setInterval(fetchChat, TIME_INTERVAL);
   
       return () => clearInterval(interval);
     }, [userType, userId, contextProfile])

@@ -4,7 +4,7 @@ import { Icon, Text } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import MyScrollView from './MyScrollView';
 import useAuth from '../hooks/useAuth';
-import { BACKEND } from '../constants/backend';
+import { BACKEND, TIME_INTERVAL } from '../constants/backend';
 import axios from 'axios';
 import ChatCard from './ChatCard';
 
@@ -40,7 +40,7 @@ export default function AllChatsPage() {
   useEffect(
     useCallback(() => {
       fetchAllChats(); 
-      const interval = setInterval(fetchAllChats, 100000);
+      const interval = setInterval(fetchAllChats, TIME_INTERVAL);
 
       return () => clearInterval(interval); 
     }, [contextProfile])
