@@ -1,46 +1,72 @@
 import React from 'react';
 import { View, Image } from 'react-native';
 import { Text } from 'react-native-paper';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, differenceInDays, format } from 'date-fns';
 import { BACKEND } from '../constants/backend';
+import capitalize from 'capitalize';
 
 export default function ChatCard({ chat }) {
+  console.log(chat);
+
+  // get the latest message from the chat, 
+  // the message is ordered by time in ascending order
   const latestMessage = chat.chats[chat.chats.length - 1];
-  const timeAgo = formatDistanceToNow(new Date(latestMessage.time), { addSuffix: true });
+  
+  // format the date time string, so if < 24 hours, show time ago, else show date
+  const messageTime = new Date(latestMessage.time);
+  const daysAgo = differenceInDays(new Date(), messageTime);
+  
+  const timeAgo = daysAgo >= 1
+    ? format(messageTime, 'yyyy-MM-dd')
+    : formatDistanceToNow(messageTime, { addSuffix: true });
+
+  const nameAndRole = chat.user.role === 'customer' ? `Customer: ${chat.user.name}`
+    : chat.user.role === 'driver' ? `Driver: ${chat.user.first_name} ${chat.user.last_name}`
+    : `Restaurant: ${chat.user.name}`;
+  
+  // for different type, get the name
+  const name = chat.user.role === 'customer' ? chat.user.name
+    : chat.user.role === 'driver' ? `${chat.user.first_name} ${chat.user.last_name}`
+    : chat.user.name;
 
   return (
-    <View style={{
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      padding: 12,
-      borderRadius: 10,
-      width: '100%',
-      marginBottom: 10,
-      shadowColor: '#000',
-      shadowOpacity: 0.05,
-      shadowOffset: { width: 0, height: 1 },
-      shadowRadius: 3,
-      elevation: 1,
-    }}>
-      {/* Avatar */}
+    <View 
+      style={{
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        backgroundColor: '#fff',
+        padding: 12,
+        borderRadius: 10,
+        width: '100%',
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowOffset: { width: 0, height: 1 },
+        shadowRadius: 3,
+        elevation: 1,
+      }}
+    >
+      {/* this will be 3 columns in the same row */}
+      {/* column 1 is the avatar */}
       <Image
         source={{ uri: `${BACKEND}/${chat.user.url_profile_image}` }}
         style={{
-          width: 52,
-          height: 52,
-          borderRadius: 26,
-          marginRight: 12,
+          width: 50,
+          height: 50,
+          borderRadius: 25,
           backgroundColor: '#eee',
+          marginRight: 12,
         }}
       />
 
-      {/* Name + message */}
-      <View style={{ flex: 1, justifyContent: 'center' }}>
+      {/* column 2: Name + message */}
+      <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
         <Text variant="titleMedium">
-          {chat.user.name} ({chat.user.role})
+          {capitalize.words(name)}
         </Text>
-        <Text variant="bodyMedium" numberOfLines={1}>
+        <Text variant="bodyMedium" style={{ color: '#999' }}>
+          {capitalize(chat.user.role)}
+        </Text>
+        <Text variant="bodyMedium" style={{ color: '#999' }} numberOfLines={1}>
           {latestMessage.message}
         </Text>
       </View>
@@ -48,7 +74,7 @@ export default function ChatCard({ chat }) {
       {/* Time ago */}
       <View style={{ marginLeft: 8, alignItems: 'flex-end' }}>
         <Text variant="bodySmall" style={{ color: '#999' }}>
-          {timeAgo}
+          {capitalize(timeAgo)}
         </Text>
       </View>
     </View>

@@ -59,7 +59,7 @@ export default function AllChatsPage() {
             flexDirection: "column",
             alignItems: "flex-start",
             justifyContent: "flex-start",
-            gap: 5,
+            gap: 12,
           }}
         >
           {chats.map((chat, index) => (
