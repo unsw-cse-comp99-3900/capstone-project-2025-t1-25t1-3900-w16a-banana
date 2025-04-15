@@ -43,13 +43,27 @@ class GetAllChat(Resource):
             user_id = me.id
         )
 
-        chat_logs = {}
+        # return a list of {user, chats}
+        chat_logs = []
+
         for (other_type, other_id), chats in chat_groups.items():
+            # get the other user profile
             other = get_user_by_type_and_id(other_type.name, other_id)
-            other_name = other.get_username()
-            chat_logs[f'{other_type.name}_{other_id}_{other_name}']\
-                = [chat.format_chat(me) for chat in chats]
+            other_profile = other.get_profile()
+
+            # get the chats between them
+            chats = [chat.format_chat(me) for chat in chats]
+
+            # append to the list
+            this_log = {
+                "user": other_profile,
+                "chats": chats
+            }
+
+            chat_logs.append(this_log)
+
         return chat_logs, 200
+
 
 @api.route('/get/<string:user_type>/<int:user_id>')
 @api.doc(params={
@@ -92,8 +106,17 @@ class GetChatWith(Resource):
             user2_type = my_type,
             user2_id = me.id
         )
-        username = f'{other_type.name}_{other_user.id}_{other_user.get_username()}'
-        return {username: [chat.format_chat(me) for chat in chats]}, 200
+
+        # the other user's profile
+        other_user_profile = other_user.get_profile()
+        
+        # return a dictionary {user, chats}
+        response = {
+            "user": other_user_profile,
+            "chats": [chat.format_chat(me) for chat in chats]
+        }
+
+        return response, 200
 
 
 @api.route('/send/<string:user_type>/<int:user_id>')
