@@ -1,7 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { View, Linking, ScrollView } from 'react-native';
-import MyScrollView from './MyScrollView';
-import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
+import { ActivityIndicator, IconButton, Text, TextInput } from 'react-native-paper';
 import useAuth from '../hooks/useAuth';
 import { BACKEND } from '../constants/backend';
 import axios from 'axios';
@@ -17,6 +16,9 @@ export default function ChatPageDetail() {
 
   const [chatUser, setChatUser] = useState(null);
   const [chats, setChats] = useState([]);
+
+  // user can add new message
+  const [message, setMessage] = useState("");
 
   // get the name of that user
   const name = !chatUser ? null  
@@ -66,6 +68,29 @@ export default function ChatPageDetail() {
     }, 100);
   }, [chats]);
 
+  const submitChat = async () => {
+    const newMessage = message.trim();
+    if (!newMessage) {
+      showToast("Please enter a message", "error");
+      setMessage("");
+      return;
+    }
+
+    // prepare to submit
+    const url = `${BACKEND}/chat/send/${userType}/${userId}`;
+    const config = { headers: { Authorization: contextProfile.token } };
+    const data = { message: newMessage };
+
+    try {
+      await axios.post(url, data, config);
+      setMessage("");
+    } catch (error) {
+      const msg = error.response?.data?.message || "Error sending message";
+      console.error(error);
+      showToast(msg, "error");
+    }
+  };
+
   // during loading, show the loading symbol
   if (!chatUser) {
     return (
@@ -76,29 +101,33 @@ export default function ChatPageDetail() {
   }
 
   return (
-    <MyScrollView>
-      {/* on the top of the page, a back button, the profile, and right the phone call */}
+    <View 
+      style={{ 
+        flex: 1, 
+        paddingTop: 14, 
+        backgroundColor: "#f9f9f9",
+        paddingBottom: 0,
+      }}
+    >
+      {/* Header  */}
       <View 
         style={{ 
+          paddingHorizontal: 16,
           flexDirection: "row", 
           justifyContent: "space-between",
           alignItems: "center", 
           marginBottom: 12,
-          width: "100%"
         }}
       >
         <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
-        <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 0 }}>
-          <Text variant="titleMedium">
-            {name}
-          </Text>
+        <View style={{ flexDirection: "column", alignItems: "center" }}>
+          <Text variant="titleMedium">{name}</Text>
           <Text variant="bodyMedium" style={{ color: "#999" }}>
             {capitalize(chatUser.role)}
           </Text>
         </View>
         <IconButton icon="phone" size={24}
           onPress={() => {
-            // open the phone call app
             const url = `tel:${chatUser.phone}`;
             Linking.openURL(url).catch((err) => {
               console.error("Error opening dialer:", err);
@@ -107,10 +136,12 @@ export default function ChatPageDetail() {
           }}
         />
       </View>
-      {/* here is a scroll view, and display all the chats */}
+
+      {/* Chats inside the scroll view */}
       <ScrollView
         ref={scrollViewRef}
-        contentContainerStyle={{ paddingHorizontal: 8, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 12, paddingBottom: 80 }}
+        style={{ flex: 1, paddingHorizontal: 16 }}
       >
         {chats.map((chat, index) => (
           <ChatPageOneChat
@@ -119,9 +150,35 @@ export default function ChatPageDetail() {
             chatUser={chatUser}
           />
         ))}
-        {/* 👇 this is the bottom anchor for auto-scroll */}
         <View ref={bottomRef} />
       </ScrollView>
-    </MyScrollView>
+
+      {/* Fixed Input Field */}
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        borderTopWidth: 1,
+        borderTopColor: "#ccc",
+        backgroundColor: "#fff",
+      }}>
+        <TextInput
+          underlineColor="transparent"
+          dense
+          mode="outlined"
+          multiline
+          numberOfLines={2}
+          value={message}
+          onChangeText={setMessage}
+          placeholder="Type your message..."
+          style={{
+            flex: 1,
+            borderRadius: 20,
+            fontSize: 16,
+            marginRight: 8,
+          }}
+        />
+        <IconButton icon="send" size={24} onPress={submitChat} />
+      </View>
+    </View>
   );
 }

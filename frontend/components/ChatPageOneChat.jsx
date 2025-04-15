@@ -4,6 +4,7 @@ import { Text } from 'react-native-paper'
 import useAuth from '../hooks/useAuth';
 import { BACKEND } from '../constants/backend';
 import { formatDistanceToNow, format, differenceInMinutes } from 'date-fns';
+import capitalize from 'capitalize';
 
 export default function ChatPageOneChat({ chatUser, chat }) {
   console.log(chat);
@@ -20,7 +21,7 @@ export default function ChatPageOneChat({ chatUser, chat }) {
   const minutesAgo = differenceInMinutes(new Date(), chatTime);
 
   const timeLabel = minutesAgo < 60
-    ? formatDistanceToNow(chatTime, { addSuffix: true })
+    ? capitalize(formatDistanceToNow(chatTime, { addSuffix: true }))
     : format(chatTime, 'h:mmaaa, dd MMMM')
 
   return (
@@ -37,9 +38,9 @@ export default function ChatPageOneChat({ chatUser, chat }) {
       <Image
         source={{ uri: avatar }}
         style={{
-          width: 40,
-          height: 40,
-          borderRadius: 20,
+          width: 36,
+          height: 36,
+          borderRadius: 18,
           objectFit: "contain",
         }}
       />
