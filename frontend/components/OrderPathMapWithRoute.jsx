@@ -70,12 +70,12 @@ export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddre
       return {
         lat: (driverLocation.lat + restaurantLoc.lat) / 2,
         lng: (driverLocation.lng + restaurantLoc.lng) / 2,
-      }
+      };
     } else {
       return {
         lat: (restaurantLoc.lat + deliveryLoc.lat) / 2,
         lng: (restaurantLoc.lng + deliveryLoc.lng) / 2,
-      }
+      };
     }
   }, [driverLocation, restaurantLoc, deliveryLoc, isDriverToRestaurant]);
 

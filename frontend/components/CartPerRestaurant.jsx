@@ -23,7 +23,7 @@ export default function CartPerRestaurant({ restaurant, onUpdated }) {
     const payload = { menu_id, quantity };
 
     try {
-      const response = await axios.put(url, payload, config);
+      await axios.put(url, payload, config);
       onUpdated();
     } catch (err) {
       console.error("Failed to update item:", err);

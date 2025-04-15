@@ -1,6 +1,6 @@
-import React from 'react'
-import { Pressable } from 'react-native'
-import { Icon } from 'react-native-paper'
+import React from "react";
+import { Pressable } from "react-native";
+import { Icon } from "react-native-paper";
 
 export default function PressableIcon({
   onPress,
@@ -12,5 +12,5 @@ export default function PressableIcon({
     <Pressable onPress={onPress}>
       <Icon source={source} size={size} color={color} />
     </Pressable>
-  )
+  );
 }

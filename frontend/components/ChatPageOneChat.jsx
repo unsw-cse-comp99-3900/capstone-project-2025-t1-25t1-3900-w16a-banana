@@ -1,10 +1,10 @@
-import React from 'react'
-import { Image, View } from 'react-native'
-import { Text } from 'react-native-paper'
-import useAuth from '../hooks/useAuth';
-import { BACKEND } from '../constants/backend';
-import { formatDistanceToNow, format, differenceInMinutes } from 'date-fns';
-import capitalize from 'capitalize';
+import React from "react";
+import { Image, View } from "react-native";
+import { Text } from "react-native-paper";
+import useAuth from "../hooks/useAuth";
+import { BACKEND } from "../constants/backend";
+import { formatDistanceToNow, format, differenceInMinutes } from "date-fns";
+import capitalize from "capitalize";
 
 export default function ChatPageOneChat({ chatUser, chat }) {
   const { contextProfile } = useAuth();
@@ -20,7 +20,7 @@ export default function ChatPageOneChat({ chatUser, chat }) {
 
   const timeLabel = minutesAgo < 60
     ? capitalize(formatDistanceToNow(chatTime, { addSuffix: true }))
-    : format(chatTime, 'h:mmaaa, dd MMMM')
+    : format(chatTime, "h:mmaaa, dd MMMM");
 
   return (
     <View 
@@ -58,7 +58,7 @@ export default function ChatPageOneChat({ chatUser, chat }) {
             maxWidth: 300,       // 👈 updated
             minWidth: 60,
             flexShrink: 1,       // 👈 new
-            flexWrap: 'wrap',    // 👈 new
+            flexWrap: "wrap",    // 👈 new
           }}
         >
           <Text 
@@ -79,5 +79,5 @@ export default function ChatPageOneChat({ chatUser, chat }) {
         </Text>
       </View>
     </View>
-  )
+  );
 }

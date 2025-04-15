@@ -1,11 +1,11 @@
-import React from 'react';
-import { View, Image, Pressable } from 'react-native';
-import { Text } from 'react-native-paper';
-import { formatDistanceToNow, differenceInDays, format } from 'date-fns';
-import { BACKEND } from '../constants/backend';
-import capitalize from 'capitalize';
-import useAuth from '../hooks/useAuth';
-import { router } from 'expo-router';
+import React from "react";
+import { View, Image, Pressable } from "react-native";
+import { Text } from "react-native-paper";
+import { formatDistanceToNow, differenceInDays, format } from "date-fns";
+import { BACKEND } from "../constants/backend";
+import capitalize from "capitalize";
+import useAuth from "../hooks/useAuth";
+import { router } from "expo-router";
 
 export default function ChatCard({ chat }) {
   const { contextProfile } = useAuth();
@@ -19,16 +19,12 @@ export default function ChatCard({ chat }) {
   const daysAgo = differenceInDays(new Date(), messageTime);
   
   const timeAgo = daysAgo >= 1
-    ? format(messageTime, 'yyyy-MM-dd')
+    ? format(messageTime, "yyyy-MM-dd")
     : formatDistanceToNow(messageTime, { addSuffix: true });
-
-  const nameAndRole = chat.user.role === 'customer' ? `Customer: ${chat.user.name}`
-    : chat.user.role === 'driver' ? `Driver: ${chat.user.first_name} ${chat.user.last_name}`
-    : `Restaurant: ${chat.user.name}`;
   
   // for different type, get the name
-  const name = chat.user.role === 'customer' ? chat.user.username
-    : chat.user.role === 'driver' ? `${chat.user.first_name} ${chat.user.last_name}`
+  const name = chat.user.role === "customer" ? chat.user.username
+    : chat.user.role === "driver" ? `${chat.user.first_name} ${chat.user.last_name}`
     : chat.user.role === "restaurant" ? chat.user.name : "";
 
   return (
@@ -45,13 +41,13 @@ export default function ChatCard({ chat }) {
     >
       <View 
         style={{
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          backgroundColor: '#fff',
+          flexDirection: "row",
+          alignItems: "flex-start",
+          backgroundColor: "#fff",
           padding: 12,
           borderRadius: 10,
-          width: '100%',
-          shadowColor: '#000',
+          width: "100%",
+          shadowColor: "#000",
           shadowOpacity: 0.05,
           shadowOffset: { width: 0, height: 1 },
           shadowRadius: 3,
@@ -66,27 +62,27 @@ export default function ChatCard({ chat }) {
             width: 50,
             height: 50,
             borderRadius: 25,
-            backgroundColor: '#eee',
+            backgroundColor: "#eee",
             marginRight: 12,
           }}
         />
 
         {/* column 2: Name + message */}
-        <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+        <View style={{ flexDirection: "column", flex: 1, justifyContent: "flex-start", alignItems: "flex-start" }}>
           <Text variant="titleMedium">
             {capitalize.words(name)}
           </Text>
-          <Text variant="bodyMedium" style={{ color: '#999' }}>
+          <Text variant="bodyMedium" style={{ color: "#999" }}>
             {capitalize(chat.user.role)}
           </Text>
-          <Text variant="bodyMedium" style={{ color: '#999' }} numberOfLines={1}>
+          <Text variant="bodyMedium" style={{ color: "#999" }} numberOfLines={1}>
             {latestMessage.message}
           </Text>
         </View>
 
         {/* Time ago */}
-        <View style={{ marginLeft: 8, alignItems: 'flex-end' }}>
-          <Text variant="bodySmall" style={{ color: '#999' }}>
+        <View style={{ marginLeft: 8, alignItems: "flex-end" }}>
+          <Text variant="bodySmall" style={{ color: "#999" }}>
             {capitalize(timeAgo)}
           </Text>
         </View>

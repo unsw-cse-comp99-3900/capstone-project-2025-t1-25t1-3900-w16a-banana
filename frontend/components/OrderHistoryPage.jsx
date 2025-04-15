@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { View, ScrollView } from "react-native";
+import React, { useState, useMemo, useCallback } from "react";
+import { View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Text, ActivityIndicator, Divider } from "react-native-paper";
 import { format } from "date-fns";

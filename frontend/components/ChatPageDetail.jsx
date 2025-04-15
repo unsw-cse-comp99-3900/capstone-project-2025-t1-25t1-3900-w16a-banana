@@ -1,14 +1,14 @@
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { View, Linking, ScrollView, Pressable } from 'react-native';
-import { ActivityIndicator, Icon, IconButton, Text, TextInput } from 'react-native-paper';
-import useAuth from '../hooks/useAuth';
-import { BACKEND, TIME_INTERVAL } from '../constants/backend';
-import axios from 'axios';
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import useToast from '../hooks/useToast';
-import capitalize from 'capitalize';
-import ChatPageOneChat from './ChatPageOneChat';
-import PressableIcon from './PressableIcon';
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { View, Linking, ScrollView } from "react-native";
+import { ActivityIndicator, IconButton, Text, TextInput } from "react-native-paper";
+import useAuth from "../hooks/useAuth";
+import { BACKEND, TIME_INTERVAL } from "../constants/backend";
+import axios from "axios";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import useToast from "../hooks/useToast";
+import capitalize from "capitalize";
+import ChatPageOneChat from "./ChatPageOneChat";
+import PressableIcon from "./PressableIcon";
 
 export default function ChatPageDetail() {
   const { userType, userId, from } = useLocalSearchParams();
@@ -62,7 +62,7 @@ export default function ChatPageDetail() {
         (x, y) => {
           scrollViewRef.current?.scrollTo({ y, animated: true });
         },
-        (error) => console.error('Scroll error', error)
+        (error) => console.error("Scroll error", error)
       );
     }, 100);
   }, [chats]);
@@ -109,7 +109,7 @@ export default function ChatPageDetail() {
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#6200ee" />
       </View>
-    )
+    );
   }
 
   return (
@@ -181,8 +181,8 @@ export default function ChatPageDetail() {
 
       {/* Fixed Input Field */}
       <View style={{
-        flexDirection: 'row',
-        alignItems: 'flex-end',
+        flexDirection: "row",
+        alignItems: "flex-end",
         borderTopWidth: 1,
         borderTopColor: "#ccc",
         backgroundColor: "#fff",

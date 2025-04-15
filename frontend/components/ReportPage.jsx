@@ -1,17 +1,17 @@
-import React, { useCallback, useState } from 'react';
-import { ScrollView, View } from 'react-native';
-import { Text, Divider } from 'react-native-paper';
-import { DatePickerInput } from 'react-native-paper-dates';
-import { useFocusEffect } from 'expo-router';
-import axios from 'axios';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
-import { startOfMonth, format } from 'date-fns';
+import React, { useCallback, useState } from "react";
+import { ScrollView, View } from "react-native";
+import { Text, Divider } from "react-native-paper";
+import { DatePickerInput } from "react-native-paper-dates";
+import { useFocusEffect } from "expo-router";
+import axios from "axios";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from "chart.js";
+import { Bar, Line } from "react-chartjs-2";
+import { startOfMonth, format } from "date-fns";
 
-import MyScrollView from './MyScrollView';
-import useAuth from '../hooks/useAuth';
-import { BACKEND } from '../constants/backend';
-import PressableIcon from './PressableIcon';
+import MyScrollView from "./MyScrollView";
+import useAuth from "../hooks/useAuth";
+import { BACKEND } from "../constants/backend";
+import PressableIcon from "./PressableIcon";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
@@ -28,8 +28,8 @@ export default function ReportPage() {
   const [chartData, setChartData] = useState([]);
 
   const fetchData = async () => {
-    const startStr = format(startDate, 'yyyy-MM-dd');
-    const endStr = format(endDate, 'yyyy-MM-dd');
+    const startStr = format(startDate, "yyyy-MM-dd");
+    const endStr = format(endDate, "yyyy-MM-dd");
 
     const url = `${BACKEND}/report/${contextProfile.role}?start_date=${startStr}&end_date=${endStr}`;
     const config = { headers: { Authorization: contextProfile.token } };
@@ -41,7 +41,7 @@ export default function ReportPage() {
       setTotalEarning(data.total_earning);
       setChartData(data.data);
     } catch (error) {
-      console.error('Error fetching report data:', error);
+      console.error("Error fetching report data:", error);
     }
   };
 
@@ -65,8 +65,8 @@ export default function ReportPage() {
         <Divider style={{ marginTop: 8 }} />
       </View>
 
-      <View style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 8, marginBottom: 16 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+      <View style={{ flexDirection: "column", alignItems: "flex-start", gap: 8, marginBottom: 16 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
           <Text variant="titleMedium" style={{ marginBottom: 8 }}>Select Date Range</Text>
           <PressableIcon source="check" size={24} color="#6c757d" onPress={fetchData} />
         </View>
@@ -99,10 +99,10 @@ export default function ReportPage() {
                   labels,
                   datasets: [
                     {
-                      label: 'Orders',
+                      label: "Orders",
                       data: orders,
-                      borderColor: '#007bff',
-                      backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                      borderColor: "#007bff",
+                      backgroundColor: "rgba(0, 123, 255, 0.2)",
                       tension: 0.3,
                       pointRadius: 4
                     }
@@ -119,7 +119,7 @@ export default function ReportPage() {
                     },
                     x: {
                       ticks: {
-                        callback: function(value, index, ticks) {
+                        callback: function(value) {
                           // x axis shows MM-DD only
                           const label = this.getLabelForValue(value);
                           return label.slice(5); 
@@ -144,9 +144,9 @@ export default function ReportPage() {
                   labels,
                   datasets: [
                     {
-                      label: 'Earnings ($)',
+                      label: "Earnings ($)",
                       data: earnings,
-                      backgroundColor: '#198754'
+                      backgroundColor: "#198754"
                     }
                   ],
                 }}
@@ -162,7 +162,7 @@ export default function ReportPage() {
                     },
                     x: {
                       ticks: {
-                        callback: function(value, index, ticks) {
+                        callback: function(value) {
                           // x axis shows MM-DD only
                           const label = this.getLabelForValue(value);
                           return label.slice(5); 
