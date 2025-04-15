@@ -34,7 +34,12 @@ class ProfileResource(Resource):
         if not user:
             return res_error(400, 'User not found')
         else:
-            return user.dict()
+            # get this user dict, remove token if it exists
+            user_dict = user.dict()
+            if 'token' in user_dict:
+                del user_dict['token']
+            
+            return user_dict, 200
 
 @api.route("/all/<string:user_type>")
 class AllProfileResource(Resource):

@@ -38,11 +38,13 @@ export default function TabLayout() {
       visible: true,
     },
     { name: "OrderHistory", title: "Order History", icon: "history", visible: true },
+    { name: "chats", title: "Chats", icon: "chat", visible: true },
     { name: "menu", title: "Menu", icon: "menu", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
     // Hidden tab
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
     { name: "view/order/[orderId]", title: "Order", icon: "map-marker", visible: false },
+    { name: "view/chat", title: "Chat", icon: "chat", visible: false },
   ];
 
   // Tabs shown when registration is still pending
@@ -55,6 +57,8 @@ export default function TabLayout() {
     { name: "EditProfile", title: "Edit Profile", icon: "account-edit", visible: false },
     { name: "orders", title: "Orders", icon: "clipboard-list", visible: false },
     { name: "view/order/[orderId]", title: "Order", icon: "map-marker", visible: false },
+    { name: "chats", title: "Chats", icon: "chat", visible: false },
+    { name: "view/chat", title: "Chat", icon: "chat", visible: false },
   ];
 
   const tabsToShow =
