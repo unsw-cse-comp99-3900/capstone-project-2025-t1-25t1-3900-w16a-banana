@@ -16,7 +16,8 @@ from db_model.db_query import (
 )
 from db_model.db_enum import OrderStatus
 from routes.review.models import (
-    api, message_res, rating_req_parser, get_reviews_reponse, reply_req
+    api, message_res, rating_req_parser, 
+    get_reviews_reponse, reply_req, review_model
 )
 
 @api.route('/restaurant/<int:restaurant_id>/order/<int:order_id>')
@@ -28,7 +29,7 @@ class RateRestaurant(Resource):
     @api.response(401, 'Unauthorised', message_res)
     def put(self, restaurant_id: int, order_id: int):
         """
-        Customer Rating Post/Update For Restaurant based on Order ID.
+        Customer post / update rating & review for restaurant based on an order ID.
         Review text and img can be empty.
         One Review for a Restaurant.
         Must have order history to rate.
@@ -105,7 +106,7 @@ class RateDriver(Resource):
     @api.response(401, 'Unauthorised', message_res)
     def put(self, driver_id: int, order_id: int):
         '''
-        Customer Rating Post/Update For Driver based on Order ID.
+        Customer post / update rating & review for a driver based on an order ID.
         Review text and img can be empty.
         One Review for a Driver.
         Must have order history to rate.
@@ -186,7 +187,7 @@ class GetReviewsOf(Resource):
     '''Get All Reviews Of Restaurant/Driver Without Token'''
     @api.response(200, 'Success', get_reviews_reponse)
     def get(self, user_type: str, user_id: int):
-        '''Get All Reviews Of Restaurant/Driver Without Token'''
+        '''Get all reviews of a restaurant / driver without token'''
         if user_type == 'driver':
             if not filter_drivers(id=user_id):
                 return res_error(400, 'Driver ID Invalid')
@@ -229,7 +230,7 @@ class ReplyReviews(Resource):
     @api.expect(auth_header, reply_req)
     @api.response(200, 'Success. Return modified review')
     def put(self, user_type: str, review_id: int):
-        '''Driver or Restaurant Reply to the Customer Review'''
+        '''A driver or restaurant reply to the customer review'''
         reply = request.get_json().get('reply')
         if not reply:
             return res_error(400, 'No Reply Given')
@@ -261,7 +262,7 @@ class DeleteReview(Resource):
     @api.response(401, 'Unauthorised', message_res)
     @api.response(404, 'Review Not Found', message_res)
     def delete(self, review_id: int):
-        """Customer Delete Review"""
+        """Customer delete a existing review"""
 
         # find the customer
         customer = get_customer_by_token(tokenize(request.headers))
@@ -286,32 +287,53 @@ class DeleteReview(Resource):
 
         return {'message': 'Deleted Successfully'}, 200
 
-@api.route('/my/<string:review_type>')
-@api.doc(params={
-    'review_type': {
-        'description': 'Review Type',
-        'enum': ['driver', 'restaurant'],
-        'type': 'string'
-    },
-})
+@api.route('/about-me')
 class GetMyReviewByCustomer(Resource):
-    '''Get all reviews of a given type left by given customer'''
+    '''Get all customer reviews about me'''
     @api.expect(auth_header)
     @api.response(200, 'Successful Deletion', message_res)
     @api.response(400, 'Invalid Review Type', message_res)
     @api.response(404, 'Review Not Found', message_res)
     def get(self, review_type: str):
-        '''Get all reviews of a given type left by given customer'''
-        # Look for customer
-        customer = get_customer_by_token(tokenize(request.headers))
-        if not customer:
-            return res_error(401, 'Customer Not Found')
-        # Find the given review
-        if review_type == 'restaurant':
-            reviews = filter_restaurant_reviews(customer_id=customer.id)
-        elif review_type == 'driver':
-            reviews = filter_driver_reviews(customer_id=customer.id)
-        else:
-            return res_error(400, 'Invalid Review Type')
+        '''Get all customer reviews about me (restaurant or driver)'''
 
-        return [review.format_with_target_profile() for review in reviews], 200
+        # check the token
+        driver = get_driver_by_token(tokenize(request.headers))
+        restaurant = get_restaurant_by_token(tokenize(request.headers))
+
+        if not driver and not restaurant:
+            return res_error(401, 'Invalid Token')
+
+        # filter out all the reviews about me
+        if driver:
+            reviews = filter_driver_reviews(driver_id=driver.id)
+        elif restaurant:
+            reviews = filter_restaurant_reviews(restaurant_id=restaurant.id)
+
+        # return all the reviews
+        response = [r.format_with_target_profile() for r in reviews]
+        return response, 200
+
+@api.route('/order/<int:order_id>')
+class GetReviewByOrder(Resource):
+    '''Get the review for a specific order'''
+    @api.response(200, 'Review Found', review_model)
+    @api.response(404, 'Review Not Found', message_res)
+    def get(self, order_id: int):
+        '''Return the review tied to the order ID'''
+
+        # Try to find restaurant or driver review for this order
+        restaurant_reviews = filter_restaurant_reviews(order_id=order_id)
+        driver_reviews = filter_driver_reviews(order_id=order_id)
+
+        # so one order may have: one review to the restaurant, one review to the driver
+        r_review = restaurant_reviews[0].format_with_target_profile() if restaurant_reviews else None
+        d_review = driver_reviews[0].format_with_target_profile() if driver_reviews else None
+
+        # format the response
+        response = {
+            'restaurant_review': r_review,
+            'driver_review': d_review
+        }
+
+        return response, 200
