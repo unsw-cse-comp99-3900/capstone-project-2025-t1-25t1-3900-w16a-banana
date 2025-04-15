@@ -293,25 +293,38 @@ def test_06_chat(client):
         client, 'restaurant', restaurant1.get_id(), 'customer to restaurant'
     )
     assert response.status_code == 200
+
     # Chek if restaurant received
     response = restaurant1.chat_get(client, 'customer', customer1.get_id())
     assert response.status_code == 200
-    chat_logs = response.get_json()[f'CUSTOMER_{customer1.get_id()}_{customer1.get_username()}']
+    response = response.get_json()
+    assert "chats" in response
+    assert "user" in response
+
+    # the response contain {user, chats}
+    target_user, chat_logs = response["user"], response["chats"]
+    assert target_user["role"] == "customer"
+    assert target_user["id"] == customer1.get_id()
+
     assert len(chat_logs) == 1
     assert chat_logs[0]['message_type'] == 'received'
     assert chat_logs[0]['message'] == 'customer to restaurant'
+
     # Restaurant send chat
-    restaurant1.chat_send(client, 'customer', customer1.get_id(), 'restaurant to customer')
+    response = restaurant1.chat_send(client, 'customer', customer1.get_id(), 'restaurant to customer')
     assert response.status_code == 200
+
     # Check if customer received
     response = customer1.chat_get(client, 'restaurant', restaurant1.get_id())
     assert response.status_code == 200
-    chat_logs = chat_logs = response.get_json()[
-        f'RESTAURANT_{restaurant1.get_id()}_{restaurant1.get_username()}'
-    ]
+    
+    response = response.get_json()
+    target_user, chat_logs = response["user"], response["chats"]
+    
     assert len(chat_logs) == 2
     assert chat_logs[1]['message_type'] == 'received'
     assert chat_logs[1]['message'] == 'restaurant to customer'
+
     # 2. Chat between customer and driver
     response = customer1.chat_send(
         client, 'driver', driver1.get_id(), 'customer to driver'
