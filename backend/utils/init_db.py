@@ -14,7 +14,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from app import app # pylint: disable=wrong-import-position
 from utils.db import db # pylint: disable=wrong-import-position
 from db_model import ( # pylint: disable=wrong-import-position
-    Admin, Customer, Driver, Restaurant, MenuCategory, MenuItem, Order, OrderItem
+    Admin, Customer, Driver, Restaurant, MenuCategory, MenuItem, Order, OrderItem,
+    DriverReview, RestaurantReview
 )
 from db_model.db_enum import OrderStatus, RegistrationStatus # pylint: disable=wrong-import-position
 
@@ -297,6 +298,33 @@ def initialize_database():
 
                 db.session.add(order_item)
                 db.session.commit()
+            
+            # after each order, create the customer's review to the driver and restaurant
+            driver_review = DriverReview(
+                order_id=new_order.id,
+                driver_id=order_dict["driver_id"],
+                customer_id=order_dict["customer_id"],
+                rating=random.randint(1, 5),
+                review_text="Great service!",
+                url_img=None,
+                updated_at=order_dict["order_time"] + timedelta(days=1),
+                reply="Thank you for your feedback!"
+            )
+
+            restaurant_review = RestaurantReview(
+                order_id=new_order.id,
+                restaurant_id=order_dict["restaurant_id"],
+                customer_id=order_dict["customer_id"],
+                rating=random.randint(1, 5),
+                review_text="Delicious food!",
+                url_img=None,
+                updated_at=order_dict["order_time"] + timedelta(days=1),
+                reply="Thank you for your feedback!"
+            )
+
+            db.session.add(driver_review)
+            db.session.add(restaurant_review)
+            db.session.commit()
 
 
 if __name__ == "__main__":
