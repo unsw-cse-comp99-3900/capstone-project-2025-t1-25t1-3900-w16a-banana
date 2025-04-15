@@ -16,7 +16,8 @@ from routes.chat.models import (
     api,
     message_res,
     send_message_req,
-    get_all_chat_res
+    get_all_chat_res,
+    get_all_chats_from_all_users_res
 )
 from routes.chat.services import can_this_user_chat
 
@@ -24,7 +25,7 @@ from routes.chat.services import can_this_user_chat
 class GetAllChat(Resource):
     """Route: /get/all"""
     @api.expect(auth_header)
-    @api.response(200, 'Success', get_all_chat_res)
+    @api.response(200, 'Success', get_all_chats_from_all_users_res)
     def get(self):
         """Get all user's chat log"""
         # Get Myself from Token

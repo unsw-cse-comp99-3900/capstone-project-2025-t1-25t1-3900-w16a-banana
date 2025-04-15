@@ -21,6 +21,15 @@ chat_model = api.model('Chat Log Model', {
     'time': fields.String(example='YYYY-MM-DD HH:mm:SS')
 })
 
-get_all_chat_res = api.model('Get All Chat Log Model', {
-    'UserType_UserID_UserName': fields.List(fields.Nested(chat_model))
+chat_user_model = api.model('Chat Opposite User Model', {
+    "role": fields.String(description='User Type', example='customer OR restaurant OR driver OR admin'),
+    "id": fields.Integer(description='User ID', example=1),
+    "url_profile_image": fields.String(description='Profile Image URL', example='https://example.com/image.jpg'),
 })
+
+get_all_chat_res = api.model('Get All Chat Log Model', {
+    "user": fields.Nested(chat_user_model),
+    "chats": fields.List(fields.Nested(chat_model)),
+})
+
+get_all_chats_from_all_users_res = fields.List(fields.Nested(get_all_chat_res))
