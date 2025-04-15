@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator, Linking, ScrollView, Dimensions, Image } from "react-native";
+import { View, ActivityIndicator, Linking, ScrollView, Dimensions, Image, Pressable } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import axios from "axios";
 import Carousel from "react-native-reanimated-carousel";
-import { IconButton, Text } from "react-native-paper";
+import { Icon, IconButton, Text } from "react-native-paper";
 import RestaurantMenu from "./RestaurantMenu";
 import { BACKEND } from "../constants/backend";
+import useAuth from "../hooks/useAuth";
 
 export default function RestaurantPage({ restaurantId }) {
   const [restaurant, setRestaurant] = useState(null);
@@ -14,6 +15,9 @@ export default function RestaurantPage({ restaurantId }) {
 
   // check the from params
   const { from } = useLocalSearchParams();
+
+  // context profile
+  const { contextProfile } = useAuth();
 
   useEffect(() => {
     const fetchRestaurant = async () => {
@@ -93,36 +97,54 @@ export default function RestaurantPage({ restaurantId }) {
           marginTop: 16,
         }}
       >
-        <Text 
-          variant="titleLarge"
-          style={{ fontWeight: "bold" }}
-        >
-          {restaurant.name}
-        </Text>
+        {/* restaurant name with the chat icon */}
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+            {restaurant.name}
+          </Text>
+          <Pressable
+            onPress={() => router.push({
+              pathname: `${contextProfile.role}/view/chat`,
+              params: {
+                userType: "restaurant",
+                userId: restaurantId,
+                from: `${contextProfile.role}/view/restaurant/${restaurantId}`,
+              }
+            })}
+          >
+            <Icon
+              source="chat"
+              size={24}
+              color="#0d6efd"
+            />
+          </Pressable>
+        </View>
+
         {/* Phone Section with call icon */}
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
           <Text variant="titleSmall">
             <Text style={{ fontWeight: "bold" }}>Phone: </Text>
             {restaurant.phone}
           </Text>
-          <IconButton
-            icon="phone"
-            size={16}
-            iconColor="#0d6efd"
-            onPress={() => Linking.openURL(`tel:${restaurant.phone}`)}
-          />
+          <Pressable onPress={() => Linking.openURL(`tel:${restaurant.phone}`)}>
+            <Icon
+              source="phone"
+              size={20}
+              color="#0d6efd"
+            />
+          </Pressable>
         </View>
 
         {/* Address Section */}
-        <Text variant="titleSmall">
+        <Text variant="titleSmall" style={{ marginBottom: 4 }}>
           <Text style={{ fontWeight: "bold" }}>Address: </Text>
           {restaurant.address}
         </Text>
-        <Text variant="titleSmall">
+        <Text variant="titleSmall" style={{ marginBottom: 4 }}>
           <Text style={{ fontWeight: "bold" }}>Suburb: </Text>
           {restaurant.suburb}
         </Text>
-        <Text variant="titleSmall">
+        <Text variant="titleSmall" style={{ marginBottom: 4 }}>
           <Text style={{ fontWeight: "bold" }}>State: </Text>
           {restaurant.state}
         </Text>

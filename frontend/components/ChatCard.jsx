@@ -30,12 +30,19 @@ export default function ChatCard({ chat }) {
   const name = chat.user.role === 'customer' ? chat.user.username
     : chat.user.role === 'driver' ? `${chat.user.first_name} ${chat.user.last_name}`
     : chat.user.role === "restaurant" ? chat.user.name : "";
-  
-  // on press, go to this url
-  const targetURL = `${contextProfile.role}/view/chat?userType=${chat.user.role}&userId=${chat.user.id}`;
 
   return (
-    <Pressable style={{ width: "100%" }} onPress={() => router.push(targetURL)}>
+    <Pressable 
+      style={{ width: "100%" }} 
+      onPress={() => router.push({
+        pathname: `${contextProfile.role}/view/chat`,
+        params: {
+          userType: chat.user.role,
+          userId: chat.user.id,
+          from: `${contextProfile.role}/chats`,
+        },
+      })}
+    >
       <View 
         style={{
           flexDirection: 'row',

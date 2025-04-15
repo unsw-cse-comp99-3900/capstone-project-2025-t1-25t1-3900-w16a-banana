@@ -10,7 +10,7 @@ import capitalize from 'capitalize';
 import ChatPageOneChat from './ChatPageOneChat';
 
 export default function ChatPageDetail() {
-  const { userType, userId } = useLocalSearchParams();
+  const { userType, userId, from } = useLocalSearchParams();
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
 
@@ -43,7 +43,9 @@ export default function ChatPageDetail() {
       const msg = error.response?.data?.message || "Error fetching chat data";
       console.error(error);
       showToast(msg, "error");
-      router.back();
+      
+      // if the "from" is defined, go back to "from", otherwise go back
+      from ? router.replace(from) : router.back();
     }
   };
 
@@ -130,7 +132,7 @@ export default function ChatPageDetail() {
           marginBottom: 12,
         }}
       >
-        <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
+        <IconButton icon="arrow-left" size={24} onPress={() => from ? router.replace(from) : router.back()} />
         <View style={{ flexDirection: "column", alignItems: "center" }}>
           <Text variant="titleMedium">{name}</Text>
           <Text variant="bodyMedium" style={{ color: "#999" }}>
@@ -138,13 +140,7 @@ export default function ChatPageDetail() {
           </Text>
         </View>
         <IconButton icon="phone" size={24}
-          onPress={() => {
-            const url = `tel:${chatUser.phone}`;
-            Linking.openURL(url).catch((err) => {
-              console.error("Error opening dialer:", err);
-              showToast("Error opening dialer", "error");
-            });
-          }}
+          onPress={() => Linking.openURL(`tel:${chatUser.phone}`)}
         />
       </View>
 
