@@ -1,10 +1,10 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { View, Linking, ScrollView } from 'react-native';
 import { ActivityIndicator, IconButton, Text, TextInput } from 'react-native-paper';
 import useAuth from '../hooks/useAuth';
 import { BACKEND } from '../constants/backend';
 import axios from 'axios';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import useToast from '../hooks/useToast';
 import capitalize from 'capitalize';
 import ChatPageOneChat from './ChatPageOneChat';
@@ -22,7 +22,7 @@ export default function ChatPageDetail() {
 
   // get the name of that user
   const name = !chatUser ? null  
-    : chatUser?.role === "customer" ? chatUser.name
+    : chatUser?.role === "customer" ? chatUser.username
     : chatUser?.role === "driver" ? `${chatUser.first_name} ${chatUser.last_name}`
     : chatUser?.name;
 
@@ -47,10 +47,6 @@ export default function ChatPageDetail() {
     }
   };
 
-  useEffect(() => {
-    fetchChat();
-  }, [userType, userId, contextProfile]);
-
   // add the scroll view ref
   const scrollViewRef = useRef(null);
   const bottomRef = useRef(null);
@@ -67,6 +63,21 @@ export default function ChatPageDetail() {
       );
     }, 100);
   }, [chats]);
+
+  // poll the backend for new chats, every 1 second
+  useFocusEffect(
+    useCallback(() => {
+      // start fetch when ready.
+      if (!contextProfile) return;
+      fetchChat();
+  
+      const interval = setInterval(() => {
+        fetchChat();
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    }, [userType, userId, contextProfile])
+  );
 
   const submitChat = async () => {
     const newMessage = message.trim();
@@ -140,12 +151,12 @@ export default function ChatPageDetail() {
       {/* Chats inside the scroll view */}
       <ScrollView
         ref={scrollViewRef}
-        contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 12, paddingBottom: 80 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 12, paddingBottom: 16 }}
         style={{ flex: 1, paddingHorizontal: 16 }}
       >
         {chats.map((chat, index) => (
           <ChatPageOneChat
-            key={chat.time}
+            key={`${index}-${chat.id}`}
             chat={chat}
             chatUser={chatUser}
           />

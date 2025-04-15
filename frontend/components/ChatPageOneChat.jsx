@@ -7,8 +7,6 @@ import { formatDistanceToNow, format, differenceInMinutes } from 'date-fns';
 import capitalize from 'capitalize';
 
 export default function ChatPageOneChat({ chatUser, chat }) {
-  console.log(chat);
-
   const { contextProfile } = useAuth();
 
   const avatar = chat.message_type === "sent"
@@ -57,13 +55,16 @@ export default function ChatPageOneChat({ chatUser, chat }) {
             borderRadius: 16,
             paddingVertical: 8,
             paddingHorizontal: 14,
-            maxWidth: '80%',
+            maxWidth: 300,       // 👈 updated
+            minWidth: 60,
+            flexShrink: 1,       // 👈 new
+            flexWrap: 'wrap',    // 👈 new
           }}
         >
           <Text 
             variant="bodyLarge"
             style={{ 
-              color: chat.message_type === "sent" ? "#fff" : "#000"
+              color: chat.message_type === "sent" ? "#fff" : "#000",
             }}
           >
             {chat.message}
