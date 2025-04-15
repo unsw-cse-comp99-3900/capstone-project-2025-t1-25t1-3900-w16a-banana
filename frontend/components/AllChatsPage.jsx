@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
-import { Icon, Text } from 'react-native-paper';
-import { useFocusEffect } from '@react-navigation/native';
-import MyScrollView from './MyScrollView';
-import useAuth from '../hooks/useAuth';
-import { BACKEND, TIME_INTERVAL } from '../constants/backend';
-import axios from 'axios';
-import ChatCard from './ChatCard';
+import React, { useCallback, useEffect, useState } from "react";
+import { View } from "react-native";
+import { Icon, Text } from "react-native-paper";
+import MyScrollView from "./MyScrollView";
+import useAuth from "../hooks/useAuth";
+import { BACKEND, TIME_INTERVAL } from "../constants/backend";
+import axios from "axios";
+import ChatCard from "./ChatCard";
 
 export default function AllChatsPage() {
   const { contextProfile } = useAuth();
@@ -53,19 +52,19 @@ export default function AllChatsPage() {
       </Text>
 
       {chats.length === 0 ? (
-        <View style={{ alignItems: 'center', marginTop: 40 }}>
+        <View style={{ alignItems: "center", marginTop: 40 }}>
           <Icon source="chat-sleep" size={60} color="#ccc" />
-          <Text variant="titleMedium" style={{ marginTop: 12, color: '#999' }}>
+          <Text variant="titleMedium" style={{ marginTop: 12, color: "#999" }}>
             No chats yet.
           </Text>
         </View>
       ) : (
         <View
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
             gap: 12,
           }}
         >

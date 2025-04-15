@@ -2,7 +2,7 @@
 from typing import Dict, TypedDict
 from abc import abstractmethod
 from datetime import datetime
-from sqlalchemy import CheckConstraint
+from sqlalchemy import CheckConstraint, UniqueConstraint
 from db_model.base import BaseModel
 from db_model import Customer, Driver, Restaurant
 from utils.db import db
@@ -18,6 +18,7 @@ class BaseReviewFormat(TypedDict):
     review_img: str
     reply: str
     time: str
+    order_id: int
 
 class RestaurantReviewFormat(BaseReviewFormat):
     '''Base review format with restaurant profile'''
@@ -35,26 +36,35 @@ class BaseReview(BaseModel):
     __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True)
+    
+    order_id = db.Column(
+        db.Integer,
+        db.ForeignKey('orders.id'),
+        nullable=False
+    )
+
     customer_id = db.Column(
         db.Integer,
         db.ForeignKey('customers.id'),
         nullable=False
     )
 
-    rating = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.Float, nullable=False)
     review_text = db.Column(db.String(255), nullable=False)
     url_img = db.Column(db.String(255), nullable=True)
-    reply = db.Column(db.String(255), nullable=True)
-    updated_at = db.Column(db.DateTime, default=datetime.now)
+    reply = db.Column(db.String(255), nullable=True, default=None)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     __table_args__ = (
         CheckConstraint('rating >= 1 AND rating <= 5', name='check_rating_range'),
+        UniqueConstraint('order_id', 'customer_id', name='unique_order_customer_review'),
     )
 
     def format(self) -> BaseReviewFormat:
         '''Format Reveiw into detailed dictionary format without the target info.'''
         customer: Customer = Customer.query.filter_by(id=self.customer_id).first()
         return {
+            'order_id': self.order_id,
             'customer_id': customer.id,
             'customer_name': customer.get_username(),
             'customer_profile_img': customer.url_profile_image,
@@ -77,6 +87,7 @@ class DriverReview(BaseReview):
     Review left by customer for a driver.
     '''
     __tablename__ = 'driver_reviews'
+
     driver_id = db.Column(
         db.Integer,
         db.ForeignKey('drivers.id'),
@@ -95,6 +106,7 @@ class RestaurantReview(BaseReview):
     Review left by customer for a restaurant.
     '''
     __tablename__ = 'restaurant_reviews'
+
     restaurant_id = db.Column(
         db.Integer,
         db.ForeignKey('restaurants.id'),

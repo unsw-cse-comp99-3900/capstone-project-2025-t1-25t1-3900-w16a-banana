@@ -19,7 +19,7 @@ export default function MenuCategoryEdit({ category, onRefresh, displayIndex }) 
 
   // keep the original name
   const [categoryName, setCategoryName] = useState(category.name);
-  const [originalName, setOriginalName] = useState(category.name);
+  const originalName = category.name;
 
   // checks if user changed the category name
   const isCatChanged = categoryName.trim() !== originalName.trim();
@@ -81,11 +81,6 @@ export default function MenuCategoryEdit({ category, onRefresh, displayIndex }) 
       console.error("Failed to remove category:", error);
       showToast("Failed to remove category.", "error");
     }
-  };
-
-  // Add Item
-  const addItem = async () => {
-    alert("TODO");
   };
 
   return (

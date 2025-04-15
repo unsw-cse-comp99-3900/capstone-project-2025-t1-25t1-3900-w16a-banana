@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { View, Image, Pressable, Linking } from "react-native";
-import { Text, Divider, IconButton, Icon } from "react-native-paper";
+import { View, Image, Linking } from "react-native";
+import { Text, Divider, IconButton } from "react-native-paper";
 import MyScrollView from "./MyScrollView";
 import axios from "axios";
 import { router, useFocusEffect } from "expo-router";

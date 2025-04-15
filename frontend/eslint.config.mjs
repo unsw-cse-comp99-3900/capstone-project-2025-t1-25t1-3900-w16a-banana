@@ -17,6 +17,9 @@ export default defineConfig([
   },
   {
     ...pluginReact.configs.flat.recommended,
+    settings: {
+      react: { version: "detect" }
+    },
     rules: {
       ...pluginReact.configs.flat.recommended.rules,
       "react/prop-types": "off"  // Turn off missing props validation

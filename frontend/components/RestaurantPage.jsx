@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator, Linking, ScrollView, Dimensions, Image, Pressable } from "react-native";
+import { View, ActivityIndicator, Linking, ScrollView, Dimensions, Image } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import axios from "axios";
 import Carousel from "react-native-reanimated-carousel";
-import { Icon, IconButton, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
 import RestaurantMenu from "./RestaurantMenu";
 import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
