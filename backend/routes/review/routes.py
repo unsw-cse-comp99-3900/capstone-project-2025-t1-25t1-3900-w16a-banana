@@ -19,16 +19,16 @@ from routes.review.models import (
     api, message_res, rating_req_parser, get_reviews_reponse, reply_req
 )
 
-@api.route('/restaurant/<int:restaurant_id>')
+@api.route('/restaurant/<int:restaurant_id>/order/<int:order_id>')
 class RateRestaurant(Resource):
-    """Route: /restaurant/<int:restaurant_id>"""
+    """Route: /restaurant/<int:restaurant_id>/order/<int:order_id>"""
     @api.expect(auth_header, rating_req_parser)
     @api.response(200, 'Success')
     @api.response(400, 'Bad Request', message_res)
     @api.response(401, 'Unauthorised', message_res)
-    def put(self, restaurant_id: int):
+    def put(self, restaurant_id: int, order_id: int):
         """
-        Customer Rating Post/Update For Restaurant.
+        Customer Rating Post/Update For Restaurant based on Order ID.
         Review text and img can be empty.
         One Review for a Restaurant.
         Must have order history to rate.
@@ -45,49 +45,67 @@ class RateRestaurant(Resource):
         if not args.get('rating') or not 1 <= args.get('rating') <= 5:
             return res_error(400, 'Invalid Rating')
 
-        # Check the previous review.
-        reviews = filter_restaurant_reviews(
-            customer_id = customer.id,
-            restaurant_id = restaurant_id
+        # check if this order exists, and the order is between this (customer, restaurant)
+        orders = filter_orders(
+            id=order_id,
+            customer_id=customer.id,
+            restaurant_id=restaurant_id,
         )
+
+        if not orders:
+            return res_error(400, 'Order Not Found')
+
+        # check if previous review exists
+        reviews = filter_restaurant_reviews(
+            order_id=order_id,
+            customer_id=customer.id,
+            restaurant_id=restaurant_id
+        )
+
         if reviews:
             review = reviews[0]
-            review.rating = args.get('rating')
         else:
-            # Check the complete order history
-            if not filter_orders(
-                customer_id=customer.id, restaurant_id=restaurant_id,
-                order_status=OrderStatus.DELIVERED
-            ):
-                return res_error(400, 'Customer Haven\'t Ordered From Here')
+            # create this review
             review = RestaurantReview(
                 customer_id=customer.id,
                 restaurant_id=restaurant_id,
+                order_id=order_id,
                 rating=args.get('rating'),
                 review_text=''
             )
+
             db.session.add(review)
+            db.session.commit()
+        
+        # now update the review
+        if args.get('rating'):
+            review.rating = args.get('rating')
+
         if args.get('review_text'):
             review.review_text = args.get('review_text')
+        
         if args.get('img'):
             url_img = save_image(args.get('img'))
             if not url_img:
                 return res_error(400, 'Invalid Image File')
             review.url_img = url_img
-        review.updated_at = datetime.now()
+        
+        # save the update
         db.session.commit()
+
+        # return the review
         return review.dict(), 200
 
-@api.route('/driver/<int:driver_id>')
+@api.route('/driver/<int:driver_id>/order/<int:order_id>')
 class RateDriver(Resource):
-    '''Route: /driver/<int:driver_id>'''
+    '''Route: /driver/<int:driver_id>/order/<int:order_id>'''
     @api.expect(auth_header, rating_req_parser)
     @api.response(200, 'Success')
     @api.response(400, 'Bad Request', message_res)
     @api.response(401, 'Unauthorised', message_res)
-    def put(self, driver_id: int):
+    def put(self, driver_id: int, order_id: int):
         '''
-        Customer Rating Post/Update For Driver.
+        Customer Rating Post/Update For Driver based on Order ID.
         Review text and img can be empty.
         One Review for a Driver.
         Must have order history to rate.
@@ -104,37 +122,55 @@ class RateDriver(Resource):
         if not args.get('rating') or not 1 <= args.get('rating') <= 5:
             return res_error(400, 'Invalid Rating')
 
-        # Check the previous review.
-        reviews = filter_driver_reviews(
-            customer_id = customer.id,
-            driver_id = driver_id
+        # check if this order exists, and this order is between this (customer, driver)
+        orders = filter_orders(
+            id=order_id,
+            customer_id=customer.id,
+            driver_id=driver_id,
         )
+
+        if not orders:
+            return res_error(400, 'Order Not Found')
+
+        # check if previous review exists
+        reviews = filter_driver_reviews(
+            order_id=order_id,
+            customer_id=customer.id,
+            driver_id=driver_id
+        )
+
         if reviews:
             review = reviews[0]
-            review.rating = args.get('rating')
         else:
-            # Check the complete order history
-            if not filter_orders(
-                customer_id=customer.id, driver_id=driver_id,
-                order_status=OrderStatus.DELIVERED
-            ):
-                return res_error(400, 'Customer Haven\'t Received From This Driver')
+            # create this order review
             review = DriverReview(
                 customer_id=customer.id,
                 driver_id=driver_id,
+                order_id=order_id,
                 rating=args.get('rating'),
                 review_text=''
             )
+
             db.session.add(review)
+            db.session.commit()
+        
+        # now update the review
+        if args.get('rating'):
+            review.rating = args.get('rating')
+
         if args.get('review_text'):
             review.review_text = args.get('review_text')
+        
         if args.get('img'):
             url_img = save_image(args.get('img'))
             if not url_img:
                 return res_error(400, 'Invalid Image File')
             review.url_img = url_img
-        review.updated_at = datetime.now()
+
+        # save the update
         db.session.commit()
+
+        # return the review
         return review.dict(), 200
 
 @api.route('/<string:user_type>/<int:user_id>')

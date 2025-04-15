@@ -9,18 +9,19 @@ message_res = api.model('Simple Message Response', {
 })
 
 rating_req_parser = reqparse.RequestParser()
-rating_req_parser.add_argument('rating', type=int, required=True, default=1)
+rating_req_parser.add_argument('rating', type=float, required=True, default=1)
 rating_req_parser.add_argument('review_text', type=str, required=False, default='Excellent!')
 rating_req_parser.add_argument(
     'img', type=FileStorage, location="files", required=False, help='Review Image'
 )
 
 review_model = api.model('Individual Review', {
+    'order_id': fields.Integer(),
     'customer_id': fields.String(),
     'customer_name': fields.String(),
     'customer_profile_img': fields.String(),
     'review_id': fields.Integer(),
-    'rating': fields.Integer(),
+    'rating': fields.Float(),
     'review_text': fields.String(),
     'review_img': fields.String(),
     'reply': fields.String(),
