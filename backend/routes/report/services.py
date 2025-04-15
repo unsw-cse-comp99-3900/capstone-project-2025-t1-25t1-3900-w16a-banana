@@ -1,6 +1,6 @@
 """Helper functions for Report API"""
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import and_
 from db_model import Order
 from db_model.db_enum import OrderStatus
@@ -54,3 +54,60 @@ def filter_orders_by_user_and_date_range(
     filters.append(Order.order_status == OrderStatus.DELIVERED)
 
     return Order.query.filter(and_(*filters)).order_by(Order.order_time.asc()).all()
+
+
+def get_per_day_data(
+    restaurant_id: Optional[int] = None,
+    driver_id: Optional[int] = None,
+    customer_id: Optional[int] = None,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None
+) -> List[dict]:
+    """
+    Get the per day number of orders and earnings from the orders.
+
+    Args:
+        restaurant_id (int): Restaurant ID.
+        start_date (datetime): Start date (inclusive).
+        end_date (datetime): End date (inclusive).
+
+    Returns:
+        List[dict]: List of dictionaries containing: date, num_orders, earnings
+    """
+
+    # reset the start_date to the start of the day
+    start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # reset the end_date to the next day 0:00:00
+    end_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+
+    # create a list to hold the per day data
+    data = []
+
+    # start the iteration from the first day
+    current_date = start_date 
+    while current_date < end_date:
+        # get the number of orders and earnings for the current day
+        # use either restaurant_id or driver_id to filter the orders (one of the 3 variables is not None)
+        orders = filter_orders_by_user_and_date_range(
+            restaurant_id=restaurant_id,
+            driver_id=driver_id,
+            customer_id=customer_id,
+            start_date=current_date,
+            end_date=current_date + timedelta(days=1)
+        )
+
+        num_orders = len(orders)
+        earnings = sum(order.order_price for order in orders)
+
+        # append the data to the list
+        data.append({
+            'date': current_date.strftime('%Y-%m-%d'),
+            'num_orders': num_orders,
+            'earnings': round(earnings, 2)
+        })
+
+        # move to the next day
+        current_date += timedelta(days=1)
+    
+    return data
