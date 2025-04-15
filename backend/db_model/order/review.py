@@ -52,7 +52,7 @@ class BaseReview(BaseModel):
     rating = db.Column(db.Float, nullable=False)
     review_text = db.Column(db.String(255), nullable=False)
     url_img = db.Column(db.String(255), nullable=True)
-    reply = db.Column(db.String(255), nullable=True)
+    reply = db.Column(db.String(255), nullable=True, default=None)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     __table_args__ = (

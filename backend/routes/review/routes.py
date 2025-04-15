@@ -197,18 +197,25 @@ class GetReviewsOf(Resource):
             reviews = filter_restaurant_reviews(restaurant_id=user_id)
         else:
             return res_error(400, 'Invalid User Type')
+        
         review_list = []
         total = 0
         for review in reviews:
             total += review.rating
             review_list.append(review.format())
-        return {
-            'avg_rating': 0 if len(reviews) == 0 else total / len(reviews),
+
+        # return the average rating, number of reviews, and the reviews
+        avg_rating = 0 if len(reviews) == 0 else total / len(reviews)
+
+        response = {
+            'avg_rating': avg_rating,
             'n_reviews': len(reviews),
             'reviews': review_list
-        }, 200
+        }
 
-@api.route('/reply/<string:user_type>/<int:review_id>')
+        return response, 200
+
+@api.route('/<string:user_type>/reply/<int:review_id>')
 @api.doc(params={
     'user_type': {
         'description': 'User Type',
@@ -218,11 +225,11 @@ class GetReviewsOf(Resource):
     'review_id': {'type': 'int'}
 })
 class ReplyReviews(Resource):
-    '''Update/Post Review Reply'''
+    '''Driver or Restaurant Reply to the Customer Review'''
     @api.expect(auth_header, reply_req)
     @api.response(200, 'Success. Return modified review')
     def put(self, user_type: str, review_id: int):
-        '''Update/Post Review Reply'''
+        '''Driver or Restaurant Reply to the Customer Review'''
         reply = request.get_json().get('reply')
         if not reply:
             return res_error(400, 'No Reply Given')
@@ -246,43 +253,38 @@ class ReplyReviews(Resource):
         db.session.commit()
         return reviews[0].dict(), 200
 
-@api.route('/delete/<string:review_type>/<int:review_id>')
-@api.doc(params={
-    'review_type': {
-        'description': 'Review Type',
-        'enum': ['driver', 'restaurant'],
-        'type': 'string'
-    },
-    'review_id': {'type': 'int'}
-})
+@api.route('/customer/delete/<int:review_id>')
 class DeleteReview(Resource):
-    '''Delete a Review'''
+    """Customer Delete Review"""
     @api.expect(auth_header)
     @api.response(200, 'Successful Deletion', message_res)
-    @api.response(400, 'Invalid Review Type', message_res)
+    @api.response(401, 'Unauthorised', message_res)
     @api.response(404, 'Review Not Found', message_res)
-    def delete(self, review_type: str, review_id: int):
-        '''Delete a customer left review'''
-        # Look for customer
+    def delete(self, review_id: int):
+        """Customer Delete Review"""
+
+        # find the customer
         customer = get_customer_by_token(tokenize(request.headers))
         if not customer:
             return res_error(401, 'Customer Not Found')
-        # Find the given review
-        if review_type == 'restaurant':
-            reviews = filter_restaurant_reviews(id=review_id)
-        elif review_type == 'driver':
-            reviews = filter_driver_reviews(id=review_id)
-        else:
-            return res_error(400, 'Invalid Review Type')
-        # Check if the review exists
-        if not reviews:
-            return res_error(404, 'Review Not Found')
-        review = reviews[0]
+        
+        # find the review
+        restaurant_reviews = filter_restaurant_reviews(id=review_id, customer_id=customer.id)
+        driver_reviews = filter_driver_reviews(id=review_id, customer_id=customer.id)
 
-        # Delete from DB
+        if not restaurant_reviews and not driver_reviews:
+            return res_error(404, 'Review Not Found')
+    
+        if restaurant_reviews:
+            review = restaurant_reviews[0]
+        else:
+            review = driver_reviews[0]
+        
+        # delete this review
         db.session.delete(review)
         db.session.commit()
-        return {'message': 'Deleted Successfully'}
+
+        return {'message': 'Deleted Successfully'}, 200
 
 @api.route('/my/<string:review_type>')
 @api.doc(params={
