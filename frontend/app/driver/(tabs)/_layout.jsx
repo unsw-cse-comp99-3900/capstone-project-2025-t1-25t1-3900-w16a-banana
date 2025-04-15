@@ -40,6 +40,7 @@ export default function TabLayout() {
     },
     { name: "OrderHistory", title: "Order History", icon: "history", visible: true },
     { name: "chats", title: "Chats", icon: "chat", visible: true },
+    { name: "report", title: "Report", icon: "chart-bar", visible: true },
     { name: "profile", title: "Profile", icon: "account", visible: true },
     // hidden tabs
     { name: "PendingProfile", title: "Home", icon: "home", visible: false },
@@ -60,6 +61,7 @@ export default function TabLayout() {
     { name: "view/order/[orderId]", title: "Order", icon: "map-marker", visible: false },
     { name: "chats", title: "Chats", icon: "chat", visible: false },
     { name: "view/chat", title: "Chat", icon: "chat", visible: false },
+    { name: "report", title: "Report", icon: "chart-bar", visible: false },
   ];
 
   const tabsToShow = isPendingDriver ? pendingTabs : normalTabs;
