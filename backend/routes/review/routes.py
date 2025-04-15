@@ -254,7 +254,7 @@ class ReplyReviews(Resource):
         db.session.commit()
         return reviews[0].dict(), 200
 
-@api.route('/customer/delete/<int:review_id>')
+@api.route('/customer-delete/<int:review_id>')
 class DeleteReview(Resource):
     """Customer Delete Review"""
     @api.expect(auth_header)
@@ -294,7 +294,7 @@ class GetMyReviewByCustomer(Resource):
     @api.response(200, 'Successful Deletion', message_res)
     @api.response(400, 'Invalid Review Type', message_res)
     @api.response(404, 'Review Not Found', message_res)
-    def get(self, review_type: str):
+    def get(self):
         '''Get all customer reviews about me (restaurant or driver)'''
 
         # check the token
