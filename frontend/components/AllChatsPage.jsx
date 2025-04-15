@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
-import { Icon, Text } from 'react-native-paper'
+import React, { useCallback, useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { Icon, Text } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 import MyScrollView from './MyScrollView';
 import useAuth from '../hooks/useAuth';
 import { BACKEND } from '../constants/backend';
@@ -9,67 +10,70 @@ import ChatCard from './ChatCard';
 
 export default function AllChatsPage() {
   const { contextProfile } = useAuth();
-
-  // save all chats
   const [chats, setChats] = useState([]);
 
-
   const fetchAllChats = async () => {
+    if (!contextProfile) return;
+
     const url = `${BACKEND}/chat/get/all`;
     const config = { headers: { Authorization: contextProfile.token } };
-    
+
     try {
       const response = await axios.get(url, config);
       const data = response.data;
-      setChats(data);
+
+      // sort the chats based on the last chat time, descending order
+      const sorted = [...data].sort((a, b) => {
+        const aTime = new Date(a.chats.at(-1)?.time || 0).getTime();
+        const bTime = new Date(b.chats.at(-1)?.time || 0).getTime();
+        return bTime - aTime;
+      });
+
+      setChats(sorted);
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    if (!contextProfile) return;
-    fetchAllChats();
-  }, [contextProfile]);
+  // during mounting, start fetch, and set up the timer
+  // during unmount, clear the timer
+  useEffect(
+    useCallback(() => {
+      fetchAllChats(); 
+      const interval = setInterval(fetchAllChats, 5000);
 
-  
-
+      return () => clearInterval(interval); 
+    }, [contextProfile])
+  );
 
   return (
     <MyScrollView>
-      <Text variant="titleLarge"
-        style={{
-          marginBottom: 12,
-        }}
-      >
+      <Text variant="titleLarge" style={{ marginBottom: 12 }}>
         All Chats
       </Text>
-      {/* display all the chats */}
+
       {chats.length === 0 ? (
-        <View style={{ alignItems: "center", marginTop: 40 }}>
+        <View style={{ alignItems: 'center', marginTop: 40 }}>
           <Icon source="chat-sleep" size={60} color="#ccc" />
-          <Text variant="titleMedium" style={{ marginTop: 12, color: "#999" }}>
+          <Text variant="titleMedium" style={{ marginTop: 12, color: '#999' }}>
             No chats yet.
           </Text>
         </View>
       ) : (
         <View
           style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
             gap: 12,
           }}
         >
           {chats.map((chat, index) => (
-            <ChatCard
-              key={index}
-              chat={chat}
-            />
+            <ChatCard key={index} chat={chat} />
           ))}
         </View>
       )}
     </MyScrollView>
-  )
+  );
 }

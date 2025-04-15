@@ -6,8 +6,6 @@ import { BACKEND } from '../constants/backend';
 import capitalize from 'capitalize';
 
 export default function ChatCard({ chat }) {
-  console.log(chat);
-
   // get the latest message from the chat, 
   // the message is ordered by time in ascending order
   const latestMessage = chat.chats[chat.chats.length - 1];
