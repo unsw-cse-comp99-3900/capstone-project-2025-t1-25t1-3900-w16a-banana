@@ -13,6 +13,23 @@ const icons = {
   delivery: "https://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png",
 };
 
+/**
+ * OrderPathOverviewMap
+ *
+ * Displays a Google Map with markers showing the current location of the driver,
+ * the restaurant address, and the customer delivery address.
+ * 
+ * This component calculates the center of these three points to center the map.
+ * Marker icons are customized for each entity.
+ *
+ * Props:
+ * - restaurantAddress: string – Full address of the restaurant
+ * - deliveryAddress: string – Full address of the delivery location (customer)
+ *
+ * Uses:
+ * - Fetches lat/lng for restaurant and delivery using address
+ * - Uses current user (driver) location from `useUserLocation`
+ */
 export default function OrderPathOverviewMap({ restaurantAddress, deliveryAddress }) {
   const { location: driverLocation } = useUserLocation();
 

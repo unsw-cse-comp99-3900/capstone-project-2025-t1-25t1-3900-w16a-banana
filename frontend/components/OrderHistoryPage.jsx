@@ -11,6 +11,18 @@ import { BACKEND } from "../constants/backend";
 import OrderCard from "./OrderCard";
 import { useFocusEffect } from "expo-router";
 
+/**
+ * OrderHistoryPage
+ * 
+ * Displays a scrollable calendar view for selecting a date and viewing orders made on that day.
+ * 
+ * Features:
+ * - Allows users to pick a date using a calendar.
+ * - Fetches and filters orders based on the selected date.
+ * - Displays order cards with details.
+ * - Handles both customer and role-based endpoints (e.g., driver, restaurant).
+ * - Shows loading indicator during fetch and fallback when no orders exist.
+ */
 export default function OrderHistoryPage() {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();

@@ -16,6 +16,21 @@ import PressableIcon from "./PressableIcon";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
+/**
+ * ReportPage
+ *
+ * Displays a revenue report for the logged-in user (restaurant or driver), 
+ * including daily order counts and earnings within a selected date range.
+ * Charts are rendered using Chart.js (line and bar).
+ *
+ * Inputs:
+ * - none directly, but relies on the authenticated user context for fetching data.
+ *
+ * Behavior:
+ * - On mount (or focus), fetches revenue data for the current month by default.
+ * - Allows the user to pick a date range and manually refresh the report.
+ * - Displays total orders, total earnings, and per-day line/bar charts.
+ */
 export default function ReportPage() {
   const { contextProfile } = useAuth();
 

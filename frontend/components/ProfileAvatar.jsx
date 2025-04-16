@@ -7,6 +7,11 @@ import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 import useToast from "../hooks/useToast";
 
+/**
+ * ProfileAvatar - A profile avatar component allowing the user to view and update their profile picture.
+ *
+ * userType: the role of the current user (e.g., "customer", "driver", "restaurant", "admin"), used to determine the API endpoint for updating the profile image
+ */
 export default function ProfileAvatar({ userType }) {
   const { contextProfile, login } = useAuth();
   const { showToast } = useToast();
