@@ -5,6 +5,10 @@ import { Picker } from "@react-native-picker/picker";
 import MyScrollView from "../../../components/MyScrollView";
 import UserTableWithType from "../../../components/UserTableWithType";
 
+/**
+ * Displays a user management page for admins, 
+ * allowing filtering of user profiles by type and viewing them in categorized tables.
+ */
 export default function Users() {
   const [selectedType, setSelectedType] = useState("all");
 

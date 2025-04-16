@@ -5,6 +5,17 @@ import { Appbar } from "react-native-paper";
 import ImageViewer from "react-native-image-zoom-viewer";
 import { BACKEND } from "../constants/backend";
 
+/**
+ * ImageView component displays a full-screen zoomable image with swipe-down to dismiss functionality.
+ * 
+ * Uses:
+ * - `imageUrl`: relative path of the image from the backend (from URL parameters).
+ * - `title`: optional title to display in the header (from URL parameters).
+ * 
+ * Features:
+ * - Appbar with a back button.
+ * - Zoomable and swipe-dismissable image viewer.
+ */
 export default function ImageView() {
   const router = useRouter();
   const { imageUrl, title } = useLocalSearchParams();

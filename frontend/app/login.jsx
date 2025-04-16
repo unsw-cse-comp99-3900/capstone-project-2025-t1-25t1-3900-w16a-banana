@@ -10,6 +10,23 @@ import axios from "axios";
 import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 
+/**
+ * Login component that allows users to authenticate into the platform.
+ *
+ * Features:
+ * - Supports login for four user types: customer, driver, restaurant, and admin.
+ * - Validates email format and required fields.
+ * - Sends login credentials to backend and stores token upon success.
+ * - Displays toast messages for success or error feedback.
+ *
+ * Internal State:
+ * - form: object containing email, password, and userType input values.
+ *
+ * Hooks used:
+ * - useAuth: to store authenticated user info.
+ * - useToast: to show toast notifications.
+ * - useRouter: to navigate to role-specific homepages after login.
+ */
 export default function Login() {
   const router = useRouter();
   const { showToast } = useToast();
