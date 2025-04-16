@@ -4,6 +4,16 @@ import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
 import { BACKEND, TIME_INTERVAL } from "../../../constants/backend";
 
+/**
+ * TabLayout component renders the bottom navigation tabs for the driver.
+ *
+ * - Dynamically fetches and checks for new incoming orders at intervals.
+ * - Shows a red alert icon and updates the "Orders" tab title if new orders are found.
+ * - Displays different tab sets based on whether the driver is pending approval or not.
+ *
+ * Returns:
+ * - A BottomTabs component with the appropriate list of tabs.
+ */
 export default function TabLayout() {
   const { contextProfile } = useAuth();
   const [hasNewOrders, setHasNewOrders] = useState(false);

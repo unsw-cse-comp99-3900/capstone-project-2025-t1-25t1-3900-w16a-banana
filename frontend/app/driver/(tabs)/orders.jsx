@@ -19,6 +19,17 @@ const TABS = {
   delivering: { label: "Delivering" },
 };
 
+/**
+ * Displays the driver's orders categorized into "New Orders", "To Pick Up", and "Delivering" based on their current status.
+ *
+ * Driver's orders is categorized into 3 groups:
+ * - New Orders: Orders that are newly created and not yet picked up.
+ * - To Pick Up: Orders that are ready for the driver to pick up.
+ * - Delivering: Orders that are currently being delivered by the driver.
+ *
+ * The screen uses tab navigation to switch between categories 
+ * and polls the backend every 1 seconds to refresh the order list.
+ */
 export default function DriverOrdersScreen() {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();

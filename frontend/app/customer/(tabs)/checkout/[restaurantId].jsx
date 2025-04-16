@@ -12,6 +12,17 @@ import useDialog from "../../../../hooks/useDialog";
 import { calculateDistance, fetchLocationDetailFromAddress } from "../../../../utils/location";
 import { calculateDeliveryFee } from "../../../../utils/fee";
 
+/**
+ * CheckoutPage displays the order summary, delivery fee calculator, address form,
+ * credit card input, and final order submission for a single restaurant's cart.
+ *
+ * restaurantId – The ID of the restaurant for which the user is placing the order.
+ *
+ * Fetches the cart items from the backend and displays a read-only view of the order.
+ * The user must input a valid address to calculate delivery fee and provide a 16-digit
+ * card number to place the order. GST is automatically included in the total.
+ * Includes validation and toast/dialog feedback on errors or confirmation.
+ */
 export default function CheckoutPage() {
   const router = useRouter();
   const { restaurantId } = useLocalSearchParams();
