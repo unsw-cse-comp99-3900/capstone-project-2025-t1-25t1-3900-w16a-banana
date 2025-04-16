@@ -8,6 +8,15 @@ import useAuth from "../hooks/useAuth";
 import axios from "axios";
 import { BACKEND } from "../constants/backend";
 
+/**
+ * Displays a scrollable table of user applications with action buttons to view, approve, or reject entries.
+ * 
+ * data: array - list of application objects to display.
+ * columns: array - list of column titles to show in the table header.
+ * rowKeys: array - list of keys to extract values from each item row.
+ * userType: string - either 'restaurant' or 'driver', determines API endpoints.
+ * forceReload: function - function to refresh the parent component after actions.
+ */
 export default function ApplicationTable({ data, columns, rowKeys, userType, forceReload }) {
   const router = useRouter();
   const { showToast } = useToast();

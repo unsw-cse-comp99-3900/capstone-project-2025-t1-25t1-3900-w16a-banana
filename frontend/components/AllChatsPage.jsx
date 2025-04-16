@@ -7,6 +7,15 @@ import { BACKEND, TIME_INTERVAL } from "../constants/backend";
 import axios from "axios";
 import ChatCard from "./ChatCard";
 
+/**
+ * AllChatsPage component
+ * 
+ * Displays a list of all chat conversations for the logged-in user. 
+ * Periodically fetches chat updates from the server and renders them 
+ * as chat cards sorted by latest message time.
+ * 
+ * No props are required.
+ */
 export default function AllChatsPage() {
   const { contextProfile } = useAuth();
   const [chats, setChats] = useState([]);

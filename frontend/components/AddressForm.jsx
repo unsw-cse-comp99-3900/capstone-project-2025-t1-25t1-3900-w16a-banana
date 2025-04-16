@@ -5,6 +5,17 @@ import { Picker } from "@react-native-picker/picker";
 import { isPostalCode } from "validator";
 import useAuth from "../hooks/useAuth";
 
+/**
+ * AddressForm Component
+ *
+ * A form component for users to input or update their address details.
+ *
+ * form - The current form values (address, suburb, postcode, state)
+ * setForm - Function to update the form state
+ * allowContextAddress - If true, shows a button to fill address from context
+ * showSubmit - If true, displays a submit button
+ * submitCallback - Function to call when submit is clicked
+ */
 export default function AddressForm ({ form, setForm, allowContextAddress = false, showSubmit = false, submitCallback = () => {} }) {
   const { contextProfile } = useAuth();
   

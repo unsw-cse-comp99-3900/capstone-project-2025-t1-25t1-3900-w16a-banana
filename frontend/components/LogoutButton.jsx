@@ -4,6 +4,12 @@ import useAuth from "../hooks/useAuth";
 import { useRouter } from "expo-router";
 import useToast from "../hooks/useToast";
 
+/**
+ * LogoutButton - A button component that logs the user out of the app.
+ *
+ * On press, it clears the user's authentication context, navigates to the root route,
+ * and displays a toast notification indicating a successful logout.
+ */
 export default function LogoutButton() {
   const { logout } = useAuth();
   const router = useRouter();

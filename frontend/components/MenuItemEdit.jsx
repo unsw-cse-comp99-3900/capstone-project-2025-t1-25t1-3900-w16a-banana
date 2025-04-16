@@ -14,7 +14,18 @@ import useDialog from "../hooks/useDialog";
 import ImageUploadComponent from "./ImageUploadForm";
 import { isDecimal } from "validator";
 
-// this component works for both new and existing item
+/**
+ * MenuItemEdit Component
+ * 
+ * Renders a form interface for creating or editing a menu item under a specific restaurant category.
+ * Handles form state, validation, image uploads, and API calls 
+ * for both creating new items and updating existing ones.
+ * 
+ * item        - existing item object; if null/undefined, a new item will be created
+ * categoryId  - ID of the category this item belongs to
+ * onRefresh   - callback function to refresh parent view after update/create/delete
+ * displayIndex - optional index to show item number for UI display
+ */
 export default function MenuItemEdit({item, categoryId, onRefresh, displayIndex, }) {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();

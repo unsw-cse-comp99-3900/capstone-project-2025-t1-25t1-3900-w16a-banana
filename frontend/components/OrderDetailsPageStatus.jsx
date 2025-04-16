@@ -3,6 +3,11 @@ import { View, Image } from "react-native";
 import { Text, IconButton, Divider } from "react-native-paper";
 import { STATUS_CONTENT, STATUS_LIST } from "../utils/order";
 
+/**
+ * Displays the current and next step of an ongoing order’s status using images and labels.
+ *
+ * order: the order object containing the current status.
+ */
 export default function OrderDetailsPageStatus({ order }) {
   const currentStepIndex = STATUS_LIST.findIndex(
     (status) => status === order.order_status

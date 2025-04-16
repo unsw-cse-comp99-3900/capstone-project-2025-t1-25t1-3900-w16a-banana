@@ -12,6 +12,14 @@ import useToast from "../hooks/useToast";
 import MenuItemEdit from "./MenuItemEdit";
 import useDialog from "../hooks/useDialog";
 
+/**
+ * Renders and manages a single restaurant menu category and its items.
+ * Allows editing the category name, deleting the category, and managing individual menu items.
+ *
+ * category: object - Contains category details including id, name, and its menu items.
+ * onRefresh: function - Callback to refresh the menu list after updates.
+ * displayIndex: number - Displayed index number for the category (e.g., "Category #1").
+ */
 export default function MenuCategoryEdit({ category, onRefresh, displayIndex }) {
   const { showToast } = useToast();
   const { showDialog } = useDialog();

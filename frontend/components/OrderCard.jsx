@@ -11,8 +11,14 @@ import OrderPathOverview from "./OrderPathOverview";
 import axios from "axios";
 import { STATUS_CONTENT } from "../utils/order";
 
-// This component shows a simplified view for one order. 
-// It is used for 3 user roles: customer, restaurant, and driver.
+/**
+ * OrderCard - Displays a detailed view of a single order, including items, status, and related actions.
+ * 
+ * entry: object - The order data containing order, restaurant, customer, and item details.
+ * 
+ * The component dynamically adjusts its layout and available actions based on the user's role
+ * (customer, restaurant, or driver). Includes status updates and order path display.
+ */
 export default function OrderCard({ entry }) {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();

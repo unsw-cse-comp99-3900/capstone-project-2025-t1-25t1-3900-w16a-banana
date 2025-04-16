@@ -13,6 +13,11 @@ import axios from "axios";
 import isEmail from "validator/lib/isEmail";
 import { isMobilePhone, isPostalCode, isStrongPassword } from "validator";
 
+/**
+ * EditProfileForm - A form component that allows users to edit and update their profile information.
+ *
+ * userType: string - The type of user ("customer", "driver", "restaurant", "admin") which determines the form fields.
+ */
 export default function EditProfileForm({ userType }) {
   const router = useRouter();
   const { showToast } = useToast();
