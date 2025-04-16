@@ -3,6 +3,21 @@ import { Portal, Dialog, Button, Text } from "react-native-paper";
 
 export const DialogContext = createContext();
 
+/**
+ * DialogContext provides a global confirmation dialog system.
+ * 
+ * Includes a `DialogProvider` component that renders a customizable dialog and
+ * exposes `showDialog` and `hideDialog` methods via context.
+ * 
+ * showDialog(options):
+ *   - title: string – The dialog title.
+ *   - message: string – The main message of the dialog.
+ *   - confirmText: string – Text on the confirm button (default: "OK").
+ *   - cancelText: string – Text on the cancel button (default: "Cancel").
+ *   - onConfirm: function – Callback to invoke when the confirm button is clicked.
+ * 
+ * hideDialog(): Hides the dialog.
+ */
 export const DialogProvider = ({ children }) => {
   const [dialog, setDialog] = useState({
     visible: false,

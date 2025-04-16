@@ -5,6 +5,23 @@ import { View } from "react-native";
 
 export const ToastContext = createContext();
 
+/**
+ * ToastContext.jsx
+ * 
+ * Provides a global context for managing toast notifications across the app.
+ * Allows any component to trigger a toast message with a specified content and type.
+ * 
+ * Context Values:
+ * - isToastVisible: boolean - Controls the visibility of the toast.
+ * - toastMessage: string - The message content shown in the toast.
+ * - toastType: string - The toast variant (e.g., "success", "error", etc.).
+ * - showToast: function(message: string, type: string) - Displays the toast with a message and type.
+ * - hideToast: function() - Hides the currently visible toast.
+ * 
+ * Usage:
+ * - Wrap your app in <ToastProvider> to enable access to the toast context.
+ * - Use the `useToast()` hook to trigger or dismiss toast messages in any component.
+ */
 export const ToastProvider = ({ children }) => {
   const [toast, setToast] = useState({ visible: false, message: "", status: "", action: null });
   const timeoutRef = useRef(null);
