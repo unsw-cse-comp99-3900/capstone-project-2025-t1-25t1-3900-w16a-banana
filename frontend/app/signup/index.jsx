@@ -4,6 +4,10 @@ import { useRouter } from "expo-router";
 import { Card, Text, IconButton } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
+/**
+ * SignupSelection component renders a selection screen where users can choose to sign up
+ * as a Customer, Driver, or Restaurant, and navigates to the corresponding signup form.
+ */
 export default function SignupSelection() {
   const router = useRouter();
 

@@ -11,6 +11,17 @@ import { isStrongPassword } from "validator";
 import axios from "axios";
 import MyScrollView from "../../components/MyScrollView";
 
+/**
+ * DriverSignup - A React component for registering a new delivery driver.
+ * 
+ * This form collects personal and vehicle information from the driver, including:
+ * - first name, last name, email, phone number, password, confirmPassword
+ * - license number, car plate number
+ * - license image and registration paper image
+ * 
+ * Validations include field completeness, image upload checks, and password strength/match.
+ * Upon successful validation, it submits the data to the backend for registration.
+ */
 export default function DriverSignup() {
   const router = useRouter();
   const { showToast } = useToast();

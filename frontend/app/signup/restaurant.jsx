@@ -13,6 +13,22 @@ import { BACKEND } from "../../constants/backend";
 import useAuth from "../../hooks/useAuth";
 import MyScrollView from "../../components/MyScrollView";
 
+/**
+ * Restaurant - Signup form component for registering a new restaurant account.
+ * 
+ * Handles the complete registration process for a restaurant, including:
+ * - Collecting business details (name, email, phone, ABN, etc.)
+ * - Uploading 3 required advertisement images
+ * - Validating inputs (email, password, ABN, postcode)
+ * - Submitting the data to the backend API
+ * 
+ * Internally uses reusable form components like:
+ * - PersonalInfoForm: captures general contact and account info
+ * - AddressForm: captures location information
+ * - ImageUploadForm: for uploading images
+ * 
+ * Redirects to `/restaurant` page upon successful registration.
+ */
 export default function Restaurant () {
   const router = useRouter();
   const { showToast } = useToast();

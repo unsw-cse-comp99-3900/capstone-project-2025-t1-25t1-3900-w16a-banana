@@ -15,6 +15,12 @@ const { width } = Dimensions.get("window");
 // carousel uses some default images
 const carouselImages = [Img1, Img2, Img3];
 
+/**
+ * Home screen for the customer view.
+ * 
+ * Displays the user's location, a carousel of featured images, and quick access buttons to
+ * favorites, cart, and order history. Also renders a list of nearby restaurants with a search filter.
+ */
 export default function Home() {
   // use the hook to obtain the location
   const { location, locationDetails } = useUserLocation();
@@ -42,13 +48,6 @@ export default function Home() {
       >
         <Button
           mode="outlined"
-          icon="heart"
-          onPress={() => router.push("/customer/favourites")}
-        >
-          Favorites
-        </Button>
-        <Button
-          mode="outlined"
           icon="cart"
           onPress={() => router.push("/customer/cart")}
         >
@@ -57,7 +56,7 @@ export default function Home() {
         <Button
           mode="outlined"
           icon="history"
-          onPress={() => router.push("/customer/history")}
+          onPress={() => router.push("/customer/OrderHistory")}
         >
           History
         </Button>

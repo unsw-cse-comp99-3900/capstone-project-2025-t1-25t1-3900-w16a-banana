@@ -10,6 +10,10 @@ import axios from "axios";
 import { isStrongPassword } from "validator";
 import { BACKEND } from "../../constants/backend";
 
+/**
+ * Renders the customer sign-up form with fields for personal and address details, 
+ * handles validation, and submits the registration request to the backend.
+ */
 export default function CustomerSignup() {
   const router = useRouter();
   const { showToast } = useToast();

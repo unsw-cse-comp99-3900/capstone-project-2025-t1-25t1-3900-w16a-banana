@@ -3,6 +3,9 @@ import { View, ActivityIndicator } from "react-native";
 import useAuth from "../../../hooks/useAuth";
 import UserProfile from "../../../components/UserProfile";
 
+/**
+ * Profile component for the customer tab.
+ */
 export default function Profile() {
   const { contextProfile } = useAuth();
 

@@ -8,6 +8,17 @@ import axios from "axios";
 import OrderCard from "../../../components/OrderCard";
 import MyScrollView from "../../../components/MyScrollView";
 
+/**
+ * Orders component for the customer tab.
+ * 
+ * Displays a list of active (in-progress) orders for the current customer, 
+ * fetched from the backend in regular intervals. Shows a loading spinner 
+ * while fetching and handles empty states gracefully.
+ * 
+ * Dependencies:
+ * - contextProfile: user authentication and profile info
+ * - showToast: displays error message on fetch failure
+ */
 export default function Orders() {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
