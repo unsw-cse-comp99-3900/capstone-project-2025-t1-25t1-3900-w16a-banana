@@ -1,50 +1,80 @@
-# Welcome to your Expo app 👋
+# SmartEats Frontend
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is the **React Native frontend** for the SmartEats food delivery platform, built using **Expo Router**, **React Native Paper**, and various other libraries for maps, charts, and navigation.
 
-## Get started
+## Get Started
 
-1. Install dependencies
+1. Before running the frontend, make sure the backend is up and running (instructions in [backend/README.md](../backend/README.md#1-installation-and-running-the-backend-server)). In local development, this frontend app communicates with the backend at the [http://localhost:11000](http://localhost:11000). 
+
+2. Install dependencies:
 
    ```bash
+   # Open a terminal in the frontend folder.
    npm install
    ```
 
-2. Start the app
+3. Start the app (web and native):
 
    ```bash
-    npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+   In the CLI, you can choose to run it on:
+   - Web browser
+   - Android emulator or device
+   - iOS simulator or device (on macOS)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   **Recommend**: press `w` to open the app in a web browser for faster development.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Project Structure
 
-## Get a fresh project
+- `app/`: File-based routing with Expo Router (e.g. `/signup`, `/login`, `/driver`, `/restaurant`, `/admin`, etc.)
+- `components/`: Reusable UI components like `PressableIcon`, `ProfileAvatar`, `OrderCard`, etc.
+- `constants/`: Centralized static config like API endpoints (`backend.jsx`)
+- `hooks/`: Custom hooks like `useAuth`, `useToast`, `useUserLocation`, etc.
+- `store/`: Context providers for authentication, toast messages, and dialogs
+- `utils/`: Utility functions for fees, geolocation, etc.
+- `assets/`: Static images.
 
-When you're ready, run:
+## Linting & Code Quality
+
+To check and auto-fix linting issues:
 
 ```bash
-npm run reset-project
+# Open a terminal in the frontend folder. 
+npm run lint
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Uses ESLint with recommended rules and React-specific settings. Also integrated into GitHub Actions.
 
-## Learn more
+## Key Libraries
 
-To learn more about developing your project with Expo, look at the following resources:
+- **Expo Router** – for declarative navigation with file-based routing
+- **React Native Paper** – for consistent UI components
+- **react-chartjs-2** – for rendering performance charts and reports
+- **@react-native-maps** – for location tracking and route display
+- **Axios** – for REST API integration with the backend
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Authentication
 
-## Join the community
+Authentication context is shared via `useAuth()` and persisted via `AsyncStorage` (or `SessionStorage` when on the web) . Supports token-based auth for all roles: customer, driver, restaurant, and admin.
 
-Join our community of developers creating universal apps.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Here's the updated "Highlight Features" section for your `README.md`, combining all your key features in short bullet points:
+
+## Highlight Features
+
+### 📍 GPS Tracking & Location Marking
+
+- Drivers can view their location in real-time with Google Maps integration.
+- Location data is updated dynamically, providing accurate route visualizations.
+
+### 💬 In-app Messaging
+
+- Real-time messaging between customers, drivers, and restaurants for order updates in the `chats` screen.
+- Supports direct communication with message grouping and automatic polling.
+
+### 📊 Daily Reports for Drivers & Restaurants
+
+- Drivers and restaurants can view daily reports on orders and earnings.
+- Visualized in bar/line charts for easy tracking of performance and activity.
