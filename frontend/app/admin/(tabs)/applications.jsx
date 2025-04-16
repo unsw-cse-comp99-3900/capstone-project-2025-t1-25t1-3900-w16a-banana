@@ -7,6 +7,19 @@ import { BACKEND } from "../../../constants/backend";
 import ApplicationTable from "../../../components/ApplicationTable";
 import MyScrollView from "../../../components/MyScrollView";
 
+/**
+ * Applications Component
+ * 
+ * Displays and manages pending restaurant and driver account applications for the admin.
+ * Fetches application data from the backend upon loading and provides tables for viewing and approving.
+ * 
+ * No input props.
+ * 
+ * State:
+ * - restaurantApplications: list of pending restaurant applications
+ * - driverApplications: list of pending driver applications
+ * - loading: boolean indicating whether data is still loading
+ */
 export default function Applications() {
   const { contextProfile } = useAuth();
   const [restaurantApplications, setRestaurantApplications] = useState([]);

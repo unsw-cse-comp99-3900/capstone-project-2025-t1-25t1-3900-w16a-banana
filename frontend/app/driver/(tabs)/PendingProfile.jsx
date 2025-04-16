@@ -2,6 +2,14 @@ import React from "react";
 import { View, Text } from "react-native";
 import useAuth from "../../../hooks/useAuth";
 
+/**
+ * Displays the driver's pending or rejected registration status.
+ *
+ * Shows a loading state until the authentication context is ready.
+ * Once loaded, it displays the driver's first name and a message:
+ * - If registration is "PENDING": informs the user their application is under review.
+ * - If registration is "REJECTED": advises the user to update their profile for re-approval.
+ */
 export default function PendingProfile() {
   const { contextProfile, isContextLoading } = useAuth();
 

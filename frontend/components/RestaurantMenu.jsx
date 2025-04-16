@@ -9,6 +9,12 @@ import useAuth from "../hooks/useAuth";
 import { router, useFocusEffect } from "expo-router";
 import RestaurantMenuItem from "./RestaurantMenuItem";
 
+/**
+ * RestaurantMenu - Displays the menu for a restaurant, with options for customers to add items to cart
+ * and for restaurant owners to edit their menu. Supports expanding/collapsing menu categories.
+ * 
+ * restaurantId: number - ID of the restaurant whose menu is to be displayed.
+ */
 export default function RestaurantMenu({ restaurantId }) {
   const { showToast } = useToast();
   const { contextProfile } = useAuth();

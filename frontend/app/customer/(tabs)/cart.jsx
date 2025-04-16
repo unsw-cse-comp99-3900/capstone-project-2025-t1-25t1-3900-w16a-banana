@@ -8,6 +8,18 @@ import MyScrollView from "../../../components/MyScrollView";
 import { Text, Icon } from "react-native-paper";
 import { useFocusEffect } from "expo-router";
 
+/**
+ * Displays the current user's shopping cart.
+ *
+ * Fetches cart data from the backend and displays items grouped by restaurant.
+ * Automatically refreshes data on component focus and initial mount.
+ *
+ * Uses:
+ * - contextProfile: for authentication token.
+ * - fetchCart(): API call to retrieve the cart.
+ * - MyScrollView: custom scroll container.
+ * - CartPerRestaurant: renders cart items per restaurant.
+ */
 export default function Cart() {
   const { contextProfile } = useAuth();
 

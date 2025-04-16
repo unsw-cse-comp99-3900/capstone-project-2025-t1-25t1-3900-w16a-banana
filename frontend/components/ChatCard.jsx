@@ -7,6 +7,11 @@ import capitalize from "capitalize";
 import useAuth from "../hooks/useAuth";
 import { router } from "expo-router";
 
+/**
+ * ChatCard - A pressable card component that displays a chat summary including user info, latest message, and timestamp.
+ *
+ * chat: object - The chat object containing user info and messages (expects sorted chat history).
+ */
 export default function ChatCard({ chat }) {
   const { contextProfile } = useAuth();
 

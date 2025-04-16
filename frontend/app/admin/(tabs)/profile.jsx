@@ -3,6 +3,9 @@ import { View, ActivityIndicator } from "react-native";
 import useAuth from "../../../hooks/useAuth";
 import UserProfile from "../../../components/UserProfile";
 
+/**
+ * Displays the admin's profile using the UserProfile component, or a loading indicator if the profile is not yet available.
+ */
 export default function Profile() {
   const { contextProfile } = useAuth();
 

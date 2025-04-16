@@ -6,6 +6,14 @@ import { fetchLocationDetailFromCoordinate } from "../utils/location";
 // fallback location: UNSW campus coordinates
 const UNSW_LOCATION = { lat: -33.9173, lng: 151.2313 };
 
+/**
+ * Custom React hook that retrieves and manages the user's current geolocation and address details.
+ * Falls back to UNSW Sydney location if the user denies permission or an error occurs.
+ *
+ * Returns:
+ * - location: { lat, lng } object representing user's geographic coordinates.
+ * - locationDetails: detailed location info fetched from coordinate lookup utility.
+ */
 export default function useUserLocation() {
   const { showDialog } = useDialog();
   const { showToast } = useToast();

@@ -1,7 +1,11 @@
 import React from "react";
 import { ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 
-
+/**
+ * A reusable scrollable container that adjusts for keyboard visibility.
+ *
+ * children - the content to be rendered inside the scroll view
+ */
 export default function MyScrollView({ children }) {
   return (
     <KeyboardAvoidingView

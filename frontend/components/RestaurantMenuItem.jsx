@@ -3,6 +3,14 @@ import { View } from "react-native";
 import { Text, IconButton } from "react-native-paper";
 import ZoomableImage from "./ZoomableImage";
 
+/**
+ * RestaurantMenuItem - Displays a single food item in the restaurant's menu.
+ * 
+ * item: the menu item object including id, name, description, price, and url_img.
+ * quantity: current quantity of this item in the customer's cart.
+ * onUpdate: function to handle quantity change, takes (itemId, newQuantity).
+ * isCustomer: boolean indicating whether the current viewer is a customer.
+ */
 export default function RestaurantMenuItem({ item, quantity, onUpdate, isCustomer }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>

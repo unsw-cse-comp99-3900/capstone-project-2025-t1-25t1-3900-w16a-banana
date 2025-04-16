@@ -7,6 +7,13 @@ import { BACKEND } from "../constants/backend";
 import { Button, TextInput, Text } from "react-native-paper";
 import RestaurantListMapViewWeb from "./RestaurantListMapViewWeb";
 
+/**
+ * RestaurantList component displays a list or map of nearby restaurants,
+ * optionally filtered by search text. Calculates distance from user location.
+ *
+ * userLocation: coordinates object { lat, lng } representing user's current location.
+ * showTextFilter: boolean - whether to show the restaurant name filter input.
+ */
 export default function RestaurantList({ userLocation, showTextFilter = false }) {
   const [restaurants, setRestaurants] = useState([]);
   const [sortedRestaurants, setSortedRestaurants] = useState([]);

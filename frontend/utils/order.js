@@ -1,3 +1,15 @@
+/**
+ * Constants and mappings for handling order status display in the application.
+ *
+ * STATUS_LIST:
+ * - An ordered list of all possible order statuses.
+ *
+ * STATUS_CONTENT:
+ * - A mapping from each order status to a corresponding display configuration, including:
+ *   - title: A user-friendly description of the status.
+ *   - gif: An animation image (GIF) associated with the status.
+ *   - color: A hex code representing the color theme for this status in the UI.
+ */
 import ApprovedGIF from "../assets/images/approved.gif";
 import DeliveryGIF from "../assets/images/delivery.gif";
 import PendingGIF from "../assets/images/pending.gif";

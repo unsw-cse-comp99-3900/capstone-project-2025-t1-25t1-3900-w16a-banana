@@ -4,6 +4,16 @@ import { useRouter } from "expo-router";
 import { Button, Text } from "react-native-paper";
 import ImageSource from "../assets/images/icon.png";
 
+/**
+ * Index - Landing page component for the SmartEats app.
+ * 
+ * This screen presents users with the app logo and two main navigation options:
+ * - Login: Redirects users to the login page.
+ * - Register: Redirects users to the signup page.
+ * 
+ * Navigation:
+ * - Uses Expo Router's `useRouter` hook to navigate to login and signup screens.
+ */
 export default function Index() {
   const router = useRouter();
 

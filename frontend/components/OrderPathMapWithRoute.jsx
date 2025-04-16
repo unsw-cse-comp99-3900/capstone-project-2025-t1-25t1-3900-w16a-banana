@@ -12,6 +12,14 @@ const icons = {
   delivery: "https://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png",
 };
 
+/**
+ * OrderPathMapWithRoute - Displays a Google Map route for a delivery order,
+ *                         either from driver to restaurant or restaurant to customer.
+ *
+ * restaurantAddress: string - The full address of the restaurant.
+ * deliveryAddress: string - The full address of the delivery location.
+ * mode: string - Optional; "driver-to-restaurant" or "restaurant-to-delivery". Defaults to "driver-to-restaurant".
+ */
 export default function OrderPathMapWithRoute({ restaurantAddress, deliveryAddress, mode = "driver-to-restaurant" }) {
   const { location: driverLocation } = useUserLocation();
   const [restaurantLoc, setRestaurantLoc] = useState(null);

@@ -9,6 +9,14 @@ import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 import PressableIcon from "./PressableIcon";
 
+/**
+ * RestaurantPage component
+ * 
+ * Displays detailed information of a restaurant including its profile info, images, and menu.
+ * Provides options for users to initiate a chat or make a phone call to the restaurant.
+ * 
+ * restaurantId: the ID of the restaurant to be displayed
+ */
 export default function RestaurantPage({ restaurantId }) {
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);

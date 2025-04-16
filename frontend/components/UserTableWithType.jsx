@@ -7,6 +7,15 @@ import axios from "axios";
 import { BACKEND } from "../constants/backend";
 import capitalize from "capitalize";
 
+/**
+ * UserTableWithType
+ *
+ * Displays a dynamic user table for a specific user type (customer, driver, restaurant, or admin).
+ * Fetches all users of the given type from the backend and renders their profile data in a scrollable table.
+ * Includes a "View" button that links to individual user profile pages.
+ *
+ * userType: the type of user to display ("customer", "driver", "restaurant", or "admin")
+ */
 export default function UserTableWithType({ userType }) {
   const router = useRouter();
   const { showToast } = useToast();

@@ -3,6 +3,14 @@ import WebsiteStorage from "./storage";
 
 export const AuthContext = createContext();
 
+/**
+ * Provides authentication context for the application.
+ *
+ * Handles loading, storing, and clearing of the logged-in user profile
+ * using local website storage. Automatically loads profile on mount.
+ *
+ * children - The React component(s) wrapped by the context provider.
+ */
 export const AuthProvider = ({ children }) => {
   const [contextProfile, setContextProfile] = useState(null);
   const [isContextLoading, setIsContextLoading] = useState(true);

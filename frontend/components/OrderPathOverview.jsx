@@ -4,9 +4,18 @@ import { Text, Icon } from "react-native-paper";
 import { fetchLocationDetailFromAddress, calculateDistance } from "../utils/location";
 import useUserLocation from "../hooks/useUserLocation";
 
-// When the order status is RESTAURANT_ACCEPTED, or READY_FOR_PICKUP, 
-// show two paths: driver -> restaurant, and restaurant -> customer
-// When the order status is PICKED_UP, show one path: driver -> customer
+/**
+ * OrderPathOverview - Displays a visual summary of the delivery path and distances
+ * between the driver, restaurant, and customer based on the current order status.
+ *
+ * - When the order status is RESTAURANT_ACCEPTED or READY_FOR_PICKUP,
+ *   show two paths: driver → restaurant, and restaurant → customer.
+ * - When the order status is PICKED_UP, show one path: driver → customer.
+ *
+ * restaurantAddress: string - Full address of the restaurant.
+ * deliveryAddress: string - Full address of the delivery location (customer).
+ * orderStatus: string - Current order status, used to determine which paths to show.
+ */
 export default function OrderPathOverview({ restaurantAddress, deliveryAddress, orderStatus }) {
   const { locationDetails: driverLocation } = useUserLocation();
 

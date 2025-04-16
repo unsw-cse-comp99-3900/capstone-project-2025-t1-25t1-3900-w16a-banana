@@ -1,8 +1,15 @@
 import axios from "axios";
 import { GOOGLE_API_KEY } from "../constants/map";
 
-// input longitude and latitude, 
-// output: {longitude, latitude, suburb, postcode, state}
+/**
+ * Fetch detailed location info (suburb, postcode, state) based on latitude and longitude.
+ * Use the Google Maps API.
+ *
+ * @param {number} lat - Latitude of the coordinate.
+ * @param {number} lng - Longitude of the coordinate.
+ * @returns {Promise<{suburb: string, postcode: string, state: string, lat: number, lng: number} | null>} 
+ *          An object with location details, or null if the lookup fails.
+ */
 export async function fetchLocationDetailFromCoordinate(lat, lng) {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_API_KEY}`;
 
@@ -25,8 +32,20 @@ export async function fetchLocationDetailFromCoordinate(lat, lng) {
   }
 }
 
-// input address dict {address, suburb, state, postcode}
-// output: {longitude, latitude, suburb, postcode, state}
+/**
+ * Fetch coordinate info (lat, lng) based on a full address, use the Google Maps API.
+ *
+ * @param {Object} addressDict - Object containing address fields.
+ * @param {string} addressDict.address - Street address.
+ * @param {string} addressDict.suburb - Suburb name.
+ * @param {string} addressDict.state - State abbreviation.
+ * @param {string} addressDict.postcode - Postal code.
+ * @returns {Promise<{suburb: string, postcode: string, state: string, lat: number, lng: number} | null>}
+ *          An object with coordinates and location details, or null if the lookup fails.
+ * 
+ * input address dict {address, suburb, state, postcode}
+ * output: {longitude, latitude, suburb, postcode, state}
+ */
 export async function fetchLocationDetailFromAddress(addressDict) {
   // write the dict to string
   const { address, suburb, state, postcode } = addressDict;
@@ -51,7 +70,15 @@ export async function fetchLocationDetailFromAddress(addressDict) {
   }
 }
 
-// calculate distance in km between two coordinates
+/**
+ * Calculate the straight-line distance in kilometers between two geographic coordinates.
+ *
+ * @param {number} lat1 - Latitude of the first point.
+ * @param {number} lon1 - Longitude of the first point.
+ * @param {number} lat2 - Latitude of the second point.
+ * @param {number} lon2 - Longitude of the second point.
+ * @returns {number} - Distance in kilometers.
+ */
 export function calculateDistance(lat1, lon1, lat2, lon2) {
   // convert all to float
   const toFloat = (value) => parseFloat(value);

@@ -7,6 +7,16 @@ import MyScrollView from "./MyScrollView";
 import LogoutButton from "./LogoutButton";
 import ZoomableImage from "./ZoomableImage";
 
+/**
+ * UserProfile Component
+ *
+ * Displays detailed profile information for different user types (customer, driver, restaurant, admin).
+ * Shows avatar, personal/business details, address, uploaded documents, and profile actions.
+ *
+ * userType: string - Type of user ('customer', 'driver', 'restaurant', or 'admin').
+ * userProfile: object - The profile data of the user to display.
+ * isSelfProfile: boolean - Whether the profile being viewed is the currently logged-in user's own profile.
+ */
 export default function UserProfile({ userType, userProfile, isSelfProfile = false }) {
   const router = useRouter();
 

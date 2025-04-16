@@ -1,4 +1,15 @@
-// calculate the fee based on the distance
+/**
+ * Calculates the delivery fee based on the distance (in kilometers).
+ *
+ * Fee rules:
+ * - ≤ 5km: $5
+ * - ≤ 10km: $10
+ * - ≤ 15km: $15
+ * - > 15km: $20
+ *
+ * @param {number} distance - The delivery distance in kilometers.
+ * @returns {number} - The delivery fee in dollars.
+ */
 export function calculateDeliveryFee(distance) {
   // <= 5km, $5
   // <= 10km, $10

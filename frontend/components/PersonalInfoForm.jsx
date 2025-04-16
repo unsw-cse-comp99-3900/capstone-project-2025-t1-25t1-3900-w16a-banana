@@ -4,10 +4,22 @@ import { TextInput, HelperText } from "react-native-paper";
 import { isMobilePhone, isStrongPassword } from "validator";
 import isEmail from "validator/lib/isEmail";
 
-// customer: username, email, phone, password, confirmPassword
-// driver: first name, last name, email, phone, password, confirmPassword
-// restaurant: business name, email, phone, password, confirmPassword
-// admin: first_name, last_name, email, password, confirmPassword
+/**
+ * PersonalInfoForm - A dynamic form component that collects user identity and account information.
+ * 
+ * Renders different fields based on the userType and performs inline validation for email,
+ * phone number, password strength, and password match.
+ * 
+ * Fields per userType:
+ * - customer: username, email, phone, password, confirmPassword
+ * - driver: first_name, last_name, email, phone, password, confirmPassword
+ * - restaurant: business_name, email, phone, password, confirmPassword
+ * - admin: first_name, last_name, email, password, confirmPassword
+ * 
+ * form: current form field values
+ * setForm: function to update form values
+ * userType: one of "customer", "driver", "restaurant", or "admin"
+ */
 export default function PersonalInfoForm ({ form, setForm, userType }) {
   const handleChange = (key, value) => {
     setForm((prevForm) => ({ ...prevForm, [key]: value }));

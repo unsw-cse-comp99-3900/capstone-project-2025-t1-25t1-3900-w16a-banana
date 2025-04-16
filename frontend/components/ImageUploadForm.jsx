@@ -3,9 +3,19 @@ import { View, Image } from "react-native";
 import { TextInput, IconButton, Card, Text } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 
-// the component has a textfield at the top,
-// then a preview image on the left, and an upload button (IconButton) on the right.
-// the input key can be null, so that the textfield is not rendered.
+/**
+ * ImageUploadComponent
+ * 
+ * A reusable component for image uploading with an optional text input field.
+ * It allows users to pick an image from their device and preview it.
+ *
+ * label: string - Label for the optional text input field.
+ * form: object - Current form state containing image and text values.
+ * setForm: function - Setter to update the form state.
+ * inputKey: string|null - Key for the text input in the form object. If null, the input field is not rendered.
+ * imageKey: string - Key for storing the image URI in the form object.
+ * buttonText: string - Text displayed under the upload button.
+ */
 export default function ImageUploadComponent ({ label, form, setForm, inputKey, imageKey, buttonText }) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

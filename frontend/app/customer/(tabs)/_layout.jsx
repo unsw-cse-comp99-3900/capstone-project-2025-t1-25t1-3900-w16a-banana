@@ -8,8 +8,8 @@ const tabs = [
   { name: "OrderHistory", title: "Order History", icon: "history", visible: true },
   { name: "chats", title: "Chats", icon: "chat", visible: true },
   { name: "profile", title: "Profile", icon: "account", visible: true },
-  // hide favourites from the tab bar
-  { name: "favourites", title: "Favourites", icon: "heart", visible: false },
+
+  // hide these tabs from the bottom tab bar, but still allow navigation to them
   { name: "EditProfile", title: "Edit Profile", icon: "map-marker", visible: false },
   { name: "view/restaurant/[restaurantId]", title: "Restaurant", icon: "map-marker", visible: false },
   { name: "view/driver/[driverId]", title: "Driver", icon: "map-marker", visible: false },
@@ -18,6 +18,12 @@ const tabs = [
   { name: "checkout/[restaurantId]", title: "Checkout", icon: "map-marker", visible: false },
 ];
 
+/**
+ * TabLayout renders the bottom tab navigation for customer users.
+ * 
+ * It defines all available tab screens, marking which should be visible in the tab bar
+ * and which are accessible only via internal navigation (e.g., view pages or checkout).
+ */
 export default function TabLayout() {
   return (
     <BottomTabs tabs={tabs} />

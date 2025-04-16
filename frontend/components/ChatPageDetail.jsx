@@ -10,6 +10,23 @@ import capitalize from "capitalize";
 import ChatPageOneChat from "./ChatPageOneChat";
 import PressableIcon from "./PressableIcon";
 
+/**
+ * ChatPageDetail - Chat interface component for messaging between users (customer, driver, restaurant).
+ *
+ * Displays real-time chat messages between the logged-in user and a target user,
+ * including message history, a text input for sending new messages, and quick
+ * access to view the user's profile or call them directly.
+ *
+ * URL Params:
+ * userType: the role of the chat recipient (e.g., 'restaurant', 'driver', 'customer')
+ * userId: the ID of the user being chatted with
+ * from: optional return route after exiting chat
+ *
+ * Internal State:
+ * chatUser - stores information about the user being chatted with
+ * chats - list of messages exchanged
+ * message - current text input value
+ */
 export default function ChatPageDetail() {
   const { userType, userId, from } = useLocalSearchParams();
   const { contextProfile } = useAuth();

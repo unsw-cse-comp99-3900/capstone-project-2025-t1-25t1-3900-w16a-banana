@@ -11,7 +11,15 @@ import { router } from "expo-router";
 import useDialog from "../hooks/useDialog";
 import useToast from "../hooks/useToast";
 
-// onUpdated is a callback function from the parent component cart.jsx to update the whole page.
+/**
+ * CartPerRestaurant component
+ * 
+ * Displays all items in the cart grouped by a specific restaurant, including quantity controls,
+ * subtotal calculation, and actions for placing an order or clearing the cart.
+ * 
+ * restaurant: an object containing restaurant information and the list of items in the cart
+ * onUpdated: callback function to trigger refresh after quantity changes or cart actions
+ */
 export default function CartPerRestaurant({ restaurant, onUpdated }) {
   const { contextProfile } = useAuth();
   const { showDialog } = useDialog();

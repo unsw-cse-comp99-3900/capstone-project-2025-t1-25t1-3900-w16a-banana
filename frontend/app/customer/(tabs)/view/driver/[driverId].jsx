@@ -2,6 +2,9 @@ import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import { View, Text } from "react-native";
 
+/**
+ * ViewDriverPage component renders the driver details page for customers.
+ */
 export default function ViewDriverPage() {
   const { driverId } = useLocalSearchParams();
 

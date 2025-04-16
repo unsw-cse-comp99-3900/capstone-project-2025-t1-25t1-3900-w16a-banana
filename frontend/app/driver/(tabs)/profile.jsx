@@ -3,6 +3,9 @@ import { View, ActivityIndicator } from "react-native";
 import useAuth from "../../../hooks/useAuth";
 import UserProfile from "../../../components/UserProfile";
 
+/**
+ * Profile component displays the driver's profile.
+ */
 export default function Profile() {
   const { contextProfile } = useAuth();
 

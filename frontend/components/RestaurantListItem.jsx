@@ -4,6 +4,19 @@ import { Button, Text } from "react-native-paper";
 import { BACKEND } from "../constants/backend";
 import { router } from "expo-router";
 
+/**
+ * RestaurantListItem - Displays a single restaurant in a card layout with image, name,
+ * location, optional distance, description, and a button to view details.
+ *
+ * restaurant: the restaurant object containing:
+ *   - id: number - unique restaurant ID
+ *   - name: string - restaurant name
+ *   - suburb: string - suburb location
+ *   - state: string - state location
+ *   - description: string - restaurant description
+ *   - url_img1: string - image path
+ *   - distance: number (optional) - distance in km
+ */
 export default function RestaurantListItem({ restaurant }) {
   return (
     <View

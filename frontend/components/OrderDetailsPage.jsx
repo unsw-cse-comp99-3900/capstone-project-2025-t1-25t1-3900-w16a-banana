@@ -13,6 +13,14 @@ import OrderPathMapWithRoute from "./OrderPathMapWithRoute";
 import OrderPathOverviewMap from "./OrderPathOverviewMap";
 import PressableIcon from "./PressableIcon";
 
+/**
+ * OrderDetailsPage Component
+ *
+ * Displays the full details of a single order including items, pricing, restaurant,
+ * customer, and driver information, as well as order status and delivery path maps.
+ *
+ * orderId - ID of the order to be fetched and displayed.
+ */
 export default function OrderDetailsPage({ orderId }) {
   const { contextProfile } = useAuth();
 

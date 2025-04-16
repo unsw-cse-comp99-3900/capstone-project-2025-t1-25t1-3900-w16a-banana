@@ -7,8 +7,22 @@ import { BACKEND } from "../constants/backend";
 import UserProfile from "../components/UserProfile";
 import capitalize from "capitalize";
 
-// a shared page to display user profile
-// receive "type" and "id" query params to fetch user profile
+/**
+ * Shared profile page component that displays user profile details based on query parameters.
+ *
+ * This component fetches and displays the profile of a user (customer, driver, restaurant, or admin)
+ * using the `type` and `id` query parameters from the URL.
+ *
+ * Parameters:
+ * - type: the user type ('customer', 'driver', 'restaurant', or 'admin') from the route query
+ * - id: the ID of the user whose profile is being viewed
+ *
+ * Displays:
+ * - A back button
+ * - The user's profile details using the <UserProfile> component
+ * - A loading indicator while the data is being fetched
+ * - A fallback message if the profile is not found
+ */
 export default function Profile() {
   const router = useRouter();
   const { type, id } = useLocalSearchParams();

@@ -4,14 +4,13 @@ import useToast from "../hooks/useToast";
 import { BACKEND } from "../constants/backend";
 import { router } from "expo-router";
 
-const containerStyle = {
-  height: "400px",
-  width: "100%",
-  borderRadius: "12px",
-  marginTop: "12px",
-};
-
-export default function RestaurantListGoogleMap({ restaurants, userLocation }) {
+/**
+ * RestaurantListMapViewWeb - Displays restaurants and the user’s location on a Google Map.
+ *
+ * restaurants: array of restaurant objects, each containing id, name, coordinates, url_img1, and distance
+ * userLocation: object with 'lat' and 'lng' representing user's current geolocation
+ */
+export default function RestaurantListMapViewWeb({ restaurants, userLocation }) {
   // Load the Google Maps script
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyATnj7gIKlNSS8hZdGpV_E3XLOik8OY9tY",
@@ -27,7 +26,12 @@ export default function RestaurantListGoogleMap({ restaurants, userLocation }) {
 
   return (
     <GoogleMap
-      mapContainerStyle={containerStyle}
+      mapContainerStyle={{
+        height: "400px",
+        width: "100%",
+        borderRadius: "12px",
+        marginTop: "12px",
+      }}
       center={{ lat: userLocation.lat, lng: userLocation.lng }}
       zoom={13}
     >

@@ -6,6 +6,13 @@ import { BACKEND } from "../constants/backend";
 import { formatDistanceToNow, format, differenceInMinutes } from "date-fns";
 import capitalize from "capitalize";
 
+/**
+ * ChatPageOneChat component renders a single chat message in a conversation view.
+ * It handles the avatar, chat bubble, and timestamp formatting based on sender type.
+ *
+ * chatUser: user object containing information about the other participant in the chat
+ * chat: object containing message content, time, and message type (sent or received)
+ */
 export default function ChatPageOneChat({ chatUser, chat }) {
   const { contextProfile } = useAuth();
 
