@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
-import { Text, Divider, Button, Dialog, Portal, TextInput } from 'react-native-paper';
-import { useFocusEffect } from 'expo-router';
-import axios from 'axios';
-import { BACKEND } from '../constants/backend';
-import OrderReviewCard from './OrderReviewCard';
-import useAuth from '../hooks/useAuth';
-import useToast from '../hooks/useToast';
+import React, { useCallback, useEffect, useState } from "react";
+import { View } from "react-native";
+import { Text, Divider, Button, Dialog, Portal, TextInput } from "react-native-paper";
+import { useFocusEffect } from "expo-router";
+import axios from "axios";
+import { BACKEND } from "../constants/backend";
+import OrderReviewCard from "./OrderReviewCard";
+import useAuth from "../hooks/useAuth";
+import useToast from "../hooks/useToast";
 
 export default function OrderRatingSection({ orderId }) {
   const { contextProfile } = useAuth();
@@ -19,10 +19,10 @@ export default function OrderRatingSection({ orderId }) {
   const [reviewRestaurant, setReviewRestaurant] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [ratingDriver, setRatingDriver] = useState('');
-  const [ratingRestaurant, setRatingRestaurant] = useState('');
-  const [textDriver, setTextDriver] = useState('');
-  const [textRestaurant, setTextRestaurant] = useState('');
+  const [ratingDriver, setRatingDriver] = useState("");
+  const [ratingRestaurant, setRatingRestaurant] = useState("");
+  const [textDriver, setTextDriver] = useState("");
+  const [textRestaurant, setTextRestaurant] = useState("");
 
   const fetchOrderRating = async () => {
     setIsLoading(true);
@@ -34,7 +34,7 @@ export default function OrderRatingSection({ orderId }) {
       setDriverId(response.data.driver_id);
       setRestaurantId(response.data.restaurant_id);
     } catch (error) {
-      console.error('Error fetching order rating:', error);
+      console.error("Error fetching order rating:", error);
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +47,7 @@ export default function OrderRatingSection({ orderId }) {
   );
 
   useEffect(() => {
-    if (!isLoading && !reviewDriver && !reviewRestaurant && contextProfile.role === 'customer') {
+    if (!isLoading && !reviewDriver && !reviewRestaurant && contextProfile.role === "customer") {
       setShowModal(true);
     }
   }, [isLoading]);
@@ -56,7 +56,7 @@ export default function OrderRatingSection({ orderId }) {
     if (!rating || !text) return;
     
     // write the url to submit the review
-    const targetBodyId = targetBody === 'driver' ? driverId : restaurantId;
+    const targetBodyId = targetBody === "driver" ? driverId : restaurantId;
     const url = `${BACKEND}/review/${targetBody}/${targetBodyId}/order/${orderId}`;
     const fullUrl = `${url}?rating=${rating}&review_text=${encodeURIComponent(text)}`;
 
@@ -65,7 +65,7 @@ export default function OrderRatingSection({ orderId }) {
     try {
       await axios.put(fullUrl, {}, config);
     } catch (err) {
-      showToast(`Failed to submit ${targetBody} review`, 'error');
+      showToast(`Failed to submit ${targetBody} review`, "error");
       console.error(err);
     }
   };
@@ -73,26 +73,26 @@ export default function OrderRatingSection({ orderId }) {
   const handleSubmit = async () => {
     // require all to be filled
     if (!ratingDriver || !textDriver || !ratingRestaurant || !textRestaurant) {
-      showToast('Please fill in all fields', 'error');
+      showToast("Please fill in all fields", "error");
       return;
     }
 
     // points from 1 - 5
     if (isNaN(ratingDriver) || ratingDriver < 1 || ratingDriver > 5) {
-      showToast('Please enter a valid rating for driver between 1.0 and 5.0', 'error');
+      showToast("Please enter a valid rating for driver between 1.0 and 5.0", "error");
       return;
     }
 
     if (isNaN(ratingRestaurant) || ratingRestaurant < 1 || ratingRestaurant > 5) {
-      showToast('Please enter a valid rating for restaurant between 1.0 and 5.0', 'error');
+      showToast("Please enter a valid rating for restaurant between 1.0 and 5.0", "error");
       return;
     }
 
     // submit the review
-    await submitReview('driver', ratingDriver, textDriver);
-    await submitReview('restaurant', ratingRestaurant, textRestaurant);
+    await submitReview("driver", ratingDriver, textDriver);
+    await submitReview("restaurant", ratingRestaurant, textRestaurant);
     
-    showToast('Review submitted successfully', 'success');
+    showToast("Review submitted successfully", "success");
     setShowModal(false);
     fetchOrderRating();
   };
@@ -109,7 +109,7 @@ export default function OrderRatingSection({ orderId }) {
       {reviewRestaurant && <OrderReviewCard review={reviewRestaurant} targetBody="restaurant" onRefresh={fetchOrderRating} />}
 
       {/* if the review not exist, show the button to open the modal */}
-      {!reviewDriver && !reviewRestaurant && !showModal && contextProfile.role === 'customer' && (
+      {!reviewDriver && !reviewRestaurant && !showModal && contextProfile.role === "customer" && (
         <View>
           <Text>No reviews left for this order yet.</Text>
           <Button compact mode="outlined" onPress={() => setShowModal(true)} style={{ marginTop: 12, paddingHorizontal: 8, width: "fit-content" }}>

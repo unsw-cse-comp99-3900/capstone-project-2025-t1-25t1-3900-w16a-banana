@@ -1,3 +1,4 @@
+import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
@@ -8,7 +9,7 @@ export default function OrderRatingStar({ rating }) {
   const totalStars = 5;
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 4 }}>
+    <View style={{ flexDirection: "row", alignItems: "center", marginVertical: 4 }}>
       {[...Array(filledStars)].map((_, i) => (
         <MaterialCommunityIcons key={i} name="star" size={20} color="#fbc02d" />
       ))}
