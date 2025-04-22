@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { Text, Card, Avatar, IconButton, Dialog, Portal, TextInput, Button } from 'react-native-paper';
+import { Text, Card, Avatar, Dialog, Portal, TextInput, Button } from 'react-native-paper';
 import useAuth from '../hooks/useAuth';
 import { BACKEND } from '../constants/backend';
 import OrderRatingStar from './OrderRatingStar';
@@ -10,6 +10,8 @@ import PressableIcon from './PressableIcon';
 import useToast from '../hooks/useToast';
 
 export default function OrderReviewCard({ review, targetBody, onRefresh }) {
+  console.log(review);
+
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
 
@@ -63,20 +65,6 @@ export default function OrderReviewCard({ review, targetBody, onRefresh }) {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      const url = `${BACKEND}/review/${targetBody}/${review[`${targetBody}_id`]}/order/${review.order_id}`;
-      await axios.delete(url, {
-        headers: {
-          Authorization: contextProfile.token,
-        },
-      });
-      onRefresh?.();
-    } catch (error) {
-      console.error('Error deleting review:', error);
-    }
-  };
-
   return (
     <View>
       <Card style={{ marginBottom: 16 }}>
@@ -93,7 +81,6 @@ export default function OrderReviewCard({ review, targetBody, onRefresh }) {
             isReviewLeftByMe && (
               <View style={{ flexDirection: 'row', gap: 12, marginRight: 8 }}>
                 <PressableIcon source="pencil" onPress={handleEdit} color="grey" size={20} />
-                <PressableIcon source="delete" onPress={handleDelete} color="grey" size={20} />
               </View>
             )
           }
