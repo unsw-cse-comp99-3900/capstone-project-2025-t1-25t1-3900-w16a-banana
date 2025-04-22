@@ -9,6 +9,25 @@ import axios from "axios";
 import PressableIcon from "./PressableIcon";
 import useToast from "../hooks/useToast";
 
+/**
+ * OrderReviewCard.jsx
+ *
+ * A reusable UI component that displays a single review card for either a driver or a restaurant.
+ * It supports:
+ * - Showing the review details including customer info, rating, and text.
+ * - Allowing the customer to edit their own review.
+ * - Allowing the recipient (driver or restaurant) to leave or edit a reply to the review.
+ *
+ * Props:
+ * - review (object): The review object containing rating, text, author, and target details.
+ * - targetBody (string): Either "driver" or "restaurant", used to adjust labels and behavior.
+ * - onRefresh (function): A callback function to refresh the parent component after updates.
+ *
+ * Behavior:
+ * - Renders stars and rating using <OrderRatingStar />.
+ * - Displays action icons (edit, reply) based on the current user's role.
+ * - Uses modal dialogs for editing review and submitting replies.
+ */
 export default function OrderReviewCard({ review, targetBody, onRefresh }) {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();

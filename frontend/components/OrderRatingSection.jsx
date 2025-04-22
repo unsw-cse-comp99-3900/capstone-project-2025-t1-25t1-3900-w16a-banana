@@ -8,6 +8,21 @@ import OrderReviewCard from "./OrderReviewCard";
 import useAuth from "../hooks/useAuth";
 import useToast from "../hooks/useToast";
 
+/**
+ * OrderRatingSection.jsx
+ *
+ * This component handles the display and submission of customer reviews for an order.
+ * It supports reviews for both the driver and the restaurant.
+ *
+ * Key Features:
+ * - Automatically fetches existing reviews when the component mounts or gains focus.
+ * - If the logged-in user is a customer and no reviews exist, prompts them to submit a review via a modal.
+ * - Allows submitting and updating review ratings and texts using a REST API.
+ * - Displays existing reviews using the reusable <OrderReviewCard /> component.
+ *
+ * Props:
+ * - orderId (number): The ID of the order to fetch and submit reviews for.
+ */
 export default function OrderRatingSection({ orderId }) {
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
