@@ -12,6 +12,7 @@ import MyScrollView from "./MyScrollView";
 import useAuth from "../hooks/useAuth";
 import { BACKEND } from "../constants/backend";
 import PressableIcon from "./PressableIcon";
+import RestaurantReviews from "./RestaurantReviews";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
@@ -192,6 +193,13 @@ export default function ReportPage() {
               />
             </View>
           </ScrollView>
+
+          {/* show all the reviews of the restaurant */}
+          <Divider style={{ marginTop: 8 }} />
+          <RestaurantReviews
+            role={contextProfile.role}
+            id={contextProfile.id}
+          />
         </View>
       )}
     </MyScrollView>

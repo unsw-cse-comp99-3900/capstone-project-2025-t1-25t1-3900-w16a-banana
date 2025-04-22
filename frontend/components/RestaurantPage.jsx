@@ -8,6 +8,7 @@ import RestaurantMenu from "./RestaurantMenu";
 import { BACKEND } from "../constants/backend";
 import useAuth from "../hooks/useAuth";
 import PressableIcon from "./PressableIcon";
+import RestaurantReviews from "./RestaurantReviews";
 
 /**
  * RestaurantPage component
@@ -162,6 +163,11 @@ export default function RestaurantPage({ restaurantId }) {
       {/* display the menus */}
       <View style={{ paddingHorizontal: 16 }}>
         <RestaurantMenu restaurantId={restaurantId} />
+      </View>
+
+      {/* display all the reviews */}
+      <View style={{ marginHorizontal: 16 }}>
+        <RestaurantReviews role="restaurant" id={restaurantId} />
       </View>
     </ScrollView>
   );

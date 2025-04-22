@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Image, Dimensions } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import ReanimatedCarousel from "react-native-reanimated-carousel";
 import MyScrollView from "../../../components/MyScrollView";
-import { router } from "expo-router";
 import RestaurantList from "../../../components/RestaurantList";
 import useUserLocation from "../../../hooks/useUserLocation";
 import Img1 from "../../../assets/images/restaurant_img1.jpg";
@@ -42,25 +41,6 @@ export default function Home() {
           📍 Your location: {locationDetails.suburb}, {locationDetails.postcode}, {locationDetails.state}
         </Text>
       )}
-      {/* Quick Access Buttons */}
-      <View
-        style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 16 }}
-      >
-        <Button
-          mode="outlined"
-          icon="cart"
-          onPress={() => router.push("/customer/cart")}
-        >
-          Cart
-        </Button>
-        <Button
-          mode="outlined"
-          icon="history"
-          onPress={() => router.push("/customer/OrderHistory")}
-        >
-          History
-        </Button>
-      </View>
 
       {/* Reanimated Carousel */}
       <View style={{ alignSelf: "center", marginBottom: 16 }}>
