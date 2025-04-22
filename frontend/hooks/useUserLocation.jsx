@@ -57,10 +57,7 @@ export default function useUserLocation() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(successfulCallback, errorCallback, options);
     } else {
-      showToast({
-        type: "error",
-        message: "Geolocation is not supported by this browser.",
-      });
+      showToast("Geolocation is not supported by this browser.", "error");
       setLocation(UNSW_LOCATION);
     }
   }, []);
