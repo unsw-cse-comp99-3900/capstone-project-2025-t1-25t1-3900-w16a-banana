@@ -68,13 +68,13 @@ export default function UserTableWithType({ userType }) {
   let fieldKeys = [];
 
   if (userType === "customer") {
-    fieldKeys = ["customer_id", "url_profile_image", "username", "email", "phone", "suburb", "postcode", "state"];
+    fieldKeys = ["id", "url_profile_image", "username", "email", "phone", "suburb", "postcode", "state"];
   } else if (userType === "driver") {
-    fieldKeys = ["driver_id", "url_profile_image", "first_name", "last_name", "email", "phone"];
+    fieldKeys = ["id", "url_profile_image", "first_name", "last_name", "email", "phone"];
   } else if (userType === "restaurant") {
-    fieldKeys = ["restaurant_id", "url_profile_image", "name", "abn", "email", "phone", "suburb", "postcode", "state"];
+    fieldKeys = ["id", "url_profile_image", "name", "abn", "email", "phone", "suburb", "postcode", "state"];
   } else if (userType === "admin") {
-    fieldKeys = ["admin_id", "url_profile_image", "first_name", "last_name", "email"];
+    fieldKeys = ["id", "url_profile_image", "first_name", "last_name", "email"];
   }
 
   return (
@@ -116,7 +116,7 @@ export default function UserTableWithType({ userType }) {
               <DataTable.Cell style={{ minWidth: 120 }}>
                 <Button
                   mode="text"
-                  onPress={() => router.push(`/profile?type=${userType}&id=${user.customer_id || user.driver_id || user.restaurant_id || user.admin_id}`)}
+                  onPress={() => router.push(`/profile?type=${userType}&id=${user.id}`)}
                 >
                   View
                 </Button>
