@@ -12,6 +12,7 @@ import OrderDetailsPageStatus from "./OrderDetailsPageStatus";
 import OrderPathMapWithRoute from "./OrderPathMapWithRoute";
 import OrderPathOverviewMap from "./OrderPathOverviewMap";
 import PressableIcon from "./PressableIcon";
+import OrderRatingSection from "./OrderRatingSection";
 
 /**
  * OrderDetailsPage Component
@@ -385,6 +386,11 @@ export default function OrderDetailsPage({ orderId }) {
           </View>
         )}
       </View>
+
+      {/* when this order.order_status == DELIVERED, show the rating + review part to the participant */}
+      {order.order_status === "DELIVERED" && (
+        <OrderRatingSection orderId={order.id}/>
+      )}
     </MyScrollView>
   );
 }
