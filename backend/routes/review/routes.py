@@ -276,14 +276,16 @@ class DeleteReview(Resource):
         if not restaurant_reviews and not driver_reviews:
             return res_error(404, 'Review Not Found')
     
+        # both reviews are together
         if restaurant_reviews:
             review = restaurant_reviews[0]
-        else:
-            review = driver_reviews[0]
+            db.session.delete(review)
+            db.session.commit()
         
-        # delete this review
-        db.session.delete(review)
-        db.session.commit()
+        if driver_reviews:
+            review = driver_reviews[0]
+            db.session.delete(review)
+            db.session.commit()
 
         return {'message': 'Deleted Successfully'}, 200
 
@@ -322,6 +324,13 @@ class GetReviewByOrder(Resource):
     def get(self, order_id: int):
         '''Return the review tied to the order ID'''
 
+        # get this order
+        order = filter_orders(id=order_id)
+        if not order:
+            return res_error(404, 'Order Not Found')
+        
+        order = order[0]
+
         # Try to find restaurant or driver review for this order
         restaurant_reviews = filter_restaurant_reviews(order_id=order_id)
         driver_reviews = filter_driver_reviews(order_id=order_id)
@@ -333,7 +342,10 @@ class GetReviewByOrder(Resource):
         # format the response
         response = {
             'restaurant_review': r_review,
-            'driver_review': d_review
+            'driver_review': d_review,
+            'driver_id': order.driver_id,
+            'restaurant_id': order.restaurant_id,
+            'order_id': order.id,
         }
 
         return response, 200
