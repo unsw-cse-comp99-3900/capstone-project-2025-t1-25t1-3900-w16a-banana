@@ -1,36 +1,34 @@
 import React, { useCallback, useState } from 'react';
 import { View, Image } from 'react-native';
 import { Text, Card, Avatar, Divider } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import useAuth from '../hooks/useAuth';
 import { useFocusEffect } from 'expo-router';
 import axios from 'axios';
 import { BACKEND } from '../constants/backend';
+import OrderRatingStar from './OrderRatingStar';
+import capitalize from 'capitalize';
 
-function StarRating({ rating }) {
-  const filledStars = Math.floor(rating);
-  const halfStar = rating - filledStars >= 0.5;
-  const totalStars = 5;
 
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 4 }}>
-      {[...Array(filledStars)].map((_, i) => (
-        <MaterialCommunityIcons key={i} name="star" size={20} color="#fbc02d" />
-      ))}
-      {halfStar && <MaterialCommunityIcons name="star-half-full" size={20} color="#fbc02d" />}
-      {[...Array(totalStars - filledStars - (halfStar ? 1 : 0))].map((_, i) => (
-        <MaterialCommunityIcons key={i} name="star-outline" size={20} color="#fbc02d" />
-      ))}
-      <Text style={{ marginLeft: 6 }}>{rating.toFixed(1)}</Text>
-    </View>
-  );
-}
 
-function ReviewCard({ review, role }) {
+function ReviewCard({ review, targetBody }) {
+  const { contextProfile } = useAuth();
+
   if (!review) return null;
 
-  const isDriver = role === 'driver';
+  const isDriver = targetBody === 'driver';
   const name = isDriver ? `${review.driver.first_name} ${review.driver.last_name}` : review.restaurant.name;
+
+  const isReviewLeftByMe = contextProfile.role === 'customer' && Number(review.customer_id) === Number(contextProfile.id);
+  const isReviewLeftToMeDriver = contextProfile.role === 'driver' && isDriver && Number(review.driver.id) === Number(contextProfile.id);
+  const isReviewLeftToMeRestaurant = contextProfile.role === 'restaurant' && !isDriver && Number(review.restaurant.id) === Number(contextProfile.id);
+
+  let headerLabel = isDriver ? 'Driver Review' : 'Restaurant Review';
+
+  if (isReviewLeftByMe) {
+    headerLabel = `My Review for ${isDriver ? 'Driver' : 'Restaurant'}`;
+  } else if (isReviewLeftToMeDriver || isReviewLeftToMeRestaurant) {
+    headerLabel = 'Customer Review to Me';
+  }
 
   return (
     <Card style={{ marginBottom: 16 }}>
@@ -45,20 +43,22 @@ function ReviewCard({ review, role }) {
         )}
       />
       <Card.Content>
-        <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>
-          {isDriver ? 'Driver' : 'Restaurant'}: {name}
+        <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>{headerLabel}</Text>
+        <Text style={{ fontSize: 13, marginBottom: 2 }}>
+          {isDriver ? `Driver: ${name}` : `Restaurant: ${name}`}
         </Text>
-        <StarRating rating={review.rating} />
+        <OrderRatingStar rating={review.rating} />
         <Text style={{ marginVertical: 4 }}>{review.review_text}</Text>
         {review.reply && (
           <View style={{ backgroundColor: '#f0f0f0', padding: 6, borderRadius: 4 }}>
-            <Text style={{ fontStyle: 'italic', fontSize: 12 }}>Reply: {review.reply}</Text>
+            <Text style={{ fontStyle: 'italic', fontSize: 12 }}>{capitalize(targetBody)} Reply: {review.reply}</Text>
           </View>
         )}
       </Card.Content>
     </Card>
   );
 }
+
 
 export default function OrderRatingSection({ orderId }) {
   const { contextProfile } = useAuth();
@@ -82,14 +82,17 @@ export default function OrderRatingSection({ orderId }) {
     }, [orderId])
   );
 
+  // if the reviewDriver and reviewRestaurant are still null, return null
+  if (!reviewDriver && !reviewRestaurant) return null;
+
   return (
     <View>
       <Divider style={{ marginVertical: 8 }} />
       <Text variant="titleMedium" style={{ marginBottom: 12 }}>
         Order Rating
       </Text>
-      <ReviewCard review={reviewDriver} role="driver" />
-      <ReviewCard review={reviewRestaurant} role="restaurant" />
+      <ReviewCard review={reviewDriver} targetBody="driver" />
+      <ReviewCard review={reviewRestaurant} targetBody="restaurant" />
     </View>
   );
 }
