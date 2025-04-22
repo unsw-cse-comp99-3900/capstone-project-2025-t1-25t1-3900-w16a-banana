@@ -10,14 +10,15 @@ import PressableIcon from './PressableIcon';
 import useToast from '../hooks/useToast';
 
 export default function OrderReviewCard({ review, targetBody, onRefresh }) {
-  console.log(review);
-
   const { contextProfile } = useAuth();
   const { showToast } = useToast();
 
   const [editVisible, setEditVisible] = useState(false);
   const [editRating, setEditRating] = useState(review.rating.toFixed(1));
   const [editText, setEditText] = useState(review.review_text || '');
+
+  const [replyVisible, setReplyVisible] = useState(false);
+  const [replyText, setReplyText] = useState(review.reply || '');
 
   const isDriver = targetBody === 'driver';
   const name = isDriver ? `${review.driver.first_name} ${review.driver.last_name}` : review.restaurant.name;
@@ -26,15 +27,18 @@ export default function OrderReviewCard({ review, targetBody, onRefresh }) {
   const isReviewLeftToMeDriver = contextProfile.role === 'driver' && isDriver && Number(review.driver.id) === Number(contextProfile.id);
   const isReviewLeftToMeRestaurant = contextProfile.role === 'restaurant' && !isDriver && Number(review.restaurant.id) === Number(contextProfile.id);
 
+  const canReply = (isReviewLeftToMeDriver || isReviewLeftToMeRestaurant);
+
   let headerLabel = isDriver ? 'Driver Review' : 'Restaurant Review';
   if (isReviewLeftByMe) headerLabel = `My Review for ${isDriver ? 'Driver' : 'Restaurant'}`;
-  else if (isReviewLeftToMeDriver || isReviewLeftToMeRestaurant) headerLabel = 'Customer Review to Me';
+  else if (canReply) headerLabel = 'Customer Review to Me';
 
   const handleEdit = () => setEditVisible(true);
-  const handleClose = () => setEditVisible(false);
+  const handleReply = () => setReplyVisible(true);
+  const handleCloseEdit = () => setEditVisible(false);
+  const handleCloseReply = () => setReplyVisible(false);
 
   const handleSubmitEdit = async () => {
-    // validate the rating and text
     if (isNaN(editRating) || editRating < 1 || editRating > 5) {
       showToast('Please enter a valid rating between 1.0 and 5.0', 'error');
       return;
@@ -45,23 +49,44 @@ export default function OrderReviewCard({ review, targetBody, onRefresh }) {
       return;
     }
 
-    // submit
     const targetBodyId = isDriver ? review.driver.id : review.restaurant.id;
     const url = `${BACKEND}/review/${targetBody}/${targetBodyId}/order/${review.order_id}`;
     const fullUrl = `${url}?rating=${editRating}&review_text=${encodeURIComponent(editText)}`;
-
     const config = { headers: { Authorization: contextProfile.token } };
 
     try {
       await axios.put(fullUrl, {}, config);
       showToast('Review updated successfully', 'success');
       setEditVisible(false);
-
-      // refresh the review list
       onRefresh();
     } catch (error) {
       console.error('Error updating review:', error);
       showToast('Error updating review', 'error');
+    }
+  };
+
+  const handleSubmitReply = async () => {
+    if (!replyText.trim()) {
+      showToast('Reply cannot be empty', 'error');
+      return;
+    }
+
+    const replyUrl = `${BACKEND}/review/${contextProfile.role}/reply/${review.review_id}`;
+    const config = {
+      headers: {
+        Authorization: contextProfile.token,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      await axios.put(replyUrl, { reply: replyText }, config);
+      showToast('Reply submitted successfully', 'success');
+      setReplyVisible(false);
+      onRefresh();
+    } catch (err) {
+      console.error('Error submitting reply:', err);
+      showToast('Failed to submit reply', 'error');
     }
   };
 
@@ -77,13 +102,21 @@ export default function OrderReviewCard({ review, targetBody, onRefresh }) {
               source={{ uri: `${BACKEND}/${review.customer_profile_img}` }}
             />
           )}
-          right={() =>
-            isReviewLeftByMe && (
-              <View style={{ flexDirection: 'row', gap: 12, marginRight: 8 }}>
+          right={() => (
+            <View style={{ flexDirection: 'row', gap: 12, marginRight: 8 }}>
+              {isReviewLeftByMe && (
                 <PressableIcon source="pencil" onPress={handleEdit} color="grey" size={20} />
-              </View>
-            )
-          }
+              )}
+              {canReply && (
+                <PressableIcon
+                  source={review.reply ? 'pencil' : 'reply'}
+                  onPress={handleReply}
+                  color="grey"
+                  size={20}
+                />
+              )}
+            </View>
+          )}
         />
         <Card.Content>
           <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>{headerLabel}</Text>
@@ -94,14 +127,17 @@ export default function OrderReviewCard({ review, targetBody, onRefresh }) {
           <Text style={{ marginVertical: 4 }}>{review.review_text}</Text>
           {review.reply && (
             <View style={{ backgroundColor: '#f0f0f0', padding: 6, borderRadius: 4 }}>
-              <Text style={{ fontStyle: 'italic', fontSize: 12 }}>{capitalize(targetBody)} Reply: {review.reply}</Text>
+              <Text style={{ fontStyle: 'italic', fontSize: 12 }}>
+                {capitalize(targetBody)} Reply: {review.reply}
+              </Text>
             </View>
           )}
         </Card.Content>
       </Card>
 
+      {/* Customer Edit Review Dialog */}
       <Portal>
-        <Dialog visible={editVisible} onDismiss={handleClose}>
+        <Dialog visible={editVisible} onDismiss={handleCloseEdit}>
           <Dialog.Title>Edit Review</Dialog.Title>
           <Dialog.Content>
             <TextInput
@@ -120,8 +156,28 @@ export default function OrderReviewCard({ review, targetBody, onRefresh }) {
             />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={handleClose}>Cancel</Button>
+            <Button onPress={handleCloseEdit}>Cancel</Button>
             <Button onPress={handleSubmitEdit}>Save</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
+      {/* Driver or Restaurant Reply to Review Dialog */}
+      <Portal>
+        <Dialog visible={replyVisible} onDismiss={handleCloseReply}>
+          <Dialog.Title>{review.reply ? 'Edit Reply' : 'Leave a Reply'}</Dialog.Title>
+          <Dialog.Content>
+            <TextInput
+              label="Reply"
+              multiline
+              numberOfLines={3}
+              value={replyText}
+              onChangeText={setReplyText}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={handleCloseReply}>Cancel</Button>
+            <Button onPress={handleSubmitReply}>Submit</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
