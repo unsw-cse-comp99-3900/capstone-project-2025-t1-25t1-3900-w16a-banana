@@ -128,9 +128,9 @@ class PendingApplications(Resource):
 
         # get the pending applications
         if user_type == 'driver':
-            applications = filter_drivers(RegistrationStatus=RegistrationStatus.PENDING)
+            applications = filter_drivers(registration_status=RegistrationStatus.PENDING)
         elif user_type == 'restaurant':
-            applications = filter_restaurants(RegistrationStatus=RegistrationStatus.PENDING)
+            applications = filter_restaurants(registration_status=RegistrationStatus.PENDING)
         else:
             return res_error(400, 'Invalid application type')
 
