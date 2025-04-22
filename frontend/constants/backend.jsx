@@ -11,4 +11,4 @@ export const BACKEND = Platform.OS === "android"
   : "http://localhost:11000";
 
 // refresh with the backend every second
-export const TIME_INTERVAL = 10000;
+export const TIME_INTERVAL = 1000;
