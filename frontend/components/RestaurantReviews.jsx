@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, Image } from "react-native";
 import { Text, Card, ActivityIndicator, Button } from "react-native-paper";
 import axios from "axios";
 import { BACKEND } from "../constants/backend";
 import OrderRatingStar from "./OrderRatingStar";
 import useAuth from "../hooks/useAuth";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 export default function RestaurantReviews({ role, id }) {
   const [loading, setLoading] = useState(true);
@@ -32,9 +32,11 @@ export default function RestaurantReviews({ role, id }) {
     }
   };
 
-  useEffect(() => {
-    fetchReviews();
-  }, [role, id]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchReviews();
+    }, [role, id])
+  );
 
   if (loading) {
     return <ActivityIndicator style={{ marginVertical: 20 }} />;
