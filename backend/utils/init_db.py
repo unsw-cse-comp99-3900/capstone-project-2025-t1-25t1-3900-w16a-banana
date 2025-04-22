@@ -187,7 +187,7 @@ def initialize_database():
                     db.session.commit()
 
         # each customer has 50 orders by default
-        # the date ranges from 2025-03-23 to 2025-04-07
+        # the date ranges from 2025-03-21 to 2025-04-21
         # time ranges from 10:00 to 20:00.
         # for simplicity, pickup time is set to 30 minutes after the order creation time.
         # and delivery time is set to 30 minutes after pickup time.
@@ -219,8 +219,8 @@ def initialize_database():
                 total_price = order_price + delivery_fee
 
                 # create the order time
-                order_time = datetime(2025, 3, 23)\
-                    + timedelta(days=random.randint(0, 16), hours=random.randint(10, 20))
+                order_time = datetime(2025, 3, 21)\
+                    + timedelta(days=random.randint(0, 31), hours=random.randint(10, 20))
                 pickup_time = order_time + timedelta(minutes=30)
                 delivery_time = pickup_time + timedelta(minutes=30)
                 # create a new order dict
