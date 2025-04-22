@@ -1,6 +1,6 @@
 # Food Delivery App - Team 3900-W16A-Banana
 
-Open [LINK](https://expo.dev/accounts/wen123567/projects/SmartEats/builds/36626f96-ccc8-4be9-9f99-1e0b8b5af916) to install the latest build of the app on your **Android** device. Or scan this QR code:
+Open [LINK](https://expo.dev/accounts/wen123567/projects/SmartEats/builds/f9fd63ee-eb85-4787-9310-14b1b60bcbda) to install the latest build of the app on your **Android** device. Or scan this QR code:
 
 <img src="./docs/readme_images/qrcode.png" alt="QR code" width="200" height="auto" />
 
