@@ -95,7 +95,7 @@ export default function OrderReviewCard({ review, targetBody, onRefresh }) {
       <Card style={{ marginBottom: 16 }}>
         <Card.Title
           title={review.customer_name}
-          subtitle={new Date(review.time).toLocaleString()}
+          subtitle={new Date(review.time).toISOString().slice(0, 10)}
           left={() => (
             <Avatar.Image
               size={40}
