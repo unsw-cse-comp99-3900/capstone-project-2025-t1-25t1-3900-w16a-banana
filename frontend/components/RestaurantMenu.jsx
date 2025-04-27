@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { ScrollView, View } from "react-native";
-import { ActivityIndicator, Text, List, Button } from "react-native-paper";
 import axios from "axios";
 import capitalize from "capitalize";
-import { BACKEND } from "../constants/backend";
-import useToast from "../hooks/useToast";
-import useAuth from "../hooks/useAuth";
 import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ScrollView, View } from "react-native";
+import { ActivityIndicator, Button, List, Text } from "react-native-paper";
+import { BACKEND } from "../constants/backend";
+import useAuth from "../hooks/useAuth";
+import useToast from "../hooks/useToast";
 import RestaurantMenuItem from "./RestaurantMenuItem";
 
 /**
@@ -121,11 +121,22 @@ export default function RestaurantMenu({ restaurantId }) {
 
   if (!menuCategories.length) {
     return (
-      <View style={{ padding: 16 }}>
-        <Text variant="titleLarge">No menu data found.</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 16 }}>
+        <Text variant="titleLarge" style={{ marginBottom: 12 }}>
+          No menu data found.
+        </Text>
+        {isRestaurantOwner && (
+          <Button
+            mode="contained"
+            icon="plus"
+            onPress={() => router.push("/restaurant/EditMenu")}
+          >
+            Add Menu
+          </Button>
+        )}
       </View>
     );
-  }
+  }  
 
   return (
     <ScrollView style={{ paddingTop: 8, paddingBottom: 12 }}>
