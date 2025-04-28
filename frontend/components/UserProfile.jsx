@@ -71,14 +71,6 @@ export default function UserProfile({ userType, userProfile, isSelfProfile = fal
             </Text>
           </>
         )}
-          
-        {/* Customer Actions */}
-        {isSelfProfile && isCustomer && (
-          <View style={{ flexDirection: "row", marginTop: 20, gap: 10 }}>
-            <Button mode="outlined" icon="heart" onPress={() => router.push("/customer/favourites")}>Favourites</Button>
-            <Button mode="outlined" icon="history" onPress={() => router.push("/customer/history")}>History</Button>
-          </View>
-        )}
 
         {/* Personal Info Section */}
         <View style={{ width: "100%", marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: "#f0f0f0", borderRadius: 10 }}>
