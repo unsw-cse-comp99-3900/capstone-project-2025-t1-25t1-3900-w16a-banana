@@ -8,7 +8,7 @@ Open [LINK](https://expo.dev/accounts/wen123567/projects/SmartEats/builds/f9fd63
 
 With the growing demand for on-demand food delivery, restaurants are seeking efficient solutions to connect with customers and manage orders seamlessly. Many current food delivery platforms face challenges such as inefficient order management, poor communication between customers, restaurants, and delivery drivers. To address these issues, this project proposes a food delivery mobile application that provides a seamless and user-friendly experience for all participants. We will present our solutions to improve order efficiency, enhance communication, and optimize the delivery process, ensuring a smooth and reliable service for both businesses and customers. In addition, we integrate the ChatGPT API. We encourage restaurant managers to build their own chatbots for automated customer interaction during ordering and menu recommendations. Furthermore, customers can also use the chatbots to get quick responses to common queries, such as order status and payment inquiries.
 
-## 2. Demo Setup (for week 5, week 8, week 10 demo)
+## 2. Demo Setup
 
 1. **Clone the repository**
 
